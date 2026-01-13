@@ -41,32 +41,35 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6 relative overflow-hidden font-outfit">
             {/* Animated Background Orbs */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                 <motion.div
                     animate={{
-                        x: [0, 100, 0],
-                        y: [0, 50, 0],
-                        scale: [1, 1.2, 1]
-                    }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-primary-100/30 rounded-full blur-[120px]"
-                />
-                <motion.div
-                    animate={{
-                        x: [0, -80, 0],
-                        y: [0, 120, 0],
+                        x: [0, 80, 0],
+                        y: [0, 40, 0],
                         scale: [1, 1.1, 1]
                     }}
                     transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-1/2 -right-40 w-[500px] h-[500px] bg-teal-100/30 rounded-full blur-[100px]"
+                    style={{ willChange: "transform" }}
+                    className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-primary-100/20 rounded-full blur-[80px]"
                 />
                 <motion.div
                     animate={{
-                        x: [0, 60, 0],
-                        y: [0, -100, 0]
+                        x: [0, -60, 0],
+                        y: [0, 100, 0],
+                        scale: [1, 1.05, 1]
                     }}
-                    transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-                    className="absolute -bottom-40 left-1/4 w-[450px] h-[450px] bg-indigo-100/30 rounded-full blur-[110px]"
+                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                    style={{ willChange: "transform" }}
+                    className="absolute top-1/2 -right-40 w-[500px] h-[500px] bg-teal-100/20 rounded-full blur-[70px]"
+                />
+                <motion.div
+                    animate={{
+                        x: [0, 50, 0],
+                        y: [0, -80, 0]
+                    }}
+                    transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+                    style={{ willChange: "transform" }}
+                    className="absolute -bottom-40 left-1/4 w-[450px] h-[450px] bg-indigo-100/20 rounded-full blur-[80px]"
                 />
             </div>
 
@@ -121,7 +124,8 @@ export default function LoginPage() {
 
                         <div
                             onClick={() => handleCardClick(card.route)}
-                            className="relative bg-white/80 backdrop-blur-xl border border-white rounded-[3rem] p-12 h-full flex flex-col justify-between cursor-pointer shadow-2xl transition-all duration-500 group-hover:-translate-y-3"
+                            className="relative bg-white/70 backdrop-blur-lg border border-white/50 rounded-[3rem] p-12 h-full flex flex-col justify-between cursor-pointer shadow-xl transition-all duration-500 group-hover:-translate-y-3"
+                            style={{ transformStyle: "preserve-3d" }}
                         >
                             <div>
                                 <div className="flex items-start justify-between mb-12">
