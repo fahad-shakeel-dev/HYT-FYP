@@ -2,11 +2,12 @@ import mongoose from "mongoose";
 
 const ClassSectionSchema = new mongoose.Schema(
   {
-    semester: {
+    category: { // Replaces program
       type: String,
       required: true,
     },
-    section: {
+    // semester removed/deprecated
+    schedule: { // Replaces section
       type: String,
       required: true,
     },
@@ -17,6 +18,7 @@ const ClassSectionSchema = new mongoose.Schema(
     room: {
       type: String,
       required: true,
+      default: "Therapy Room 1",
     },
     enrolledStudents: {
       type: Number,
@@ -33,13 +35,9 @@ const ClassSectionSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
-    subject: {
-      type: String, // Optional to avoid validation error
-      default: null,
-    },
-    program: {
+    activity: { // Replaces subject
       type: String,
-      required: true,
+      default: null,
     },
     assignedAt: {
       type: Date,
@@ -52,6 +50,11 @@ const ClassSectionSchema = new mongoose.Schema(
   }
 );
 
-ClassSectionSchema.index({ classId: 1, section: 1, subject: 1 }, { unique: true, sparse: true });
+ClassSectionSchema.index({ classId: 1, schedule: 1, activity: 1 }, { unique: true, sparse: true });
 
-export default mongoose.models.ClassSection || mongoose.model("ClassSection", ClassSectionSchema);
+// Prevent Mongoose overwrite warning but force update for HMR
+if (mongoose.models.ClassSection) {
+  delete mongoose.models.ClassSection;
+}
+
+export default mongoose.model("ClassSection", ClassSectionSchema);

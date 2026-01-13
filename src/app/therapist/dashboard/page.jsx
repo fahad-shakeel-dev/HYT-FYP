@@ -5,11 +5,6 @@ import Sidebar from "@/components/therapist/dashboard/Sidebar"
 import Header from "@/components/therapist/dashboard/Header"
 import DashboardOverview from "@/components/therapist/dashboard/DashboardOverview"
 import PatientManagement from "@/components/therapist/dashboard/PatientManagement"
-import SessionScheduleManagement from "@/components/therapist/dashboard/SessionScheduleManagement"
-import TherapyTaskManagement from "@/components/therapist/dashboard/TherapyTaskManagement"
-import ClinicalAssessmentManagement from "@/components/therapist/dashboard/ClinicalAssessmentManagement"
-import ClinicalResourceSharing from "@/components/therapist/dashboard/ClinicalResourceSharing"
-import ClinicalConsultations from "@/components/therapist/dashboard/ClinicalConsultations"
 
 export default function TherapistDashboard() {
   const [activeSection, setActiveSection] = useState("dashboard")
@@ -18,21 +13,11 @@ export default function TherapistDashboard() {
   const renderContent = () => {
     switch (activeSection) {
       case "dashboard":
-        return <DashboardOverview />
+        return <DashboardOverview setActiveSection={setActiveSection} />
       case "patients":
         return <PatientManagement />
-      case "sessions":
-        return <SessionScheduleManagement />
-      case "tasks":
-        return <TherapyTaskManagement />
-      case "assessments":
-        return <ClinicalAssessmentManagement />
-      case "resources":
-        return <ClinicalResourceSharing />
-      case "consultations":
-        return <ClinicalConsultations />
       default:
-        return <DashboardOverview />
+        return <DashboardOverview setActiveSection={setActiveSection} />
     }
   }
 

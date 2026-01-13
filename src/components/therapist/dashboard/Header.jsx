@@ -18,12 +18,7 @@ export default function Header({ activeSection, toggleSidebar }) {
   const getSectionTitle = () => {
     const titles = {
       dashboard: "Analytics Overview",
-      students: "Patient Portfolios",
-      classes: "Session Schedules",
-      assignments: "Therapy Tasks",
-      quizzes: "Assessments",
-      content: "Clinical Resources",
-      communications: "Consultations",
+      patients: "My Patients",
     };
     return titles[activeSection] || "Clinical Portal";
   };

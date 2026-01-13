@@ -11,12 +11,10 @@ import AssignClasses from "@/components/admin/AssignClasses"
 import RejectModal from "@/components/admin/RejectModal"
 import BackgroundParticles from "@/components/admin/BackgroundParticles"
 import MakeClass from "@/components/admin/MakeClass"
-import SessionManagement from "@/components/admin/SessionManagement"
-import SessionGuard from "@/components/admin/SessionGuard"
 import { useSessionLogger } from "@/hooks/useSessionLogger"
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("session-management")
+  const [activeTab, setActiveTab] = useState("dashboard")
   const [classes, setClasses] = useState([])
   const [teacherRequests, setTeacherRequests] = useState([])
   const [allStudents, setAllStudents] = useState([])
@@ -28,37 +26,17 @@ export default function AdminDashboard() {
   const [rejectReason, setRejectReason] = useState("")
   const [selectedRequest, setSelectedRequest] = useState(null)
   const [processingRequests, setProcessingRequests] = useState(new Set())
-  const [hasActiveSession, setHasActiveSession] = useState(false)
 
   const { logActivity } = useSessionLogger()
 
   useEffect(() => {
-    checkSessionStatus()
+    fetchData()
   }, [])
 
-  useEffect(() => {
-    if (hasActiveSession) {
-      fetchData()
-    }
-  }, [hasActiveSession])
-
-  const checkSessionStatus = async () => {
-    try {
-      const response = await fetch("/api/admin/session/status")
-      const data = await response.json()
-      setHasActiveSession(data.hasActiveSession)
-      setLoading(false)
-    } catch (error) {
-      console.error("Error checking session status:", error)
-      setLoading(false)
-    }
-  }
-
   const fetchData = async () => {
-    if (!hasActiveSession) return
-
     try {
       console.log("🔄 Fetching dashboard data...")
+      setLoading(true)
       const [teachersRes, studentsRes, sectionsRes, allTeachersRes, classesRes] = await Promise.all([
         fetch("/api/admin/teachers/requests"),
         fetch("/api/admin/students"),
@@ -79,9 +57,11 @@ export default function AdminDashboard() {
       setAllTeachers(allTeachersData.teachers || [])
       setClasses(classesData.classes || [])
 
+      setLoading(false)
       console.log("✅ Dashboard data loaded")
     } catch (error) {
       console.error("❌ Error fetching data:", error)
+      setLoading(false)
     }
   }
 
@@ -264,16 +244,6 @@ export default function AdminDashboard() {
   }
 
   const renderActiveComponent = () => {
-    // Always allow session management
-    if (activeTab === "session-management") {
-      return <SessionManagement onSessionChange={setHasActiveSession} />
-    }
-
-    // Guard other components
-    if (!hasActiveSession) {
-      return <SessionGuard hasActiveSession={hasActiveSession} />
-    }
-
     switch (activeTab) {
       case "dashboard":
         return (
@@ -352,7 +322,6 @@ export default function AdminDashboard() {
           allStudents={allStudents}
           allTeachers={allTeachers}
           sections={sections}
-          hasActiveSession={hasActiveSession}
         />
 
         <div className="flex-1 p-6 relative z-10 min-w-0">{renderActiveComponent()}</div>

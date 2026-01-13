@@ -45,11 +45,11 @@ export async function GET(request) {
     }
 
     // Find teacher by ID and role
-    console.log("API: Querying user with ID:", decoded.id, "and role: teacher");
+    console.log("API: Querying user with ID:", decoded.id, "and role: therapist");
     const teacher = await User.findOne({
       _id: decoded.id,
-      role: "teacher",
-    }).select("name email role classAssignments");
+      role: "therapist",
+    }).select("name email role classAssignments image");
 
     if (!teacher) {
       console.log("API: Teacher not found for ID:", decoded.id);
@@ -86,6 +86,7 @@ export async function GET(request) {
         id: teacher._id,
         name: teacher.name,
         email: teacher.email,
+        image: teacher.image,
         department: teacher.role, // Use role as department for Sidebar compatibility
         assignedClasses: classSections.map((classSection) => ({
           classSectionId: classSection._id,

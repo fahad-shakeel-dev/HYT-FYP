@@ -5,13 +5,8 @@ import {
   LucideLayoutDashboard,
   LucideUsers,
   LucideCalendar,
-  LucideClipboardCheck,
-  LucideFileText,
-  LucideLibrary,
-  LucideMessageSquare,
   LucideStethoscope,
   LucideChevronLeft,
-  LucideChevronRight
 } from "lucide-react";
 
 export default function Sidebar({ activeSection, setActiveSection, collapsed, setCollapsed }) {
@@ -32,6 +27,7 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
           setTherapist({
             name: data.teacher.name || "Unknown Therapist",
             specialization: data.teacher.department || "Therapist",
+            image: data.teacher.image,
           });
         }
       } catch (error) {
@@ -58,13 +54,8 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
   }, [setCollapsed]);
 
   const menuItems = [
-    { id: "dashboard", label: "Analytics Overview", icon: LucideLayoutDashboard },
-    { id: "students", label: "Patient Portfolios", icon: LucideUsers },
-    { id: "classes", label: "Session Schedules", icon: LucideCalendar },
-    { id: "assignments", label: "Therapy Tasks", icon: LucideClipboardCheck },
-    { id: "quizzes", label: "Assessments", icon: LucideFileText },
-    { id: "content", label: "Clinical Resources", icon: LucideLibrary },
-    { id: "communications", label: "Consultations", icon: LucideMessageSquare },
+    { id: "dashboard", label: "Dashboard", icon: LucideLayoutDashboard },
+    { id: "patients", label: "My Patients", icon: LucideUsers }, // This matches the "Therapist selects a child" flow
   ];
 
   return (
@@ -113,8 +104,8 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
                 if (window.innerWidth < 1024) setCollapsed(true);
               }}
               className={`flex items-center gap-4 w-full h-14 px-4 rounded-2xl transition-all duration-300 group ${isActive
-                  ? "bg-primary-600 text-white shadow-xl shadow-primary-100"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-primary-600"
+                ? "bg-primary-600 text-white shadow-xl shadow-primary-100"
+                : "text-slate-500 hover:bg-slate-50 hover:text-primary-600"
                 }`}
               title={collapsed ? item.label : ""}
             >
@@ -138,7 +129,11 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
       <div className="absolute bottom-0 left-0 w-full p-6 border-t border-slate-100 bg-white/80 backdrop-blur-sm">
         <div className={`flex items-center gap-4 p-2 rounded-2xl transition-all ${collapsed ? "justify-center" : "hover:bg-slate-50"}`}>
           <div className="min-w-[48px] h-[48px] rounded-2xl bg-secondary-100 flex items-center justify-center text-secondary-600 font-bold border-2 border-white shadow-sm overflow-hidden">
-            {therapist.name.charAt(0)}
+            {therapist.image ? (
+              <img src={therapist.image} alt={therapist.name} className="w-full h-full object-cover" />
+            ) : (
+              therapist.name.charAt(0)
+            )}
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0 pr-2">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import ChildClinicalFile from "./ChildClinicalFile"
 import {
   LucideUsers,
   LucideSearch,
@@ -75,6 +76,10 @@ export default function PatientManagement() {
         <p className="text-slate-400 font-bold animate-pulse uppercase tracking-widest text-xs">Accessing Secure Records...</p>
       </div>
     )
+  }
+
+  if (selectedPatient) {
+    return <ChildClinicalFile patient={selectedPatient} onBack={() => setSelectedPatient(null)} />
   }
 
   return (
@@ -232,133 +237,7 @@ export default function PatientManagement() {
       </div>
 
       {/* Patient Detail Modal */}
-      <AnimatePresence>
-        {selectedPatient && (
-          <motion.div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedPatient(null)}
-          >
-            <motion.div
-              className="bg-white rounded-[3rem] shadow-2xl max-w-2xl w-full p-10 relative overflow-hidden"
-              initial={{ scale: 0.9, y: 20, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.9, y: 20, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-600 to-teal-500"></div>
 
-              <button
-                onClick={() => setSelectedPatient(null)}
-                className="absolute top-8 right-8 p-3 bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
-              >
-                <LucideActivity className="rotate-45" size={24} />
-              </button>
-
-              <div className="flex flex-col md:flex-row gap-10 items-start">
-                <div className="w-full md:w-1/3 flex flex-col items-center space-y-6">
-                  <div className="w-40 h-40 rounded-[3rem] overflow-hidden border-8 border-slate-50 shadow-inner">
-                    <img
-                      src={selectedPatient.image || `https://ui-avatars.com/api/?name=${selectedPatient.name}&background=eff6ff&color=2563eb&size=400`}
-                      alt={selectedPatient.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="text-center w-full">
-                    <span className="text-[10px] font-black text-green-600 bg-green-50 px-4 py-1.5 rounded-full uppercase tracking-widest">
-                      Stable Profile
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex-1 space-y-8">
-                  <div>
-                    <h4 className="text-3xl font-black text-slate-800 mb-1 leading-tight">{selectedPatient.name}</h4>
-                    <p className="text-primary-600 font-black text-sm uppercase tracking-widest">Patient Record Profile</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-primary-600 transition-colors">
-                          <LucideMail size={18} />
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider leading-none mb-1">Primary Email</span>
-                          <span className="text-sm font-bold text-slate-700 truncate">{selectedPatient.email}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-primary-600 transition-colors">
-                          <LucidePhone size={18} />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider leading-none mb-1">Contact</span>
-                          <span className="text-sm font-bold text-slate-700">{selectedPatient.phone}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-primary-600 transition-colors">
-                          <LucideClipboard size={18} />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider leading-none mb-1">Specialty</span>
-                          <span className="text-sm font-bold text-slate-700">{selectedPatient.program}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-primary-600 transition-colors">
-                          <LucideActivity size={18} />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider leading-none mb-1">Treatment Phase</span>
-                          <span className="text-sm font-bold text-slate-700">Phase {selectedPatient.semester}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-primary-600 transition-colors">
-                          <LucideCalendar size={18} />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider leading-none mb-1">Clinical Node</span>
-                          <span className="text-sm font-bold text-slate-700">Node {selectedPatient.section}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:text-primary-600 transition-colors">
-                          <LucideMapPin size={18} />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider leading-none mb-1">Location</span>
-                          <span className="text-sm font-bold text-slate-700">{selectedPatient.room || "Room 000"}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6 border-t border-slate-100 flex gap-4">
-                    <button className="flex-1 py-4 bg-primary-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-primary-100 hover:bg-primary-700 transition-all active:scale-95">
-                      Download Clinical File
-                    </button>
-                    <button className="flex-1 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-100 transition-all">
-                      Edit Records
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

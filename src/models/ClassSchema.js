@@ -1,37 +1,32 @@
 import mongoose from "mongoose";
 
 const ClassSchema = new mongoose.Schema({
-  program: {
+  category: {
     type: String,
     required: true,
-    enum: ["BSCS", "BBA", "ADP CS"],
+    enum: ["Speech Therapy", "Occupational Therapy", "Behavioral Therapy", "Physical Therapy", "Social Skills Group"],
   },
   className: {
-    type: String,
+    type: String, // Therapy Group Name
     required: true,
     trim: true,
     unique: true,
   },
-  semester: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 8,
-  },
-  sections: {
-    type: [String],
+  // semester field removed as it's not relevant for therapy groups
+  schedules: {
+    type: [String], // e.g., ["Monday 10:00 AM", "Wednesday 2:00 PM"] or specific dates
     required: true,
     validate: {
-      validator: (v) => v.length > 0 && v.every((s) => ["A", "B", "C", "D", "E", "F"].includes(s)),
-      message: "Sections must be non-empty and contain valid values (A-F)",
+      validator: (v) => v.length > 0 && v.every((s) => s.trim().length > 0),
+      message: "At least one schedule is required",
     },
   },
-  subjects: {
+  activities: { // Replaces subjects
     type: [String],
     required: true,
     validate: {
       validator: (v) => v.length > 0 && v.every((s) => s.trim().length > 0),
-      message: "At least one valid subject is required",
+      message: "At least one activity is required",
     },
   },
   createdAt: {
@@ -43,4 +38,9 @@ const ClassSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.Class || mongoose.model("Class", ClassSchema);
+// Prevent Mongoose overwrite warning but force update for HMR
+if (mongoose.models.Class) {
+  delete mongoose.models.Class;
+}
+
+export default mongoose.model("Class", ClassSchema);

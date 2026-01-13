@@ -10,7 +10,7 @@ export async function GET(request) {
         await connectDB()
 
         const teachers = await User.find({
-            role: "teacher",
+            role: { $in: ["teacher", "therapist"] },
             isApproved: true,
         })
             .sort({ createdAt: -1 })

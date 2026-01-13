@@ -23,6 +23,11 @@ const RegistrationRequestSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    role: {
+        type: String,
+        enum: ["teacher", "therapist"],
+        default: "therapist",
+    },
     status: {
         type: String,
         enum: ["pending", "approved", "rejected"],

@@ -28,7 +28,7 @@ export async function GET(request) {
     await connectToDatabase();
 
     const assignedTeachers = await User.find({
-      role: "teacher",
+      role: { $in: ["teacher", "therapist"] },
       isApproved: true,
       classAssignments: { $exists: true, $ne: [] },
     })
@@ -55,8 +55,8 @@ export async function GET(request) {
           console.warn("⚠️ Class not found for classId:", assignment.classId);
         }
 
-        const sections = Array.isArray(assignment.sections) && assignment.sections.length > 0 
-          ? assignment.sections 
+        const sections = Array.isArray(assignment.sections) && assignment.sections.length > 0
+          ? assignment.sections
           : (classData && Array.isArray(classData.sections) && classData.sections.length > 0 ? classData.sections : ["Unknown"]);
 
         const classSections = await ClassSection.find({
@@ -70,9 +70,9 @@ export async function GET(request) {
         const classDisplayName = assignment.classDisplayName || (classData ? `${classData.className} (${sections.join(", ")})` : "Unknown Class");
         const credentials = assignment.classCredentials && typeof assignment.classCredentials === "object"
           ? {
-              username: assignment.classCredentials.username || "N/A",
-              password: assignment.classCredentials.password || "N/A",
-            }
+            username: assignment.classCredentials.username || "N/A",
+            password: assignment.classCredentials.password || "N/A",
+          }
           : { username: "N/A", password: "N/A" };
 
         // Create a single entry with all sections
@@ -88,21 +88,21 @@ export async function GET(request) {
           classId: assignment.classId?.toString() || "N/A",
           classDetails: classSections.length > 0 || classData
             ? {
-                program: classSections[0]?.program || classData?.program || "N/A",
-                semester: classSections[0]?.semester || classData?.semester || "N/A",
-                section: sections.join(", "),
-                room: classSections[0]?.room || "N/A",
-                enrolledStudents: classSections[0]?.enrolledStudents || 0,
-                classId: (classSections[0]?.classId || assignment.classId)?.toString() || "N/A",
-              }
+              program: classSections[0]?.program || classData?.program || "N/A",
+              semester: classSections[0]?.semester || classData?.semester || "N/A",
+              section: sections.join(", "),
+              room: classSections[0]?.room || "N/A",
+              enrolledStudents: classSections[0]?.enrolledStudents || 0,
+              classId: (classSections[0]?.classId || assignment.classId)?.toString() || "N/A",
+            }
             : {
-                program: classData?.program || "N/A",
-                semester: classData?.semester || "N/A",
-                section: sections.join(", "),
-                room: "N/A",
-                enrolledStudents: 0,
-                classId: assignment.classId?.toString() || "N/A",
-              },
+              program: classData?.program || "N/A",
+              semester: classData?.semester || "N/A",
+              section: sections.join(", "),
+              room: "N/A",
+              enrolledStudents: 0,
+              classId: assignment.classId?.toString() || "N/A",
+            },
         });
       }
     }

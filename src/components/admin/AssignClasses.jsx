@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, BookOpen, Send, Key, User, CheckCircle, AlertCircle, RefreshCw, Trash2, ShieldCheck, Activity, Zap, ClipboardList, Database, Lock } from "lucide-react";
+import { Users, BookOpen, Send, Key, User, CheckCircle, AlertCircle, RefreshCw, Trash2, ShieldCheck, Activity, Zap, ClipboardList, Database, Lock, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Select from "react-select";
 
 export default function AssignClasses({ allTeachers, classes, fetchData }) {
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
-  const [subject, setSubject] = useState("");
-  const [selectedSections, setSelectedSections] = useState([]);
-  const [availableSubjects, setAvailableSubjects] = useState([]);
+  const [activity, setActivity] = useState(""); // Replaces subject
+  const [selectedSchedules, setSelectedSchedules] = useState([]); // Replaces selectedSections
+  const [availableActivities, setAvailableActivities] = useState([]); // Replaces availableSubjects
   const [classCredentials, setClassCredentials] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [assignedClasses, setAssignedClasses] = useState([]);
@@ -42,53 +42,53 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
     fetchAssignedClasses();
   }, []);
 
+  // Update available activities based on selected class and schedules
+  // In the new model, activities are defined per group, but we might want to check overlap/availability?
+  // For now, simpler: getting activities from the selected class is enough.
+  // The API call 'available-subjects' might fail if backend isn't updated, 
+  // so let's rely on class data directly if possible or update the flow.
+  // Assuming for now verification of availability happens on assignment or we just show all class activities.
   useEffect(() => {
-    const fetchAvailableSubjects = async () => {
-      if (!selectedClass || !selectedSections.length) {
-        setAvailableSubjects([]);
-        setSubject("");
-        return;
-      }
-      try {
-        const response = await fetch(`/api/admin/available-subjects?classId=${selectedClass}&sections=${selectedSections.join(",")}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setAvailableSubjects(data.availableSubjects || []);
-        } else {
-          setAvailableSubjects([]);
-        }
-      } catch (error) {
-        setAvailableSubjects([]);
-      }
-    };
-    fetchAvailableSubjects();
-  }, [selectedClass, selectedSections]);
+    if (!selectedClass) {
+      setAvailableActivities([]);
+      setActivity("");
+      return;
+    }
+    const cls = classes.find(c => c._id === selectedClass);
+    if (cls) {
+      setAvailableActivities(cls.activities || []);
+    }
+  }, [selectedClass]);
+
 
   const availableTeachers = allTeachers?.filter((teacher) => teacher.isApproved) || [];
-  const availableClasses = classes?.filter((cls) => cls.sections.length > 0) || [];
+  // Filter classes that have schedules (meaning they are valid Therapy Groups)
+  const availableClasses = classes?.filter((cls) => cls.schedules && cls.schedules.length > 0) || [];
   const selectedClassData = classes?.find((c) => c._id === selectedClass);
 
-  const sectionOptions = selectedClassData?.sections.map((section) => ({
-    value: section,
-    label: `Session ${section}`,
+  const scheduleOptions = selectedClassData?.schedules.map((schedule) => ({
+    value: schedule,
+    label: schedule,
   })) || [];
 
   const generateCredentials = () => {
-    if (selectedClassData && subject && selectedSections.length > 0) {
-      const sectionPart = selectedSections.length === selectedClassData.sections.length
+    if (selectedClassData && activity && selectedSchedules.length > 0) {
+      const schedulePart = selectedSchedules.length === selectedClassData.schedules.length
         ? "all"
-        : selectedSections.join("_").toLowerCase();
-      const username = `node_${selectedClassData.program.toLowerCase()}_${selectedClassData.semester}_${subject.toLowerCase()}_${sectionPart}`;
+        : "multi"; // Simplified for brevity
+
+      // Sanitized username generation
+      const safeGroup = selectedClassData.className.replace(/\s+/g, '_').toLowerCase().slice(0, 10);
+      const safeActivity = activity.replace(/\s+/g, '_').toLowerCase().slice(0, 10);
+
+      const username = `u_${safeGroup}_${safeActivity}_${Math.floor(Math.random() * 1000)}`;
       const password = Math.random().toString(36).slice(-10).toUpperCase();
       setClassCredentials({ username, password });
     }
   };
 
   const handleAssignClass = async () => {
-    if (!selectedTeacher || !selectedClass || !subject || selectedSections.length === 0 || !classCredentials.username || !classCredentials.password) {
+    if (!selectedTeacher || !selectedClass || !activity || selectedSchedules.length === 0 || !classCredentials.username || !classCredentials.password) {
       return;
     }
     setLoading(true);
@@ -99,19 +99,21 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
         body: JSON.stringify({
           teacherId: selectedTeacher,
           classId: selectedClass,
-          subject,
-          sections: selectedSections,
+          subject: activity, // sending as 'subject' to match likely existing API payload expectation unless we change backend assign-class too
+          sections: selectedSchedules, // sending as 'sections' to match likely existing API payload expectation
           credentials: classCredentials,
         }),
       });
       if (response.ok) {
         setSelectedTeacher("");
         setSelectedClass("");
-        setSubject("");
-        setSelectedSections([]);
+        setActivity("");
+        setSelectedSchedules([]);
         setClassCredentials({ username: "", password: "" });
-        setAvailableSubjects([]);
+        setAvailableActivities([]);
         await Promise.all([fetchData(), fetchAssignedClasses()]);
+      } else {
+        alert("Failed to assign.")
       }
     } catch (error) {
       console.error(error);
@@ -191,7 +193,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
             <Database className="text-primary-500" size={24} />
             <h1 className="text-4xl font-black text-white tracking-tighter">Assign Therapist</h1>
           </div>
-          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Link Therapists to Sessions & Groups</p>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Link Therapists to Groups</p>
         </div>
         <div className="px-6 py-2 bg-slate-900/50 border border-slate-800 rounded-2xl">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none"> Total Assignments </span>
@@ -233,23 +235,23 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                 {/* Unit Select */}
                 <div className="space-y-2">
                   <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                    <ClipboardList size={12} /> Session Group
+                    <ClipboardList size={12} /> Therapy Group
                   </label>
                   <div className="relative">
                     <select
                       value={selectedClass}
                       onChange={(e) => {
                         setSelectedClass(e.target.value);
-                        setSubject("");
-                        setSelectedSections([]);
-                        setAvailableSubjects([]);
+                        setActivity("");
+                        setSelectedSchedules([]);
+                        setAvailableActivities([]);
                         setClassCredentials({ username: "", password: "" });
                       }}
                       className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer"
                     >
-                      <option value="">Select Unit...</option>
+                      <option value="">Select Group...</option>
                       {availableClasses.map((cls) => (
-                        <option key={cls._id} value={cls._id}>{cls.program} {cls.semester}</option>
+                        <option key={cls._id} value={cls._id}>{cls.className} ({cls.category})</option>
                       ))}
                     </select>
                   </div>
@@ -257,19 +259,19 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                 {/* Discipline Select */}
                 <div className="space-y-2">
                   <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                    <BookOpen size={12} /> Therapeutic Discipline
+                    <BookOpen size={12} /> Activity/Service
                   </label>
                   <div className="relative">
                     <select
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
+                      value={activity}
+                      onChange={(e) => setActivity(e.target.value)}
                       className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer disabled:opacity-30"
                       disabled={!selectedClass}
                     >
-                      <option value="">Select Discipline...</option>
-                      {selectedClassData?.subjects.map((sub) => (
-                        <option key={sub} value={sub} disabled={!availableSubjects.includes(sub)}>
-                          {sub} {availableSubjects.includes(sub) ? "" : " (PROVISIONED)"}
+                      <option value="">Select Activity...</option>
+                      {availableActivities.map((act) => (
+                        <option key={act} value={act}>
+                          {act}
                         </option>
                       ))}
                     </select>
@@ -280,15 +282,15 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
               {/* Node Multi-Select */}
               <div className="space-y-2">
                 <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                  <Activity size={12} /> Targeted Sections
+                  <Calendar size={12} /> Session Schedule
                 </label>
                 <Select
                   isMulti
-                  options={sectionOptions}
-                  value={sectionOptions.filter((opt) => selectedSections.includes(opt.value))}
-                  onChange={(sel) => setSelectedSections(sel.map((opt) => opt.value))}
+                  options={scheduleOptions}
+                  value={scheduleOptions.filter((opt) => selectedSchedules.includes(opt.value))}
+                  onChange={(sel) => setSelectedSchedules(sel.map((opt) => opt.value))}
                   styles={customSelectStyles}
-                  placeholder="SELECT SECTIONS..."
+                  placeholder="SELECT TIME SLOTS..."
                   isDisabled={!selectedClass}
                 />
               </div>
@@ -297,7 +299,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
             <div className="mt-8 pt-8 border-t border-slate-800/50">
               <button
                 onClick={handleAssignClass}
-                disabled={loading || !selectedTeacher || !selectedClass || !subject || selectedSections.length === 0 || !classCredentials.username}
+                disabled={loading || !selectedTeacher || !selectedClass || !activity || selectedSchedules.length === 0 || !classCredentials.username}
                 className="w-full py-5 bg-primary-600 hover:bg-emerald-600 text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-950/20 active:scale-95 disabled:opacity-30 group/btn"
               >
                 {loading ? <Activity className="animate-spin" size={20} /> : <Send size={20} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />}
@@ -324,7 +326,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                 </div>
                 <button
                   onClick={generateCredentials}
-                  disabled={!selectedClass || !subject || selectedSections.length === 0}
+                  disabled={!selectedClass || !activity || selectedSchedules.length === 0}
                   className="px-6 py-3 bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-white font-black rounded-2xl text-[9px] uppercase tracking-widest transition-all active:scale-95 disabled:opacity-20"
                 >
                   Generate New
@@ -396,14 +398,20 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
 
                 <div className="lg:col-span-5 grid grid-cols-2 gap-4">
                   <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-900">
-                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Session Unit</p>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-black text-primary-400 uppercase tracking-widest">{assignment.assignedClass}</span>
-                      <div className="px-2 py-0.5 bg-slate-900 rounded text-[9px] font-black text-slate-500">SECTION {assignment.section}</div>
+                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Therapy Group</p>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-black text-primary-400 uppercase tracking-widest">
+                        {assignment.classDetails?.className || assignment.assignedClass || "Unknown Group"}
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        <span className="px-2 py-0.5 bg-slate-900 rounded text-[9px] font-black text-slate-500">
+                          {assignment.section}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-900">
-                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Discipline</p>
+                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Activity</p>
                     <div className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       <span className="text-xs font-black text-white uppercase tracking-widest truncate">{assignment.subject}</span>

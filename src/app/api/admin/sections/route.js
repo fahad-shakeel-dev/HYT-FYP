@@ -8,7 +8,7 @@ export async function GET(request) {
 
         const sections = await ClassSection.find({})
             .populate("students", "name email registrationNumber")
-            .sort({ semester: 1, section: 1 })
+            .sort({ category: 1, schedule: 1 })
             .lean()
 
         return NextResponse.json(

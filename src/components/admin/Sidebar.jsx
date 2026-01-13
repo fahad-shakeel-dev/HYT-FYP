@@ -27,17 +27,8 @@ export default function Sidebar({
   allTeachers,
   sections,
   classes,
-  hasActiveSession,
 }) {
   const menuItems = [
-    {
-      id: "session-management",
-      label: "Session Management",
-      icon: Settings,
-      count: null,
-      alwaysEnabled: true,
-      desc: "Manage academic cycles"
-    },
     {
       id: "dashboard",
       label: "System Overview",
@@ -120,14 +111,7 @@ export default function Sidebar({
               </div>
             </div>
 
-            <div className={`p-4 rounded-2xl border flex items-center gap-3 transition-colors ${hasActiveSession ? "bg-emerald-50 border-emerald-100" : "bg-slate-50 border-slate-200"}`}>
-              <div className={`w-2.5 h-2.5 rounded-full ${hasActiveSession ? "bg-emerald-500 animate-pulse" : "bg-slate-400"} `} />
-              <div className="flex flex-col">
-                <span className={`text-[10px] font-bold uppercase tracking-widest leading-tight ${hasActiveSession ? "text-emerald-700" : "text-slate-500"}`}>
-                  {hasActiveSession ? "Session Active" : "No Session"}
-                </span>
-              </div>
-            </div>
+
           </div>
 
           {/* Navigation Section */}
@@ -135,25 +119,19 @@ export default function Sidebar({
             {menuItems.map((item) => {
               const Icon = item.icon
               const isActive = activeTab === item.id
-              const isDisabled = !hasActiveSession && !item.alwaysEnabled
 
               return (
                 <button
                   key={item.id}
                   onClick={() => {
-                    if (!isDisabled) {
-                      setActiveTab(item.id)
-                      setSidebarOpen(false)
-                    }
+                    setActiveTab(item.id)
+                    setSidebarOpen(false)
                   }}
-                  disabled={isDisabled}
                   className={`
                     w-full group flex flex-col p-4 rounded-2xl text-left transition-all relative
                     ${isActive
                       ? "bg-primary-600 text-white shadow-lg shadow-primary-600/30 ring-4 ring-primary-50"
-                      : isDisabled
-                        ? "text-slate-400 cursor-not-allowed opacity-50 bg-slate-50/50"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                     }
                   `}
                 >

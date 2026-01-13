@@ -21,7 +21,7 @@ export async function POST(request) {
       phone: registrationRequest.phone,
       password: registrationRequest.password,
       image: registrationRequest.image,
-      role: "teacher",
+      role: registrationRequest.role || "therapist", // Use role from request, default to therapist
       isApproved: true,
     });
 
