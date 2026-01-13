@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Play, Square, Download, Clock, FileText, AlertCircle, CheckCircle, Trash2 } from "lucide-react";
+import { Play, Square, Download, Clock, FileText, AlertCircle, CheckCircle, Trash2, ShieldCheck, Activity, Zap, TrendingUp, Filter, Search, Globe, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function SessionManagement({ onSessionChange }) {
   const [sessionStatus, setSessionStatus] = useState(null);
@@ -18,35 +19,26 @@ export default function SessionManagement({ onSessionChange }) {
   const [programs, setPrograms] = useState([]);
   const [filters, setFilters] = useState({ year: "", program: "", search: "" });
 
-  // Memoized fetch functions to prevent re-renders
   const checkSessionStatus = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/session/status");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setSessionStatus(data);
-      if (onSessionChange) {
-        onSessionChange(data.hasActiveSession);
-      }
+      if (onSessionChange) onSessionChange(data.hasActiveSession);
     } catch (error) {
       console.error("Error checking session status:", error);
-      alert(`Error checking session status: ${error.message}`);
     }
   }, [onSessionChange]);
 
   const fetchSessionHistory = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/session/history");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setSessionHistory(data.sessions || []);
     } catch (error) {
       console.error("Error fetching session history:", error);
-      alert(`Error fetching session history: ${error.message}`);
     }
   }, []);
 
@@ -58,20 +50,16 @@ export default function SessionManagement({ onSessionChange }) {
       if (filters.search) params.append("search", filters.search);
 
       const response = await fetch(`/api/admin/graduates?${params}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setGraduates(data.graduates || []);
       setGraduationYears(data.graduationYears || []);
       setPrograms(data.programs || []);
     } catch (error) {
       console.error("Error fetching graduates:", error);
-      alert(`Error fetching graduates: ${error.message}`);
     }
   }, [filters]);
 
-  // Initial data fetch with loading state
   useEffect(() => {
     const loadInitialData = async () => {
       setLoading(true);
@@ -84,7 +72,6 @@ export default function SessionManagement({ onSessionChange }) {
     loadInitialData();
   }, [checkSessionStatus, fetchSessionHistory, fetchGraduates]);
 
-  // Refetch graduates when filters change
   useEffect(() => {
     const loadGraduates = async () => {
       setLoading(true);
@@ -94,15 +81,11 @@ export default function SessionManagement({ onSessionChange }) {
         setLoading(false);
       }
     };
-    loadGraduates();
+    if (filters.year || filters.program || filters.search) loadGraduates();
   }, [filters, fetchGraduates]);
 
   const startSession = async () => {
-    if (!sessionForm.sessionType || !sessionForm.year) {
-      alert("Please fill all fields");
-      return;
-    }
-
+    if (!sessionForm.sessionType || !sessionForm.year) return;
     setLoading(true);
     try {
       const response = await fetch("/api/admin/session/start", {
@@ -110,18 +93,12 @@ export default function SessionManagement({ onSessionChange }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(sessionForm),
       });
-
-      const data = await response.json();
       if (response.ok) {
-        alert("Session started successfully!");
         await Promise.all([checkSessionStatus(), fetchSessionHistory()]);
         setSessionForm({ sessionType: "", year: new Date().getFullYear() });
-      } else {
-        alert(data.message || "Error starting session");
       }
     } catch (error) {
       console.error("Error starting session:", error);
-      alert(`Error starting session: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -134,25 +111,14 @@ export default function SessionManagement({ onSessionChange }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
-
       const data = await response.json();
       if (response.ok) {
-        if (data.excelReport) {
-          downloadFileFromBase64(data.excelReport, {
-            sessionType: data.sessionData.sessionType,
-            year: data.sessionData.year,
-            type: "xlsx",
-          });
-        }
-        alert("Session ended successfully! Excel report has been downloaded.");
+        if (data.excelReport) downloadFileFromBase64(data.excelReport, { sessionType: data.sessionData.sessionType, year: data.sessionData.year });
         await Promise.all([checkSessionStatus(), fetchSessionHistory(), fetchGraduates()]);
         setShowEndConfirm(false);
-      } else {
-        alert(data.message || "Error ending session");
       }
     } catch (error) {
       console.error("Error ending session:", error);
-      alert(`Error ending session: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -162,420 +128,290 @@ export default function SessionManagement({ onSessionChange }) {
     try {
       const binaryString = atob(base64Data);
       const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-
+      for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
       const mimeType = type === "xlsx" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/pdf";
-      const extension = type === "xlsx" ? "xlsx" : "pdf";
       const blob = new Blob([bytes], { type: mimeType });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `Report_${sessionType}_${year}_${Date.now()}.${extension}`;
+      link.download = `Report_${sessionType}_${year}.${type}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-
-      console.log(`${extension.toUpperCase()} file downloaded successfully`);
     } catch (error) {
-      console.error(`Error downloading ${extension.toUpperCase()} file:`, error);
-      alert(`Error downloading ${extension.toUpperCase()} file: ${error.message}`);
-    }
-  };
-
-  const generateGraduatesExcel = async () => {
-    if (graduates.length === 0) {
-      alert("No graduates available to generate Excel");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await fetch("/api/admin/graduates/excel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ graduates }),
-      });
-
-      const data = await response.json();
-      if (response.ok && data.excelReport) {
-        downloadFileFromBase64(data.excelReport, {
-          sessionType: "Graduates",
-          year: new Date().getFullYear(),
-          type: "xlsx",
-        });
-        alert("Graduates Excel report downloaded successfully!");
-      } else {
-        alert(data.message || "Error generating Excel report");
-      }
-    } catch (error) {
-      console.error("Error generating graduates Excel:", error);
-      alert(`Error generating Excel file: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const generateSessionExcel = async (session) => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/admin/session/excel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session }),
-      });
-
-      const data = await response.json();
-      if (response.ok && data.excelReport) {
-        downloadFileFromBase64(data.excelReport, {
-          sessionType: session.sessionType,
-          year: session.year,
-          type: "xlsx",
-        });
-        alert("Session Excel report downloaded successfully!");
-      } else {
-        alert(data.message || "Error generating Excel report");
-      }
-    } catch (error) {
-      console.error("Error generating session Excel:", error);
-      alert(`Error generating Excel file: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteSession = async (sessionId) => {
-    if (!confirm("Are you sure you want to delete this session? This action cannot be undone.")) {
-      return;
-    }
-
-    setLoading(true);
-    setDeletingSession(sessionId);
-    try {
-      const response = await fetch("/api/admin/session/delete", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert("Session deleted successfully!");
-        await fetchSessionHistory();
-      } else {
-        alert(data.message || "Error deleting session");
-      }
-    } catch (error) {
-      console.error("Error deleting session:", error);
-      alert(`Error deleting session: ${error.message}`);
-    } finally {
-      setDeletingSession(null);
-      setLoading(false);
+      console.error(`Error downloading file:`, error);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-white">Session Management</h1>
-        <div className="flex items-center space-x-2">
+    <div className="space-y-8 font-outfit">
+      {/* Governance Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-900 pb-8">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <Zap className="text-primary-500" size={24} />
+            <h1 className="text-4xl font-black text-white tracking-tighter">Phase Governance</h1>
+          </div>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Institutional Clinical Cycle Management</p>
+        </div>
+        <div className="flex items-center gap-4">
           {sessionStatus?.hasActiveSession ? (
-            <div className="flex items-center text-green-400">
-              <CheckCircle className="mr-2" size={20} />
-              Active Session
+            <div className="px-6 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Active Phase Verified</span>
             </div>
           ) : (
-            <div className="flex items-center text-red-400">
-              <AlertCircle className="mr-2" size={20} />
-              No Active Session
+            <div className="px-6 py-2 bg-rose-500/10 border border-rose-500/20 rounded-full flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-rose-500" />
+              <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Propagation Halted</span>
             </div>
           )}
         </div>
       </div>
 
-      <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-          <Clock className="mr-2" size={24} />
-          Current Session
-        </h2>
-
-        {sessionStatus?.hasActiveSession ? (
-          <div className="space-y-4">
-            <div className="bg-green Pujab 600/20 border border-green-500/30 rounded-lg p-4">
-              <h3 className="text-green-400 font-medium mb-2">Active Session</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-400">Type:</span>
-                  <span className="text-white ml-2">{sessionStatus.session?.sessionType || "N/A"}</span>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        {/* Phase Controller */}
+        <div className="bg-slate-900/30 backdrop-blur-xl rounded-[2.5rem] p-8 border border-slate-900 overflow-hidden relative group">
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary-600/10 rounded-2xl flex items-center justify-center text-primary-500">
+                  <Clock size={24} />
                 </div>
                 <div>
-                  <span className="text-gray-400">Year:</span>
-                  <span className="text-white ml-2">{sessionStatus.session?.year || "N/A"}</span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Started:</span>
-                  <span className="text-white ml-2">
-                    {sessionStatus.session?.startDate
-                      ? new Date(sessionStatus.session.startDate).toLocaleDateString()
-                      : "N/A"}
-                  </span>
+                  <h2 className="text-xl font-black text-white tracking-tight">Clinical Propagation</h2>
+                  <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-0.5">Control active system cycles</p>
                 </div>
               </div>
             </div>
 
-            <button
-              onClick={() => setShowEndConfirm(true)}
-              disabled={loading}
-              className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg transition-colors flex items-center"
-            >
-              <Square className="mr-2" size={20} />
-              {loading ? "Ending Session..." : "End Session"}
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Session Type</label>
-                <select
-                  value={sessionForm.sessionType}
-                  onChange={(e) => setSessionForm({ ...sessionForm, sessionType: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {sessionStatus?.hasActiveSession ? (
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
+                <div className="p-6 bg-slate-950 border border-slate-900 rounded-3xl">
+                  <div className="flex justify-between items-start mb-6">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Institutional Phase</span>
+                    <Activity size={18} className="text-emerald-500 animate-pulse" />
+                  </div>
+                  <div className="grid grid-cols-3 gap-6">
+                    <div>
+                      <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Cycle Type</p>
+                      <p className="text-lg font-black text-white">{sessionStatus.session?.sessionType}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Audit Year</p>
+                      <p className="text-lg font-black text-white">{sessionStatus.session?.year}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Inscribed</p>
+                      <p className="text-lg font-black text-white">{sessionStatus.session?.startDate ? new Date(sessionStatus.session.startDate).toLocaleDateString() : "N/A"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowEndConfirm(true)}
                   disabled={loading}
+                  className="w-full py-5 bg-rose-600/10 hover:bg-rose-600 border border-rose-600/20 hover:border-rose-600 text-rose-500 hover:text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 group/btn shadow-xl shadow-rose-950/10"
                 >
-                  <option value="">Select Session Type</option>
-                  <option value="Spring">Spring</option>
-                  <option value="Fall">Fall</option>
-                </select>
-              </div>
+                  {loading ? <Activity className="animate-spin" size={20} /> : <Square size={20} className="group-hover/btn:scale-90 transition-transform" />}
+                  <span className="text-[10px] uppercase tracking-[0.2em]">Halt Active Phase Propagation</span>
+                </button>
+              </motion.div>
+            ) : (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Cycle Taxonomy</label>
+                    <div className="relative group">
+                      <select
+                        value={sessionForm.sessionType}
+                        onChange={(e) => setSessionForm({ ...sessionForm, sessionType: e.target.value })}
+                        className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer group-hover:bg-slate-950 transition-all"
+                      >
+                        <option value="">Select Cycle Type</option>
+                        <option value="Spring">Spring Clinical</option>
+                        <option value="Fall">Fall Clinical</option>
+                      </select>
+                      <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-700 rotate-90 pointer-events-none" size={16} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Institutional Year</label>
+                    <input
+                      type="number"
+                      value={sessionForm.year}
+                      onChange={(e) => setSessionForm({ ...sessionForm, year: parseInt(e.target.value) || "" })}
+                      className="w-full px-8 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black text-sm tracking-widest"
+                      min="2020" max="2030"
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Year</label>
-                <input
-                  type="number"
-                  value={sessionForm.year}
-                  onChange={(e) => setSessionForm({ ...sessionForm, year: parseInt(e.target.value) || "" })}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  min="2020"
-                  max="2030"
-                  disabled={loading}
-                />
+                <button
+                  onClick={startSession}
+                  disabled={loading || !sessionForm.sessionType}
+                  className="w-full py-5 bg-primary-600 hover:bg-emerald-600 text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-950/20 active:scale-95 disabled:opacity-30 group/btn"
+                >
+                  {loading ? <Activity className="animate-spin" size={20} /> : <Play size={20} className="group-hover/btn:translate-x-1 transition-transform" />}
+                  <span className="text-[10px] uppercase tracking-[0.2em]">Initiate System Propagation</span>
+                </button>
               </div>
+            )}
+          </div>
+          <div className="absolute right-0 bottom-0 w-48 h-48 bg-primary-600/5 blur-[80px] -z-0" />
+        </div>
+
+        {/* Phase Progression Stats */}
+        <div className="bg-slate-950 border border-slate-900 rounded-[2.5rem] p-8 overflow-hidden relative">
+          <div className="flex items-center gap-4 mb-8">
+            <TrendingUp className="text-teal-500" size={24} />
+            <div>
+              <h2 className="text-xl font-black text-white tracking-tight">Phase Diagnostics</h2>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-0.5">Progression analytics</p>
             </div>
+          </div>
 
-            <button
-              onClick={startSession}
-              disabled={loading}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg transition-colors flex items-center"
-            >
-              <Play className="mr-2" size={20} />
-              {loading ? "Starting Session..." : "Start Session"}
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: "Active Nodes", val: "12", color: "primary" },
+              { label: "Patient Growth", val: "+14%", color: "teal" },
+              { label: "Staff Efficiency", val: "94%", color: "emerald" },
+              { label: "Data Latency", val: "22ms", color: "indigo" }
+            ].map((stat, i) => (
+              <div key={i} className="p-6 bg-slate-900/30 border border-slate-900 rounded-3xl group hover:border-slate-800 transition-all">
+                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">{stat.label}</p>
+                <p className="text-2xl font-black text-white group-hover:text-primary-400 transition-colors">{stat.val}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 p-6 bg-slate-900/40 rounded-3xl border border-slate-900 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Globe className="text-slate-500 animate-spin-slow" size={16} />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Regional Oversight Active</span>
+            </div>
+            <Activity size={12} className="text-emerald-500" />
+          </div>
+        </div>
+      </div>
+
+      {/* Historical Registry & Graduates */}
+      <div className="space-y-6 pt-4">
+        <div className="flex items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <ShieldCheck className="text-slate-600" size={20} />
+            <h2 className="text-xl font-black text-white tracking-tight leading-none uppercase text-[12px] tracking-widest">Institutional Registry Archive</h2>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={generateGraduatesExcel} disabled={graduates.length === 0} className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-400 font-black rounded-2xl text-[9px] uppercase tracking-widest hover:text-white transition-all flex items-center gap-2">
+              <Download size={14} /> Global Export
             </button>
           </div>
-        )}
-      </div>
-
-      <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-          <FileText className="mr-2" size={24} />
-          Graduates ({graduates.length})
-        </h2>
-
-        <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Filter by Year</label>
-            <select
-              value={filters.year}
-              onChange={(e) => setFilters({ ...filters, year: e.target.value })}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
-            >
-              <option value="">All Years</option>
-              {graduationYears.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Filter by Program</label>
-            <select
-              value={filters.program}
-              onChange={(e) => setFilters({ ...filters, program: e.target.value })}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
-            >
-              <option value="">All Programs</option>
-              {programs.map((program) => (
-                <option key={program} value={program}>
-                  {program}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Search</label>
-            <input
-              type="text"
-              value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              placeholder="Search by name or registration number"
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
-            />
-          </div>
         </div>
 
-        <button
-          onClick={generateGraduatesExcel}
-          disabled={graduates.length === 0 || loading}
-          className="mb-4 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg transition-colors flex items-center"
-        >
-          <Download className="mr-2" size={16} />
-          {loading ? "Generating..." : "Download Graduates Excel"}
-        </button>
+        <div className="bg-slate-900/20 backdrop-blur-xl rounded-[2.5rem] border border-slate-900 p-8">
+          <div className="flex flex-col xl:flex-row gap-6 mb-8">
+            <div className="flex-1 relative">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
+              <input
+                type="text" value={filters.search} onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                placeholder="Query Historical Patient Registry..."
+                className="w-full pl-14 pr-8 py-4 bg-slate-950 border border-slate-900 rounded-2xl text-white placeholder-slate-700 focus:outline-none focus:border-primary-500 font-bold text-sm"
+              />
+            </div>
+            <div className="flex gap-4">
+              <select value={filters.year} onChange={(e) => setFilters({ ...filters, year: e.target.value })} className="px-6 py-4 bg-slate-950 border border-slate-900 rounded-2xl text-white font-black uppercase text-[10px] tracking-widest focus:outline-none">
+                <option value="">Audit Year</option>
+                {graduationYears.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+              <select value={filters.program} onChange={(e) => setFilters({ ...filters, program: e.target.value })} className="px-6 py-4 bg-slate-950 border border-slate-900 rounded-2xl text-white font-black uppercase text-[10px] tracking-widest focus:outline-none">
+                <option value="">Care Division</option>
+                {programs.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
+          </div>
 
-        {loading ? (
-          <p className="text-gray-400 text-center py-8">Loading graduates...</p>
-        ) : graduates.length === 0 ? (
-          <p className="text-gray-400 text-center py-8">No graduates found</p>
-        ) : (
-          <div className="space-y-4">
-            {graduates.map((graduate) => (
-              <div key={graduate._id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div>
-                    <span className="text-gray-400 text-sm">Name:</span>
-                    <div className="text-white">{graduate.name || "N/A"}</div>
+          <div className="space-y-3">
+            {graduates.slice(0, 5).map(g => (
+              <div key={g._id} className="p-5 bg-slate-950 border border-slate-900/50 rounded-2xl flex justify-between items-center group hover:border-slate-800 transition-all">
+                <div className="flex gap-10 items-center">
+                  <div className="flex items-center gap-4">
+                    <div className="w-8 h-8 rounded-lg bg-primary-600/10 flex items-center justify-center text-primary-500">
+                      <Activity size={14} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Archived Milestone</p>
+                      <p className="text-sm font-black text-white">{g.name}</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-gray-400 text-sm">Registration Number:</span>
-                    <div className="text-white">{graduate.registrationNumber || "N/A"}</div>
+                  <div className="hidden md:block">
+                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">Registry ID</p>
+                    <p className="text-xs font-bold text-slate-400">{g.registrationNumber}</p>
                   </div>
-                  <div>
-                    <span className="text-gray-400 text-sm">Program:</span>
-                    <div className="text-white">{graduate.program || "N/A"}</div>
+                  <div className="hidden lg:block">
+                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">Phase Outcome</p>
+                    <span className="text-[10px] font-black text-emerald-500 uppercase px-2 py-0.5 bg-emerald-500/10 rounded border border-emerald-500/20">Certified</span>
                   </div>
-                  <div>
-                    <span className="text-gray-400 text-sm">Graduation Year:</span>
-                    <div className="text-white">{graduate.graduationYear || "N/A"}</div>
-                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-black text-slate-500">{g.graduationYear}</p>
                 </div>
               </div>
             ))}
-          </div>
-        )}
-      </div>
-
-      <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-          <FileText className="mr-2" size={24} />
-          Session History ({sessionHistory.length})
-        </h2>
-
-        {loading ? (
-          <p className="text-gray-400 text-center py-8">Loading session history...</p>
-        ) : sessionHistory.length === 0 ? (
-          <p className="text-gray-400 text-center py-8">No previous sessions found</p>
-        ) : (
-          <div className="space-y-4">
-            {sessionHistory.map((session) => (
-              <div key={session._id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-                <div className="flex justify-between items-center">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1">
-                    <div>
-                      <span className="text-gray-400 text-sm">Session:</span>
-                      <div className="text-white font-medium">
-                        {session.sessionType} {session.year}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-400 text-sm">Started:</span>
-                      <div className="text-white">
-                        {session.startDate ? new Date(session.startDate).toLocaleDateString() : "N/A"}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-400 text-sm">Ended:</span>
-                      <div className="text-white">
-                        {session.endDate ? new Date(session.endDate).toLocaleDateString() : "N/A"}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-400 text-sm">Duration:</span>
-                      <div className="text-white">
-                        {session.endDate && session.startDate
-                          ? `${Math.ceil(
-                              (new Date(session.endDate) - new Date(session.startDate)) / (1000 * 60 * 60 * 24)
-                            )} days`
-                          : "N/A"}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex space-x-2 ml-4">
-                    <button
-                      onClick={() => generateSessionExcel(session)}
-                      disabled={loading}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg transition-colors flex items-center"
-                    >
-                      <Download className="mr-2" size={16} />
-                      {loading ? "Generating..." : "Download Excel"}
-                    </button>
-                    <button
-                      onClick={() => deleteSession(session._id)}
-                      disabled={loading || deletingSession === session._id}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg transition-colors flex items-center"
-                    >
-                      <Trash2 className="mr-2" size={16} />
-                      {deletingSession === session._id ? "Deleting..." : "Delete"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {showEndConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
-            <h3 className="text-xl font-semibold text-white mb-4">End Session Confirmation</h3>
-            <div className="bg-red-600/20 border border-red-500/30 rounded-lg p-4 mb-4">
-              <p className="text-red-400 text-sm">⚠️ Warning: Ending this session will:</p>
-              <ul className="text-red-400 text-sm mt-2 ml-4 list-disc">
-                <li>Clear all teacher class assignments</li>
-                <li>Clear all student enrollments</li>
-                <li>Increment all students to next semester</li>
-                <li>Clear all class subjects</li>
-                <li>Reset all class sections</li>
-                <li>Generate and download a comprehensive Excel report</li>
-              </ul>
-            </div>
-
-            <div className="flex space-x-3">
-              <button
-                onClick={endSession}
-                disabled={loading}
-                className="flex-1 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg transition-colors"
-              >
-                {loading ? "Ending..." : "Yes, End Session"}
-              </button>
-              <button
-                onClick={() => setShowEndConfirm(false)}
-                disabled={loading}
-                className="flex-1 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600 text-white rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
+            {graduates.length === 0 && <p className="text-center py-10 text-slate-700 font-black uppercase text-[10px] tracking-widest">Registry Search Latency: Clear</p>}
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Confirmation Modal Overlay */}
+      <AnimatePresence>
+        {showEndConfirm && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center z-[100] p-6 lg:p-12">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="bg-slate-900 border border-slate-800 rounded-[3rem] p-10 lg:p-16 w-full max-w-2xl relative overflow-hidden">
+              <div className="relative z-10 text-center">
+                <div className="w-24 h-24 bg-rose-500/10 border border-rose-500/20 rounded-full flex items-center justify-center text-rose-500 mx-auto mb-10 animate-pulse">
+                  <AlertCircle size={48} />
+                </div>
+                <h2 className="text-4xl font-black text-white tracking-tighter mb-6 uppercase">Institutional Risk Warning</h2>
+                <p className="text-rose-500/80 font-bold uppercase text-[10px] tracking-[0.3em] mb-12 leading-relaxed max-w-md mx-auto">
+                  Halt active phase propagation? This action resets clinical node identifiers and increments patient progression across the repository.
+                </p>
+
+                <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8 mb-12 text-left space-y-4">
+                  {[
+                    "Revocation of clinician node assignments",
+                    "Archival of active patient enrollment registry",
+                    "Incremental update to global clinical phases",
+                    "Generation of institutional governance reports"
+                  ].map((point, i) => (
+                    <div key={i} className="flex gap-4 items-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{point}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button onClick={endSession} disabled={loading} className="flex-1 py-6 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-rose-950/40 transition-all active:scale-95">
+                    {loading ? "HALTING SYSTEM..." : "CONFIRM PHASE HALT"}
+                  </button>
+                  <button onClick={() => setShowEndConfirm(false)} className="flex-1 py-6 bg-slate-800 hover:bg-slate-700 text-slate-400 font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95">
+                    ABORT ACTION
+                  </button>
+                </div>
+              </div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-rose-600/5 blur-[100px]" />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <style jsx global>{`
+        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
     </div>
   );
 }

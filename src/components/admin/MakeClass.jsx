@@ -1,1087 +1,10 @@
-// // "use client"
-
-// // import { useState, useEffect } from "react"
-// // import { Plus, BookOpen, Save, Trash2, CheckCircle, GraduationCap } from "lucide-react"
-
-// // export default function MakeClass({ fetchData }) {
-// //   const [selectedProgram, setSelectedProgram] = useState("")
-// //   const [selectedSemester, setSelectedSemester] = useState("")
-// //   const [selectedSections, setSelectedSections] = useState([])
-// //   const [subjects, setSubjects] = useState([{ name: "", id: Date.now() }])
-// //   const [classes, setClasses] = useState([])
-// //   const [loading, setLoading] = useState(false)
-// //   const [createdClasses, setCreatedClasses] = useState([])
-// //   const [isFetchingClasses, setIsFetchingClasses] = useState(true)
-
-// //   // Available programs
-// //   const programs = ["BSCS", "BBA", "ADP CS"]
-
-// //   // Available semesters (1-8)
-// //   const semesters = [1, 2, 3, 4, 5, 6, 7, 8]
-
-// //   // Available sections (A-F)
-// //   const sections = ["A", "B", "C", "D", "E", "F"]
-
-// //   // Generate class name
-// //   const generateClassName = (program, semester, sections) => {
-// //     if (!program || !semester || sections.length === 0) return ""
-// //     return `${program} ${semester} ${sections.sort().join("")}`
-// //   }
-
-// //   // Fetch all classes
-// //   useEffect(() => {
-// //     const fetchClasses = async () => {
-// //       try {
-// //         setIsFetchingClasses(true)
-// //         const response = await fetch("/api/admin/classes")
-// //         const data = await response.json()
-// //         if (response.ok) {
-// //           setClasses(data.classes || [])
-// //         } else {
-// //           console.error("Error fetching classes:", data.message)
-// //           alert("Failed to load classes")
-// //         }
-// //       } catch (error) {
-// //         console.error("Error fetching classes:", error)
-// //         alert("Error fetching classes. Please try again.")
-// //       } finally {
-// //         setIsFetchingClasses(false)
-// //       }
-// //     }
-// //     fetchClasses()
-// //   }, [])
-
-// //   const handleSectionChange = (section) => {
-// //     setSelectedSections((prev) => (prev.includes(section) ? prev.filter((s) => s !== section) : [...prev, section]))
-// //   }
-
-// //   const addSubject = () => {
-// //     setSubjects([...subjects, { name: "", id: Date.now() }])
-// //   }
-
-// //   const removeSubject = (id) => {
-// //     if (subjects.length > 1) {
-// //       setSubjects(subjects.filter((subject) => subject.id !== id))
-// //     }
-// //   }
-
-// //   const updateSubject = (id, name) => {
-// //     setSubjects(subjects.map((subject) => (subject.id === id ? { ...subject, name } : subject)))
-// //   }
-
-// //   const handleCreateClass = async () => {
-// //     if (
-// //       !selectedProgram ||
-// //       !selectedSemester ||
-// //       selectedSections.length === 0 ||
-// //       subjects.some((s) => !s.name.trim())
-// //     ) {
-// //       alert("Please fill all fields, including program, semester, and at least one section")
-// //       return
-// //     }
-
-// //     const className = generateClassName(selectedProgram, selectedSemester, selectedSections)
-
-// //     setLoading(true)
-// //     try {
-// //       const classData = {
-// //         program: selectedProgram,
-// //         className,
-// //         semester: selectedSemester,
-// //         sections: selectedSections,
-// //         subjects: subjects.filter((s) => s.name.trim()).map((s) => s.name.trim()),
-// //       }
-
-// //       const response = await fetch("/api/admin/create-class", {
-// //         method: "POST",
-// //         headers: {
-// //           "Content-Type": "application/json",
-// //         },
-// //         body: JSON.stringify(classData),
-// //       })
-
-// //       const data = await response.json()
-
-// //       if (response.ok) {
-// //         alert("Class created successfully!")
-
-// //         // Add to created classes list
-// //         setCreatedClasses((prev) => [
-// //           ...prev,
-// //           {
-// //             id: Date.now(),
-// //             program: selectedProgram,
-// //             className,
-// //             semester: selectedSemester,
-// //             sections: [...selectedSections],
-// //             subjects: [...subjects.filter((s) => s.name.trim()).map((s) => s.name.trim())],
-// //             createdAt: new Date().toISOString(),
-// //           },
-// //         ])
-
-// //         // Reset form
-// //         setSelectedProgram("")
-// //         setSelectedSemester("")
-// //         setSelectedSections([])
-// //         setSubjects([{ name: "", id: Date.now() }])
-
-// //         // Refresh data
-// //         if (fetchData) {
-// //           await fetchData()
-// //         }
-
-// //         // Refresh classes
-// //         const classesResponse = await fetch("/api/admin/classes")
-// //         const classesData = await classesResponse.json()
-// //         if (classesResponse.ok) {
-// //           setClasses(classesData.classes || [])
-// //         }
-// //       } else {
-// //         alert(`Error: ${data.message}`)
-// //       }
-// //     } catch (error) {
-// //       console.error("Error creating class:", error)
-// //       alert("Error creating class. Please try again.")
-// //     } finally {
-// //       setLoading(false)
-// //     }
-// //   }
-
-// //   const handleDeleteClass = async (classId) => {
-// //     if (!confirm("Are you sure you want to delete this class?")) return
-
-// //     try {
-// //       const response = await fetch("/api/admin/classes/delete", {
-// //         method: "DELETE",
-// //         headers: {
-// //           "Content-Type": "application/json",
-// //         },
-// //         body: JSON.stringify({ classId }),
-// //       })
-
-// //       const data = await response.json()
-
-// //       if (response.ok) {
-// //         alert("Class deleted successfully!")
-// //         // Refresh classes
-// //         const classesResponse = await fetch("/api/admin/classes")
-// //         const classesData = await classesResponse.json()
-// //         if (classesResponse.ok) {
-// //           setClasses(classesData.classes || [])
-// //         }
-// //         // Refresh dashboard data
-// //         if (fetchData) {
-// //           await fetchData()
-// //         }
-// //       } else {
-// //         alert(`Error: ${data.message}`)
-// //       }
-// //     } catch (error) {
-// //       console.error("Error deleting class:", error)
-// //       alert("Error deleting class. Please try again.")
-// //     }
-// //   }
-
-// //   const displayClassName = generateClassName(selectedProgram, selectedSemester, selectedSections)
-
-// //   return (
-// //     <div className="space-y-6">
-// //       {/* Header */}
-// //       <div className="flex justify-between items-center">
-// //         <h1 className="text-3xl font-bold text-white">Make Class</h1>
-// //         <div className="text-gray-400">Create new classes</div>
-// //       </div>
-
-// //       {/* Class Creation Form */}
-// //       <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-// //         <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-// //           <Plus className="mr-2" size={24} />
-// //           Create New Class
-// //         </h2>
-
-// //         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-// //           {/* Left Column */}
-// //           <div className="space-y-4">
-// //             {/* Program Selection */}
-// //             <div>
-// //               <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
-// //                 <GraduationCap className="mr-2" size={16} />
-// //                 Select Program
-// //               </label>
-// //               <select
-// //                 value={selectedProgram}
-// //                 onChange={(e) => setSelectedProgram(e.target.value)}
-// //                 className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-// //               >
-// //                 <option value="">Choose program</option>
-// //                 {programs.map((program) => (
-// //                   <option key={program} value={program}>
-// //                     {program}
-// //                   </option>
-// //                 ))}
-// //               </select>
-// //             </div>
-
-// //             {/* Semester Selection */}
-// //             <div>
-// //               <label className="block text-sm font-medium text-gray-300 mb-2">Select Semester</label>
-// //               <select
-// //                 value={selectedSemester}
-// //                 onChange={(e) => setSelectedSemester(e.target.value)}
-// //                 className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-// //               >
-// //                 <option value="">Choose semester</option>
-// //                 {semesters.map((sem) => (
-// //                   <option key={sem} value={sem}>
-// //                     Semester {sem}
-// //                   </option>
-// //                 ))}
-// //               </select>
-// //             </div>
-
-// //             {/* Section Selection */}
-// //             <div>
-// //               <label className="block text-sm font-medium text-gray-300 mb-2">Select Sections (Multiple allowed)</label>
-// //               <div className="grid grid-cols-3 gap-2">
-// //                 {sections.map((section) => (
-// //                   <label key={section} className="flex items-center space-x-2 cursor-pointer">
-// //                     <input
-// //                       type="checkbox"
-// //                       checked={selectedSections.includes(section)}
-// //                       onChange={() => handleSectionChange(section)}
-// //                       className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-// //                     />
-// //                     <span className="text-white">Section {section}</span>
-// //                   </label>
-// //                 ))}
-// //               </div>
-// //               {selectedSections.length > 0 && (
-// //                 <div className="mt-2 text-sm text-blue-400">Selected: {selectedSections.join(", ")}</div>
-// //               )}
-// //             </div>
-// //           </div>
-
-// //           {/* Right Column */}
-// //           <div className="space-y-4">
-// //             {/* Subjects */}
-// //             <div>
-// //               <div className="flex items-center justify-between mb-2">
-// //                 <label className="block text-sm font-medium text-gray-300 flex items-center">
-// //                   <BookOpen className="mr-2" size={16} />
-// //                   Subjects
-// //                 </label>
-// //                 <button
-// //                   onClick={addSubject}
-// //                   className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors flex items-center"
-// //                 >
-// //                   <Plus className="mr-1" size={14} />
-// //                   Add Subject
-// //                 </button>
-// //               </div>
-
-// //               <div className="space-y-2 max-h-48 overflow-y-auto">
-// //                 {subjects.map((subject, index) => (
-// //                   <div key={subject.id} className="flex items-center space-x-2">
-// //                     <input
-// //                       type="text"
-// //                       value={subject.name}
-// //                       onChange={(e) => updateSubject(subject.id, e.target.value)}
-// //                       placeholder={`Subject ${index + 1} (e.g., Web App Programming Fundamentals)`}
-// //                       className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-// //                     />
-// //                     {subjects.length > 1 && (
-// //                       <button
-// //                         onClick={() => removeSubject(subject.id)}
-// //                         className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-// //                       >
-// //                         <Trash2 size={16} />
-// //                       </button>
-// //                     )}
-// //                   </div>
-// //                 ))}
-// //               </div>
-// //             </div>
-
-// //             {/* Preview */}
-// //             {selectedProgram && selectedSemester && selectedSections.length > 0 && (
-// //               <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
-// //                 <h3 className="text-blue-400 font-medium mb-2">Class Preview</h3>
-// //                 <div className="text-sm text-gray-300 space-y-1">
-// //                   <p>
-// //                     <strong>Class:</strong> {displayClassName}
-// //                   </p>
-// //                   <p>
-// //                     <strong>Program:</strong> {selectedProgram}
-// //                   </p>
-// //                   <p>
-// //                     <strong>Semester:</strong> {selectedSemester}
-// //                   </p>
-// //                   <p>
-// //                     <strong>Sections:</strong> {selectedSections.join(", ")}
-// //                   </p>
-// //                   <p>
-// //                     <strong>Subjects:</strong> {subjects.filter((s) => s.name.trim()).length}
-// //                   </p>
-// //                 </div>
-// //               </div>
-// //             )}
-// //           </div>
-// //         </div>
-
-// //         {/* Create Button */}
-// //         <div className="mt-6">
-// //           <button
-// //             onClick={handleCreateClass}
-// //             disabled={
-// //               loading ||
-// //               !selectedProgram ||
-// //               !selectedSemester ||
-// //               selectedSections.length === 0 ||
-// //               subjects.some((s) => !s.name.trim())
-// //             }
-// //             className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center"
-// //           >
-// //             {loading ? (
-// //               "Creating Class..."
-// //             ) : (
-// //               <>
-// //                 <Save className="mr-2" size={20} />
-// //                 Create Class
-// //               </>
-// //             )}
-// //           </button>
-// //         </div>
-// //       </div>
-
-// //       {/* Recently Created Classes */}
-// //       {createdClasses.length > 0 && (
-// //         <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-// //           <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-// //             <CheckCircle className="mr-2" size={24} />
-// //             Recently Created Classes ({createdClasses.length})
-// //           </h2>
-
-// //           <div className="space-y-4">
-// //             {createdClasses.map((classItem) => (
-// //               <div key={classItem.id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-// //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-// //                   <div>
-// //                     <h3 className="text-white font-semibold mb-2">📚 {classItem.className}</h3>
-// //                     <div className="text-sm text-gray-300 space-y-1">
-// //                       <p>
-// //                         <span className="text-gray-400">Program:</span> {classItem.program}
-// //                       </p>
-// //                       <p>
-// //                         <span className="text-gray-400">Semester:</span> {classItem.semester}
-// //                       </p>
-// //                       <p>
-// //                         <span className="text-gray-400">Sections:</span> {classItem.sections.join(", ")}
-// //                       </p>
-// //                       <p>
-// //                         <span className="text-gray-400">Created:</span>{" "}
-// //                         {new Date(classItem.createdAt).toLocaleDateString()}
-// //                       </p>
-// //                     </div>
-// //                   </div>
-// //                   <div>
-// //                     <h4 className="text-white font-medium mb-2">📚 Subjects:</h4>
-// //                     <div className="space-y-1">
-// //                       {classItem.subjects.map((subject, index) => (
-// //                         <div key={index} className="text-sm bg-gray-800 rounded px-2 py-1 text-green-400">
-// //                           {subject}
-// //                         </div>
-// //                       ))}
-// //                     </div>
-// //                   </div>
-// //                 </div>
-// //               </div>
-// //             ))}
-// //           </div>
-// //         </div>
-// //       )}
-
-// //       {/* Currently Available Classes */}
-// //       <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-// //         <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-// //           <BookOpen className="mr-2" size={24} />
-// //           Currently Available Classes ({classes.length})
-// //         </h2>
-// //         {isFetchingClasses ? (
-// //           <p className="text-gray-400 text-center py-4">Loading classes...</p>
-// //         ) : classes.length === 0 ? (
-// //           <p className="text-gray-400 text-center py-4">No classes available</p>
-// //         ) : (
-// //           <div className="space-y-4">
-// //             {classes.map((classItem) => (
-// //               <div key={classItem._id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-// //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-// //                   <div>
-// //                     <h3 className="text-white font-semibold mb-2">📚 {classItem.className}</h3>
-// //                     <div className="text-sm text-gray-300 space-y-1">
-// //                       <p>
-// //                         <span className="text-gray-400">Program:</span> {classItem.program}
-// //                       </p>
-// //                       <p>
-// //                         <span className="text-gray-400">Semester:</span> {classItem.semester}
-// //                       </p>
-// //                       <p>
-// //                         <span className="text-gray-400">Sections:</span> {classItem.sections.join(", ")}
-// //                       </p>
-// //                       <p>
-// //                         <span className="text-gray-400">Created:</span>{" "}
-// //                         {new Date(classItem.createdAt).toLocaleDateString()}
-// //                       </p>
-// //                     </div>
-// //                   </div>
-// //                   <div>
-// //                     <h4 className="text-white font-medium mb-2">📚 Subjects:</h4>
-// //                     <div className="space-y-1">
-// //                       {classItem.subjects.map((subject, index) => (
-// //                         <div key={index} className="text-sm bg-gray-800 rounded px-2 py-1 text-green-400">
-// //                           {subject}
-// //                         </div>
-// //                       ))}
-// //                     </div>
-// //                     <button
-// //                       onClick={() => handleDeleteClass(classItem._id)}
-// //                       className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center"
-// //                     >
-// //                       <Trash2 className="mr-2" size={14} />
-// //                       Delete Class
-// //                     </button>
-// //                   </div>
-// //                 </div>
-// //               </div>
-// //             ))}
-// //           </div>
-// //         )}
-// //       </div>
-// //     </div>
-// //   )
-// // }
-
-
-
-
-
-
-
-
-// "use client"
-// import { useState, useEffect } from "react"
-// import { Plus, BookOpen, Save, Trash2, CheckCircle, GraduationCap, Edit3, X } from "lucide-react"
-
-// const MakeClass = ({ fetchData }) => {
-//   const [selectedProgram, setSelectedProgram] = useState("")
-//   const [selectedSemester, setSelectedSemester] = useState("")
-//   const [selectedSections, setSelectedSections] = useState([])
-//   const [subjects, setSubjects] = useState([{ name: "", id: Date.now() }])
-//   const [classes, setClasses] = useState([])
-//   const [loading, setLoading] = useState(false)
-//   const [createdClasses, setCreatedClasses] = useState([])
-//   const [isFetchingClasses, setIsFetchingClasses] = useState(true)
-//   const [editingClass, setEditingClass] = useState(null)
-//   const [isEditMode, setIsEditMode] = useState(false)
-
-//   // Available programs
-//   const programs = ["BSCS", "BBA", "ADP CS"]
-//   // Available semesters (1-8)
-//   const semesters = [1, 2, 3, 4, 5, 6, 7, 8]
-//   // Available sections (A-F)
-//   const sections = ["A", "B", "C", "D", "E", "F"]
-
-//   // Generate class name
-//   const generateClassName = (program, semester, sections) => {
-//     if (!program || !semester || sections.length === 0) return ""
-//     return `${program} ${semester} ${sections.sort().join("")}`
-//   }
-
-//   // Fetch all classes
-//   useEffect(() => {
-//     const fetchClasses = async () => {
-//       try {
-//         setIsFetchingClasses(true)
-//         const response = await fetch("/api/admin/classes")
-//         const data = await response.json()
-//         if (response.ok) {
-//           setClasses(data.classes || [])
-//         } else {
-//           console.error("Error fetching classes:", data.message)
-//           alert("Failed to load classes")
-//         }
-//       } catch (error) {
-//         console.error("Error fetching classes:", error)
-//         alert("Error fetching classes. Please try again.")
-//       } finally {
-//         setIsFetchingClasses(false)
-//       }
-//     }
-//     fetchClasses()
-//   }, [])
-
-//   const handleSectionChange = (section) => {
-//     setSelectedSections((prev) => (prev.includes(section) ? prev.filter((s) => s !== section) : [...prev, section]))
-//   }
-
-//   const addSubject = () => {
-//     setSubjects([...subjects, { name: "", id: Date.now() }])
-//   }
-
-//   const removeSubject = (id) => {
-//     if (subjects.length > 1) {
-//       setSubjects(subjects.filter((subject) => subject.id !== id))
-//     }
-//   }
-
-//   const updateSubject = (id, name) => {
-//     setSubjects(subjects.map((subject) => (subject.id === id ? { ...subject, name } : subject)))
-//   }
-
-//   // Handle edit class
-//   const handleEditClass = (classItem) => {
-//     setIsEditMode(true)
-//     setEditingClass(classItem)
-//     setSelectedProgram(classItem.program)
-//     setSelectedSemester(classItem.semester)
-//     setSelectedSections([...classItem.sections])
-//     setSubjects(classItem.subjects.map((subject, index) => ({ name: subject, id: Date.now() + index })))
-//   }
-
-//   // Cancel edit mode
-//   const cancelEdit = () => {
-//     setIsEditMode(false)
-//     setEditingClass(null)
-//     setSelectedProgram("")
-//     setSelectedSemester("")
-//     setSelectedSections([])
-//     setSubjects([{ name: "", id: Date.now() }])
-//   }
-
-//   // Handle update class
-//   const handleUpdateClass = async () => {
-//     if (
-//       !selectedProgram ||
-//       !selectedSemester ||
-//       selectedSections.length === 0 ||
-//       subjects.some((s) => !s.name.trim())
-//     ) {
-//       alert("Please fill all fields, including program, semester, and at least one section")
-//       return
-//     }
-
-//     const className = generateClassName(selectedProgram, selectedSemester, selectedSections)
-//     setLoading(true)
-
-//     try {
-//       const classData = {
-//         classId: editingClass._id,
-//         program: selectedProgram,
-//         className,
-//         semester: selectedSemester,
-//         sections: selectedSections,
-//         subjects: subjects.filter((s) => s.name.trim()).map((s) => s.name.trim()),
-//       }
-
-//       const response = await fetch("/api/admin/classes/update", {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(classData),
-//       })
-
-//       const data = await response.json()
-
-//       if (response.ok) {
-//         alert("Class updated successfully!")
-
-//         // Reset form and exit edit mode
-//         cancelEdit()
-
-//         // Refresh data
-//         if (fetchData) {
-//           await fetchData()
-//         }
-
-//         // Refresh classes
-//         const classesResponse = await fetch("/api/admin/classes")
-//         const classesData = await classesResponse.json()
-//         if (classesResponse.ok) {
-//           setClasses(classesData.classes || [])
-//         }
-//       } else {
-//         alert(`Error: ${data.message}`)
-//       }
-//     } catch (error) {
-//       console.error("Error updating class:", error)
-//       alert("Error updating class. Please try again.")
-//     } finally {
-//       setLoading(false)
-//     }
-//   }
-
-//   const handleCreateClass = async () => {
-//     if (
-//       !selectedProgram ||
-//       !selectedSemester ||
-//       selectedSections.length === 0 ||
-//       subjects.some((s) => !s.name.trim())
-//     ) {
-//       alert("Please fill all fields, including program, semester, and at least one section")
-//       return
-//     }
-
-//     const className = generateClassName(selectedProgram, selectedSemester, selectedSections)
-//     setLoading(true)
-
-//     try {
-//       const classData = {
-//         program: selectedProgram,
-//         className,
-//         semester: selectedSemester,
-//         sections: selectedSections,
-//         subjects: subjects.filter((s) => s.name.trim()).map((s) => s.name.trim()),
-//       }
-
-//       const response = await fetch("/api/admin/create-class", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(classData),
-//       })
-
-//       const data = await response.json()
-
-//       if (response.ok) {
-//         alert("Class created successfully!")
-//         // Add to created classes list
-//         setCreatedClasses((prev) => [
-//           ...prev,
-//           {
-//             id: Date.now(),
-//             program: selectedProgram,
-//             className,
-//             semester: selectedSemester,
-//             sections: [...selectedSections],
-//             subjects: [...subjects.filter((s) => s.name.trim()).map((s) => s.name.trim())],
-//             createdAt: new Date().toISOString(),
-//           },
-//         ])
-//         // Reset form
-//         setSelectedProgram("")
-//         setSelectedSemester("")
-//         setSelectedSections([])
-//         setSubjects([{ name: "", id: Date.now() }])
-//         // Refresh data
-//         if (fetchData) {
-//           await fetchData()
-//         }
-//         // Refresh classes
-//         const classesResponse = await fetch("/api/admin/classes")
-//         const classesData = await classesResponse.json()
-//         if (classesResponse.ok) {
-//           setClasses(classesData.classes || [])
-//         }
-//       } else {
-//         alert(`Error: ${data.message}`)
-//       }
-//     } catch (error) {
-//       console.error("Error creating class:", error)
-//       alert("Error creating class. Please try again.")
-//     } finally {
-//       setLoading(false)
-//     }
-//   }
-
-//   const handleDeleteClass = async (classId) => {
-//     if (!confirm("Are you sure you want to delete this class?")) return
-
-//     try {
-//       const response = await fetch("/api/admin/classes/delete", {
-//         method: "DELETE",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ classId }),
-//       })
-
-//       const data = await response.json()
-
-//       if (response.ok) {
-//         alert("Class deleted successfully!")
-//         // Refresh classes
-//         const classesResponse = await fetch("/api/admin/classes")
-//         const classesData = await classesResponse.json()
-//         if (classesResponse.ok) {
-//           setClasses(classesData.classes || [])
-//         }
-//         // Refresh dashboard data
-//         if (fetchData) {
-//           await fetchData()
-//         }
-//       } else {
-//         alert(`Error: ${data.message}`)
-//       }
-//     } catch (error) {
-//       console.error("Error deleting class:", error)
-//       alert("Error deleting class. Please try again.")
-//     }
-//   }
-
-//   const displayClassName = generateClassName(selectedProgram, selectedSemester, selectedSections)
-
-//   return (
-//     <div className="space-y-6">
-//       {/* Header */}
-//       <div className="flex justify-between items-center">
-//         <h1 className="text-3xl font-bold text-white">{isEditMode ? "Edit Class" : "Make Class"}</h1>
-//         <div className="text-gray-400">{isEditMode ? "Update existing class" : "Create new classes"}</div>
-//       </div>
-
-//       {/* Edit Mode Alert */}
-//       {isEditMode && (
-//         <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 flex items-center justify-between">
-//           <div className="flex items-center">
-//             <Edit3 className="mr-2 text-blue-400" size={20} />
-//             <span className="text-blue-400 font-medium">Editing: {editingClass?.className}</span>
-//           </div>
-//           <button onClick={cancelEdit} className="text-gray-400 hover:text-white transition-colors">
-//             <X size={20} />
-//           </button>
-//         </div>
-//       )}
-
-//       {/* Class Creation/Edit Form */}
-//       <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-//         <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-//           {isEditMode ? (
-//             <>
-//               <Edit3 className="mr-2" size={24} />
-//               Update Class
-//             </>
-//           ) : (
-//             <>
-//               <Plus className="mr-2" size={24} />
-//               Create New Class
-//             </>
-//           )}
-//         </h2>
-
-//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-//           {/* Left Column */}
-//           <div className="space-y-4">
-//             {/* Program Selection */}
-//             <div>
-//               <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
-//                 <GraduationCap className="mr-2" size={16} />
-//                 Select Program
-//               </label>
-//               <select
-//                 value={selectedProgram}
-//                 onChange={(e) => setSelectedProgram(e.target.value)}
-//                 disabled={isEditMode}
-//                 className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-//               >
-//                 <option value="">Choose program</option>
-//                 {programs.map((program) => (
-//                   <option key={program} value={program}>
-//                     {program}
-//                   </option>
-//                 ))}
-//               </select>
-//             </div>
-
-//             {/* Semester Selection */}
-//             <div>
-//               <label className="block text-sm font-medium text-gray-300 mb-2">Select Semester</label>
-//               <select
-//                 value={selectedSemester}
-//                 onChange={(e) => setSelectedSemester(e.target.value)}
-//                 disabled={isEditMode}
-//                 className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-//               >
-//                 <option value="">Choose semester</option>
-//                 {semesters.map((sem) => (
-//                   <option key={sem} value={sem}>
-//                     Semester {sem}
-//                   </option>
-//                 ))}
-//               </select>
-//             </div>
-
-//             {/* Section Selection */}
-//             <div>
-//               <label className="block text-sm font-medium text-gray-300 mb-2">Select Sections (Multiple allowed)</label>
-//               <div className="grid grid-cols-3 gap-2">
-//                 {sections.map((section) => (
-//                   <label key={section} className="flex items-center space-x-2 cursor-pointer">
-//                     <input
-//                       type="checkbox"
-//                       checked={selectedSections.includes(section)}
-//                       onChange={() => handleSectionChange(section)}
-//                       disabled={isEditMode}
-//                       className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 disabled:opacity-50"
-//                     />
-//                     <span className="text-white">Section {section}</span>
-//                   </label>
-//                 ))}
-//               </div>
-//               {selectedSections.length > 0 && (
-//                 <div className="mt-2 text-sm text-blue-400">Selected: {selectedSections.join(", ")}</div>
-//               )}
-//             </div>
-//           </div>
-
-//           {/* Right Column */}
-//           <div className="space-y-4">
-//             {/* Subjects */}
-//             <div>
-//               <div className="flex items-center justify-between mb-2">
-//                 <label className="block text-sm font-medium text-gray-300 flex items-center">
-//                   <BookOpen className="mr-2" size={16} />
-//                   Subjects
-//                 </label>
-//                 <button
-//                   onClick={addSubject}
-//                   className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors flex items-center"
-//                 >
-//                   <Plus className="mr-1" size={14} />
-//                   Add Subject
-//                 </button>
-//               </div>
-//               <div className="space-y-2 max-h-48 overflow-y-auto">
-//                 {subjects.map((subject, index) => (
-//                   <div key={subject.id} className="flex items-center space-x-2">
-//                     <input
-//                       type="text"
-//                       value={subject.name}
-//                       onChange={(e) => updateSubject(subject.id, e.target.value)}
-//                       placeholder={`Subject ${index + 1} (e.g., Web App Programming Fundamentals)`}
-//                       className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                     />
-//                     {subjects.length > 1 && (
-//                       <button
-//                         onClick={() => removeSubject(subject.id)}
-//                         className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-//                       >
-//                         <Trash2 size={16} />
-//                       </button>
-//                     )}
-//                   </div>
-//                 ))}
-//               </div>
-//             </div>
-
-//             {/* Preview */}
-//             {selectedProgram && selectedSemester && selectedSections.length > 0 && (
-//               <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
-//                 <h3 className="text-blue-400 font-medium mb-2">Class Preview</h3>
-//                 <div className="text-sm text-gray-300 space-y-1">
-//                   <p>
-//                     <strong>Class:</strong> {displayClassName}
-//                   </p>
-//                   <p>
-//                     <strong>Program:</strong> {selectedProgram}
-//                   </p>
-//                   <p>
-//                     <strong>Semester:</strong> {selectedSemester}
-//                   </p>
-//                   <p>
-//                     <strong>Sections:</strong> {selectedSections.join(", ")}
-//                   </p>
-//                   <p>
-//                     <strong>Subjects:</strong> {subjects.filter((s) => s.name.trim()).length}
-//                   </p>
-//                 </div>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* Action Buttons */}
-//         <div className="mt-6 flex gap-4">
-//           {isEditMode ? (
-//             <>
-//               <button
-//                 onClick={handleUpdateClass}
-//                 disabled={
-//                   loading ||
-//                   !selectedProgram ||
-//                   !selectedSemester ||
-//                   selectedSections.length === 0 ||
-//                   subjects.some((s) => !s.name.trim())
-//                 }
-//                 className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center"
-//               >
-//                 {loading ? (
-//                   "Updating Class..."
-//                 ) : (
-//                   <>
-//                     <Save className="mr-2" size={20} />
-//                     Update Class
-//                   </>
-//                 )}
-//               </button>
-//               <button
-//                 onClick={cancelEdit}
-//                 disabled={loading}
-//                 className="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center"
-//               >
-//                 <X className="mr-2" size={20} />
-//                 Cancel
-//               </button>
-//             </>
-//           ) : (
-//             <button
-//               onClick={handleCreateClass}
-//               disabled={
-//                 loading ||
-//                 !selectedProgram ||
-//                 !selectedSemester ||
-//                 selectedSections.length === 0 ||
-//                 subjects.some((s) => !s.name.trim())
-//               }
-//               className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center"
-//             >
-//               {loading ? (
-//                 "Creating Class..."
-//               ) : (
-//                 <>
-//                   <Save className="mr-2" size={20} />
-//                   Create Class
-//                 </>
-//               )}
-//             </button>
-//           )}
-//         </div>
-//       </div>
-
-//       {/* Recently Created Classes */}
-//       {createdClasses.length > 0 && (
-//         <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-//           <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-//             <CheckCircle className="mr-2" size={24} />
-//             Recently Created Classes ({createdClasses.length})
-//           </h2>
-//           <div className="space-y-4">
-//             {createdClasses.map((classItem) => (
-//               <div key={classItem.id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//                   <div>
-//                     <h3 className="text-white font-semibold mb-2">📚 {classItem.className}</h3>
-//                     <div className="text-sm text-gray-300 space-y-1">
-//                       <p>
-//                         <span className="text-gray-400">Program:</span> {classItem.program}
-//                       </p>
-//                       <p>
-//                         <span className="text-gray-400">Semester:</span> {classItem.semester}
-//                       </p>
-//                       <p>
-//                         <span className="text-gray-400">Sections:</span> {classItem.sections.join(", ")}
-//                       </p>
-//                       <p>
-//                         <span className="text-gray-400">Created:</span>{" "}
-//                         {new Date(classItem.createdAt).toLocaleDateString()}
-//                       </p>
-//                     </div>
-//                   </div>
-//                   <div>
-//                     <h4 className="text-white font-medium mb-2">📚 Subjects:</h4>
-//                     <div className="space-y-1">
-//                       {classItem.subjects.map((subject, index) => (
-//                         <div key={index} className="text-sm bg-gray-800 rounded px-2 py-1 text-green-400">
-//                           {subject}
-//                         </div>
-//                       ))}
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Currently Available Classes */}
-//       <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-//         <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-//           <BookOpen className="mr-2" size={24} />
-//           Currently Available Classes ({classes.length})
-//         </h2>
-//         {isFetchingClasses ? (
-//           <p className="text-gray-400 text-center py-4">Loading classes...</p>
-//         ) : classes.length === 0 ? (
-//           <p className="text-gray-400 text-center py-4">No classes available</p>
-//         ) : (
-//           <div className="space-y-4">
-//             {classes.map((classItem) => (
-//               <div key={classItem._id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//                   <div>
-//                     <h3 className="text-white font-semibold mb-2">📚 {classItem.className}</h3>
-//                     <div className="text-sm text-gray-300 space-y-1">
-//                       <p>
-//                         <span className="text-gray-400">Program:</span> {classItem.program}
-//                       </p>
-//                       <p>
-//                         <span className="text-gray-400">Semester:</span> {classItem.semester}
-//                       </p>
-//                       <p>
-//                         <span className="text-gray-400">Sections:</span> {classItem.sections.join(", ")}
-//                       </p>
-//                       <p>
-//                         <span className="text-gray-400">Created:</span>{" "}
-//                         {new Date(classItem.createdAt).toLocaleDateString()}
-//                       </p>
-//                     </div>
-//                   </div>
-//                   <div>
-//                     <h4 className="text-white font-medium mb-2">📚 Subjects:</h4>
-//                     <div className="space-y-1 mb-4">
-//                       {classItem.subjects.map((subject, index) => (
-//                         <div key={index} className="text-sm bg-gray-800 rounded px-2 py-1 text-green-400">
-//                           {subject}
-//                         </div>
-//                       ))}
-//                     </div>
-//                     <div className="flex gap-2">
-//                       <button
-//                         onClick={() => handleEditClass(classItem)}
-//                         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center"
-//                       >
-//                         <Edit3 className="mr-2" size={14} />
-//                         Edit Subjects
-//                       </button>
-//                       <button
-//                         onClick={() => handleDeleteClass(classItem._id)}
-//                         className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center"
-//                       >
-//                         <Trash2 className="mr-2" size={14} />
-//                         Delete Class
-//                       </button>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default MakeClass
-
-
-
-
 "use client"
-import { useState, useEffect } from "react"
-import { Plus, BookOpen, Save, Trash2, CheckCircle, GraduationCap, Edit3, X, Lock, Unlock } from "lucide-react"
 
-const MakeClass = ({ fetchData }) => {
+import { useState, useEffect } from "react"
+import { Plus, BookOpen, Save, Trash2, CheckCircle, GraduationCap, Edit3, X, ShieldCheck, Activity, Zap, Layers, ChevronRight, ClipboardList } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+
+export default function MakeClass({ fetchData }) {
   const [selectedProgram, setSelectedProgram] = useState("")
   const [selectedSemester, setSelectedSemester] = useState("")
   const [selectedSections, setSelectedSections] = useState([])
@@ -1092,22 +15,16 @@ const MakeClass = ({ fetchData }) => {
   const [isFetchingClasses, setIsFetchingClasses] = useState(true)
   const [editingClass, setEditingClass] = useState(null)
   const [isEditMode, setIsEditMode] = useState(false)
-  const [sectionsEnabled, setSectionsEnabled] = useState(false)
 
-  // Available programs
   const programs = ["BSCS", "BBA", "ADP CS"]
-  // Available semesters (1-8)
-  const semesters = [1, 2, 3, 4, 5, 6, 7, 8]
-  // Available sections (A-F)
-  const sections = ["A", "B", "C", "D", "E", "F"]
+  const semesters = ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Phase 6", "Phase 7", "Phase 8"]
+  const sections = ["Node A", "Node B", "Node C", "Node D", "Node E", "Node F"]
 
-  // Generate class name
   const generateClassName = (program, semester, sections) => {
     if (!program || !semester || sections.length === 0) return ""
     return `${program} ${semester} ${sections.sort().join("")}`
   }
 
-  // Fetch all classes
   useEffect(() => {
     const fetchClasses = async () => {
       try {
@@ -1116,13 +33,9 @@ const MakeClass = ({ fetchData }) => {
         const data = await response.json()
         if (response.ok) {
           setClasses(data.classes || [])
-        } else {
-          console.error("Error fetching classes:", data.message)
-          alert("Failed to load classes")
         }
       } catch (error) {
-        console.error("Error fetching classes:", error)
-        alert("Error fetching classes. Please try again.")
+        console.error(error)
       } finally {
         setIsFetchingClasses(false)
       }
@@ -1131,7 +44,6 @@ const MakeClass = ({ fetchData }) => {
   }, [])
 
   const handleSectionChange = (section) => {
-    if (!sectionsEnabled && isEditMode) return
     setSelectedSections((prev) => (prev.includes(section) ? prev.filter((s) => s !== section) : [...prev, section]))
   }
 
@@ -1149,24 +61,15 @@ const MakeClass = ({ fetchData }) => {
     setSubjects(subjects.map((subject) => (subject.id === id ? { ...subject, name } : subject)))
   }
 
-  // Handle edit class - Start with empty subjects
   const handleEditClass = (classItem) => {
     setIsEditMode(true)
     setEditingClass(classItem)
     setSelectedProgram(classItem.program)
     setSelectedSemester(classItem.semester)
     setSelectedSections([...classItem.sections])
-    // Start with empty subjects for new semester
-    setSubjects([{ name: "", id: Date.now() }])
-    setSectionsEnabled(false) // Sections disabled by default
+    setSubjects(classItem.subjects.map((subject, index) => ({ name: subject, id: Date.now() + index })))
   }
 
-  // Toggle sections enable/disable
-  const toggleSectionsEnabled = () => {
-    setSectionsEnabled(!sectionsEnabled)
-  }
-
-  // Cancel edit mode
   const cancelEdit = () => {
     setIsEditMode(false)
     setEditingClass(null)
@@ -1174,27 +77,22 @@ const MakeClass = ({ fetchData }) => {
     setSelectedSemester("")
     setSelectedSections([])
     setSubjects([{ name: "", id: Date.now() }])
-    setSectionsEnabled(false)
   }
 
-  // Handle update class
-  const handleUpdateClass = async () => {
-    if (
-      !selectedProgram ||
-      !selectedSemester ||
-      selectedSections.length === 0 ||
-      subjects.some((s) => !s.name.trim())
-    ) {
-      alert("Please fill all fields, including program, semester, and at least one section")
+  const handleSaveClass = async () => {
+    if (!selectedProgram || !selectedSemester || selectedSections.length === 0 || subjects.some((s) => !s.name.trim())) {
       return
     }
 
     const className = generateClassName(selectedProgram, selectedSemester, selectedSections)
     setLoading(true)
 
+    const endpoint = isEditMode ? "/api/admin/classes/update" : "/api/admin/create-class"
+    const method = isEditMode ? "PUT" : "POST"
+
     try {
       const classData = {
-        classId: editingClass._id,
+        classId: editingClass?._id,
         program: selectedProgram,
         className,
         semester: selectedSemester,
@@ -1202,542 +100,304 @@ const MakeClass = ({ fetchData }) => {
         subjects: subjects.filter((s) => s.name.trim()).map((s) => s.name.trim()),
       }
 
-      const response = await fetch("/api/admin/classes/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(classData),
       })
 
-      const data = await response.json()
-
       if (response.ok) {
-        alert("Class updated successfully!")
-
-        // Reset form and exit edit mode
+        if (!isEditMode) {
+          setCreatedClasses(prev => [{ ...classData, id: Date.now(), createdAt: new Date().toISOString() }, ...prev])
+        }
         cancelEdit()
-
-        // Refresh data
-        if (fetchData) {
-          await fetchData()
-        }
-
-        // Refresh classes
+        if (fetchData) await fetchData()
         const classesResponse = await fetch("/api/admin/classes")
         const classesData = await classesResponse.json()
-        if (classesResponse.ok) {
-          setClasses(classesData.classes || [])
-        }
-      } else {
-        alert(`Error: ${data.message}`)
+        if (classesResponse.ok) setClasses(classesData.classes || [])
       }
     } catch (error) {
-      console.error("Error updating class:", error)
-      alert("Error updating class. Please try again.")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleCreateClass = async () => {
-    if (
-      !selectedProgram ||
-      !selectedSemester ||
-      selectedSections.length === 0 ||
-      subjects.some((s) => !s.name.trim())
-    ) {
-      alert("Please fill all fields, including program, semester, and at least one section")
-      return
-    }
-
-    const className = generateClassName(selectedProgram, selectedSemester, selectedSections)
-    setLoading(true)
-
-    try {
-      const classData = {
-        program: selectedProgram,
-        className,
-        semester: selectedSemester,
-        sections: selectedSections,
-        subjects: subjects.filter((s) => s.name.trim()).map((s) => s.name.trim()),
-      }
-
-      const response = await fetch("/api/admin/create-class", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(classData),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        alert("Class created successfully!")
-        // Add to created classes list
-        setCreatedClasses((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            program: selectedProgram,
-            className,
-            semester: selectedSemester,
-            sections: [...selectedSections],
-            subjects: [...subjects.filter((s) => s.name.trim()).map((s) => s.name.trim())],
-            createdAt: new Date().toISOString(),
-          },
-        ])
-        // Reset form
-        setSelectedProgram("")
-        setSelectedSemester("")
-        setSelectedSections([])
-        setSubjects([{ name: "", id: Date.now() }])
-        // Refresh data
-        if (fetchData) {
-          await fetchData()
-        }
-        // Refresh classes
-        const classesResponse = await fetch("/api/admin/classes")
-        const classesData = await classesResponse.json()
-        if (classesResponse.ok) {
-          setClasses(classesData.classes || [])
-        }
-      } else {
-        alert(`Error: ${data.message}`)
-      }
-    } catch (error) {
-      console.error("Error creating class:", error)
-      alert("Error creating class. Please try again.")
+      console.error(error)
     } finally {
       setLoading(false)
     }
   }
 
   const handleDeleteClass = async (classId) => {
-    if (!confirm("Are you sure you want to delete this class?")) return
-
     try {
       const response = await fetch("/api/admin/classes/delete", {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ classId }),
       })
-
-      const data = await response.json()
-
       if (response.ok) {
-        alert("Class deleted successfully!")
-        // Refresh classes
         const classesResponse = await fetch("/api/admin/classes")
         const classesData = await classesResponse.json()
-        if (classesResponse.ok) {
-          setClasses(classesData.classes || [])
-        }
-        // Refresh dashboard data
-        if (fetchData) {
-          await fetchData()
-        }
-      } else {
-        alert(`Error: ${data.message}`)
+        if (classesResponse.ok) setClasses(classesData.classes || [])
+        if (fetchData) await fetchData()
       }
     } catch (error) {
-      console.error("Error deleting class:", error)
-      alert("Error deleting class. Please try again.")
+      console.error(error)
     }
   }
 
-  const displayClassName = generateClassName(selectedProgram, selectedSemester, selectedSections)
-
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-white">{isEditMode ? "Edit Class" : "Make Class"}</h1>
-        <div className="text-gray-400">{isEditMode ? "Update existing class" : "Create new classes"}</div>
+    <div className="space-y-8 font-outfit">
+      {/* Node Construction Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-900 pb-8">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <Layers className="text-primary-500" size={24} />
+            <h1 className="text-4xl font-black text-white tracking-tighter">Node Construction</h1>
+          </div>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Institutional Care Unit & Discipline Architecture</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="px-6 py-2 bg-slate-900/50 border border-slate-800 rounded-2xl">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none"> Total Registry Units </span>
+            <p className="text-lg font-black text-white">{classes.length}</p>
+          </div>
+        </div>
       </div>
 
-      {/* Edit Mode Alert */}
-      {isEditMode && (
-        <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <Edit3 className="mr-2 text-blue-400" size={20} />
-            <span className="text-blue-400 font-medium">Editing: {editingClass?.className}</span>
-            <span className="ml-4 text-sm text-gray-400">
-              (Previous subjects cleared - Add new subjects for current semester)
-            </span>
-          </div>
-          <button onClick={cancelEdit} className="text-gray-400 hover:text-white transition-colors">
-            <X size={20} />
-          </button>
-        </div>
-      )}
-
-      {/* Class Creation/Edit Form */}
-      <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-        <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-          {isEditMode ? (
-            <>
-              <Edit3 className="mr-2" size={24} />
-              Update Class - Add New Subjects
-            </>
-          ) : (
-            <>
-              <Plus className="mr-2" size={24} />
-              Create New Class
-            </>
-          )}
-        </h2>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column */}
-          <div className="space-y-4">
-            {/* Program Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
-                <GraduationCap className="mr-2" size={16} />
-                Select Program
-              </label>
-              <select
-                value={selectedProgram}
-                onChange={(e) => setSelectedProgram(e.target.value)}
-                disabled={isEditMode}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <option value="">Choose program</option>
-                {programs.map((program) => (
-                  <option key={program} value={program}>
-                    {program}
-                  </option>
-                ))}
-              </select>
-              {isEditMode && <p className="text-xs text-gray-400 mt-1">Program cannot be changed in edit mode</p>}
-            </div>
-
-            {/* Semester Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Select Semester</label>
-              <select
-                value={selectedSemester}
-                onChange={(e) => setSelectedSemester(e.target.value)}
-                disabled={isEditMode}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <option value="">Choose semester</option>
-                {semesters.map((sem) => (
-                  <option key={sem} value={sem}>
-                    Semester {sem}
-                  </option>
-                ))}
-              </select>
-              {isEditMode && <p className="text-xs text-gray-400 mt-1">Semester cannot be changed in edit mode</p>}
-            </div>
-
-            {/* Section Selection */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-medium text-gray-300">Select Sections</label>
-                {isEditMode && (
-                  <button
-                    onClick={toggleSectionsEnabled}
-                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors flex items-center ${sectionsEnabled
-                        ? "bg-green-600 hover:bg-green-700 text-white"
-                        : "bg-gray-600 hover:bg-gray-700 text-gray-300"
-                      }`}
-                  >
-                    {sectionsEnabled ? (
-                      <>
-                        <Unlock className="mr-1" size={12} />
-                        Sections Enabled
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="mr-1" size={12} />
-                        Enable Sections
-                      </>
-                    )}
-                  </button>
-                )}
+      <AnimatePresence>
+        {isEditMode && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="p-6 bg-primary-600/10 border border-primary-600/20 rounded-3xl flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-primary-600/20 rounded-xl flex items-center justify-center text-primary-500">
+                <Edit3 size={18} />
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                {sections.map((section) => (
-                  <label key={section} className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedSections.includes(section)}
-                      onChange={() => handleSectionChange(section)}
-                      disabled={isEditMode && !sectionsEnabled}
-                      className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
-                    <span className={`text-white ${isEditMode && !sectionsEnabled ? "opacity-50" : ""}`}>
-                      Section {section}
-                    </span>
-                  </label>
-                ))}
-              </div>
-              {selectedSections.length > 0 && (
-                <div className="mt-2 text-sm text-blue-400">Selected: {selectedSections.join(", ")}</div>
-              )}
-              {isEditMode && !sectionsEnabled && (
-                <p className="text-xs text-yellow-400 mt-2">
-                  ⚠️ Sections are locked. Click "Enable Sections" to modify sections.
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="space-y-4">
-            {/* Subjects */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-medium text-gray-300 flex items-center">
-                  <BookOpen className="mr-2" size={16} />
-                  Subjects {isEditMode && <span className="ml-2 text-xs text-green-400">(New Semester)</span>}
-                </label>
-                <button
-                  onClick={addSubject}
-                  className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors flex items-center"
-                >
-                  <Plus className="mr-1" size={14} />
-                  Add Subject
-                </button>
-              </div>
-              {isEditMode && (
-                <div className="mb-3 p-3 bg-yellow-600/20 border border-yellow-500/30 rounded-lg">
-                  <p className="text-xs text-yellow-400">
-                    📚 Previous semester subjects have been cleared. Add new subjects for the current semester.
-                  </p>
-                </div>
-              )}
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {subjects.map((subject, index) => (
-                  <div key={subject.id} className="flex items-center space-x-2">
-                    <input
-                      type="text"
-                      value={subject.name}
-                      onChange={(e) => updateSubject(subject.id, e.target.value)}
-                      placeholder={`Subject ${index + 1} (e.g., ${isEditMode ? "Advanced Programming, Data Structures" : "Web App Programming Fundamentals"})`}
-                      className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {subjects.length > 1 && (
-                      <button
-                        onClick={() => removeSubject(subject.id)}
-                        className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    )}
-                  </div>
-                ))}
+              <div>
+                <p className="text-[9px] font-black text-primary-400 uppercase tracking-widest leading-none mb-1">Editing Registry Unit</p>
+                <span className="text-white font-black">{editingClass?.className}</span>
               </div>
             </div>
-
-            {/* Preview */}
-            {selectedProgram && selectedSemester && selectedSections.length > 0 && (
-              <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4">
-                <h3 className="text-blue-400 font-medium mb-2">Class Preview</h3>
-                <div className="text-sm text-gray-300 space-y-1">
-                  <p>
-                    <strong>Class:</strong> {displayClassName}
-                  </p>
-                  <p>
-                    <strong>Program:</strong> {selectedProgram}
-                  </p>
-                  <p>
-                    <strong>Semester:</strong> {selectedSemester}
-                  </p>
-                  <p>
-                    <strong>Sections:</strong> {selectedSections.join(", ")}
-                  </p>
-                  <p>
-                    <strong>New Subjects:</strong> {subjects.filter((s) => s.name.trim()).length}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="mt-6 flex gap-4">
-          {isEditMode ? (
-            <>
-              <button
-                onClick={handleUpdateClass}
-                disabled={
-                  loading ||
-                  !selectedProgram ||
-                  !selectedSemester ||
-                  selectedSections.length === 0 ||
-                  subjects.some((s) => !s.name.trim())
-                }
-                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center"
-              >
-                {loading ? (
-                  "Updating Class..."
-                ) : (
-                  <>
-                    <Save className="mr-2" size={20} />
-                    Update Class with New Subjects
-                  </>
-                )}
-              </button>
-              <button
-                onClick={cancelEdit}
-                disabled={loading}
-                className="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center"
-              >
-                <X className="mr-2" size={20} />
-                Cancel
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={handleCreateClass}
-              disabled={
-                loading ||
-                !selectedProgram ||
-                !selectedSemester ||
-                selectedSections.length === 0 ||
-                subjects.some((s) => !s.name.trim())
-              }
-              className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center"
-            >
-              {loading ? (
-                "Creating Class..."
-              ) : (
-                <>
-                  <Save className="mr-2" size={20} />
-                  Create Class
-                </>
-              )}
+            <button onClick={cancelEdit} className="p-2 text-slate-500 hover:text-white transition-colors">
+              <X size={20} />
             </button>
-          )}
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Recently Created Classes */}
-      {createdClasses.length > 0 && (
-        <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-          <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-            <CheckCircle className="mr-2" size={24} />
-            Recently Created Classes ({createdClasses.length})
-          </h2>
-          <div className="space-y-4">
-            {createdClasses.map((classItem) => (
-              <div key={classItem.id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="text-white font-semibold mb-2">📚 {classItem.className}</h3>
-                    <div className="text-sm text-gray-300 space-y-1">
-                      <p>
-                        <span className="text-gray-400">Program:</span> {classItem.program}
-                      </p>
-                      <p>
-                        <span className="text-gray-400">Semester:</span> {classItem.semester}
-                      </p>
-                      <p>
-                        <span className="text-gray-400">Sections:</span> {classItem.sections.join(", ")}
-                      </p>
-                      <p>
-                        <span className="text-gray-400">Created:</span>{" "}
-                        {new Date(classItem.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        {/* Architect Panel */}
+        <div className="bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] p-8 border border-slate-900 relative group overflow-hidden">
+          <div className="relative z-10">
+            <h2 className="text-xl font-black text-white tracking-tight mb-8 flex items-center gap-3">
+              <Plus className="text-primary-500" size={22} />
+              Unit Architect
+            </h2>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Registry Division</label>
+                  <div className="relative group">
+                    <select value={selectedProgram} onChange={(e) => setSelectedProgram(e.target.value)} disabled={isEditMode} className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer hover:bg-slate-950 transition-all disabled:opacity-30">
+                      <option value="">Division Taxonomy...</option>
+                      {programs.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                    <ChevronRight className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-700 rotate-90 pointer-events-none" size={16} />
                   </div>
-                  <div>
-                    <h4 className="text-white font-medium mb-2">📚 Subjects:</h4>
-                    <div className="space-y-1">
-                      {classItem.subjects.map((subject, index) => (
-                        <div key={index} className="text-sm bg-gray-800 rounded px-2 py-1 text-green-400">
-                          {subject}
-                        </div>
-                      ))}
-                    </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Clinical Phase</label>
+                  <div className="relative">
+                    <select value={selectedSemester} onChange={(e) => setSelectedSemester(e.target.value)} className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer">
+                      <option value="">Phase Registry...</option>
+                      {semesters.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* Currently Available Classes */}
-      <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-          <BookOpen className="mr-2" size={24} />
-          Currently Available Classes ({classes.length})
-        </h2>
-        {isFetchingClasses ? (
-          <p className="text-gray-400 text-center py-4">Loading classes...</p>
-        ) : classes.length === 0 ? (
-          <p className="text-gray-400 text-center py-4">No classes available</p>
-        ) : (
-          <div className="space-y-4">
-            {classes.map((classItem) => (
-              <div key={classItem._id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="text-white font-semibold mb-2">📚 {classItem.className}</h3>
-                    <div className="text-sm text-gray-300 space-y-1">
-                      <p>
-                        <span className="text-gray-400">Program:</span> {classItem.program}
-                      </p>
-                      <p>
-                        <span className="text-gray-400">Semester:</span> {classItem.semester}
-                      </p>
-                      <p>
-                        <span className="text-gray-400">Sections:</span> {classItem.sections.join(", ")}
-                      </p>
-                      <p>
-                        <span className="text-gray-400">Created:</span>{" "}
-                        {new Date(classItem.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-medium mb-2">📚 Current Subjects:</h4>
-                    <div className="space-y-1 mb-4">
-                      {classItem.subjects && classItem.subjects.length > 0 ? (
-                        classItem.subjects.map((subject, index) => (
-                          <div key={index} className="text-sm bg-gray-800 rounded px-2 py-1 text-green-400">
-                            {subject}
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-sm text-yellow-400 italic">
-                          No subjects - Ready for new semester subjects
-                        </div>
+              <div className="space-y-4">
+                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Target Nodes (Provision multiple units)</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {sections.map(sec => (
+                    <button key={sec} onClick={() => handleSectionChange(sec)} className={`px-4 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-widest transition-all ${selectedSections.includes(sec) ? 'bg-primary-600 border-primary-500 text-white shadow-lg shadow-primary-950/20' : 'bg-slate-950/40 border-slate-900 text-slate-500 hover:border-slate-800'}`}>
+                      {sec}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4 pt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Unit Disciplines</label>
+                  <button onClick={addSubject} className="text-secondary-400 font-black text-[9px] uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors">
+                    <Plus size={14} /> Add Discipline
+                  </button>
+                </div>
+                <div className="space-y-3 max-h-[200px] overflow-y-auto pr-2 no-scrollbar">
+                  {subjects.map((s, idx) => (
+                    <div key={s.id} className="flex gap-2">
+                      <input
+                        type="text" value={s.name} onChange={(e) => updateSubject(s.id, e.target.value)}
+                        placeholder={`Discipline ${idx + 1}...`}
+                        className="flex-1 px-6 py-4 bg-slate-950/50 border border-slate-900 rounded-2xl text-white placeholder-slate-700 focus:outline-none focus:border-primary-500 font-bold text-xs"
+                      />
+                      {subjects.length > 1 && (
+                        <button onClick={() => removeSubject(s.id)} className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-2xl hover:bg-rose-600 hover:text-white transition-all">
+                          <Trash2 size={16} />
+                        </button>
                       )}
                     </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditClass(classItem)}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center"
-                      >
-                        <Edit3 className="mr-2" size={14} />
-                        Add New Subjects
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClass(classItem._id)}
-                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center"
-                      >
-                        <Trash2 className="mr-2" size={14} />
-                        Delete Class
-                      </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-slate-800/50">
+              <button
+                onClick={handleSaveClass}
+                disabled={loading || !selectedProgram || !selectedSemester || selectedSections.length === 0}
+                className="w-full py-5 bg-primary-600 hover:bg-emerald-600 text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-950/20 active:scale-95 disabled:opacity-30 group/btn"
+              >
+                {loading ? <Activity className="animate-spin" size={20} /> : <Save size={20} className="group-hover/btn:scale-110 transition-transform" />}
+                <span className="text-[10px] uppercase tracking-[0.2em]">{isEditMode ? "Update Unit Configuration" : "Provision New Unit Network"}</span>
+              </button>
+            </div>
+          </div>
+          <div className="absolute right-0 bottom-0 w-48 h-48 bg-primary-600/5 blur-[80px] -z-0" />
+        </div>
+
+        {/* Blueprint Viewer */}
+        <div className="space-y-8">
+          <div className="bg-slate-950 border border-slate-900 rounded-[2.5rem] p-8 relative overflow-hidden h-full">
+            <div className="relative z-10">
+              <h2 className="text-xl font-black text-white tracking-tight mb-10 flex items-center gap-4">
+                <Activity className="text-teal-400" size={22} />
+                Unit Blueprint
+              </h2>
+
+              {selectedProgram && selectedSemester && selectedSections.length > 0 ? (
+                <div className="space-y-6">
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-3xl relative overflow-hidden group">
+                    <div className="flex justify-between items-start mb-8">
+                      <div>
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">Inscribed Identifier</p>
+                        <h3 className="text-2xl font-black text-white tracking-tighter">{generateClassName(selectedProgram, selectedSemester, selectedSections)}</h3>
+                      </div>
+                      <div className="px-3 py-1 bg-teal-500/10 border border-teal-500/20 rounded-lg">
+                        <span className="text-[9px] font-black text-teal-500 uppercase">Valid Blueprint</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-8">
+                      <div>
+                        <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-2">Hierarchy</p>
+                        <div className="space-y-1">
+                          <p className="text-xs font-bold text-slate-300">{selectedProgram}</p>
+                          <p className="text-xs font-bold text-slate-400">{selectedSemester}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-2">Affected Nodes</p>
+                        <p className="text-xs font-black text-primary-400">{selectedSections.join(", ")}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 bg-slate-900/30 border border-slate-900 rounded-3xl">
+                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4">Provisioned Disciplines</p>
+                    <div className="flex flex-wrap gap-2">
+                      {subjects.filter(s => s.name.trim()).map(s => (
+                        <div key={s.id} className="px-4 py-2 bg-slate-950 rounded-xl border border-slate-800 text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+                          {s.name}
+                        </div>
+                      ))}
+                      {subjects.filter(s => s.name.trim()).length === 0 && <span className="text-slate-700 text-[10px] font-black uppercase tracking-widest">Null Set</span>}
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[300px] text-center border-2 border-dashed border-slate-900 rounded-3xl p-10">
+                  <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-slate-700 mb-6">
+                    <ClipboardList size={32} />
+                  </div>
+                  <p className="text-slate-600 font-black uppercase text-[11px] tracking-[0.3em] leading-relaxed">CONFIGURE UNIT PARAMETERS TO VIEW ARCHITECTURAL BLUEPRINT</p>
+                </div>
+              )}
+            </div>
+            <div className="absolute right-0 bottom-0 w-64 h-64 bg-teal-500/5 blur-[100px]" />
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Institutional unit Registry */}
+      <div className="space-y-6 pt-10">
+        <div className="flex items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <Database className="text-primary-500" size={24} />
+            <h2 className="text-xl font-black text-white tracking-tight uppercase tracking-widest">Active Unit Registry</h2>
+          </div>
+          <div className="flex gap-4">
+            <div className="px-4 py-2 bg-slate-900/50 border border-slate-800 rounded-xl text-[10px] font-black text-slate-500 uppercase tracking-widest"> Registry Phase: {new Date().getFullYear()} </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {classes.map((cls, idx) => (
+            <motion.div
+              key={cls._id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.03 }}
+              className="bg-slate-900/40 backdrop-blur-xl border border-slate-900 rounded-[2.5rem] p-7 group hover:border-slate-800 transition-all overflow-hidden relative"
+            >
+              <div className="relative z-10 flex flex-col h-full">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="w-12 h-12 bg-primary-600/10 rounded-2xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform">
+                    <Layers size={22} />
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => handleEditClick(cls)} className="p-2.5 bg-slate-900 hover:bg-slate-800 text-slate-500 hover:text-white rounded-xl transition-all">
+                      <Edit3 size={16} />
+                    </button>
+                    <button onClick={() => handleDeleteClass(cls._id)} className="p-2.5 bg-slate-900 hover:bg-rose-950 text-slate-500 hover:text-rose-500 rounded-xl transition-all border border-transparent hover:border-rose-900/50">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <h3 className="text-xl font-black text-white tracking-tighter mb-4">{cls.className}</h3>
+
+                <div className="space-y-3 mb-8 flex-1">
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-slate-600">Division</span>
+                    <span className="text-slate-300">{cls.program}</span>
+                  </div>
+                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-slate-600">Active Nodes</span>
+                    <span className="text-primary-400">{cls.sections.join(", ")}</span>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-slate-800/50">
+                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-3">Provisioned Disciplines</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {cls.subjects.slice(0, 3).map((sub, i) => (
+                      <span key={i} className="px-2 py-1 bg-slate-950 rounded-lg text-[8px] font-black text-slate-500 uppercase border border-slate-900">{sub}</span>
+                    ))}
+                    {cls.subjects.length > 3 && <span className="px-2 py-1 text-[8px] font-black text-primary-600 uppercase">+{cls.subjects.length - 3} More</span>}
+                  </div>
+                </div>
+              </div>
+              <div className="absolute right-0 bottom-0 w-32 h-32 bg-primary-600/5 blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            </motion.div>
+          ))}
+          {classes.length === 0 && !isFetchingClasses && (
+            <div className="col-span-full py-20 text-center border border-dashed border-slate-900 rounded-[3rem]">
+              <p className="text-slate-700 font-black uppercase text-xs tracking-[0.5em]">Institutional Registry Purged</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
     </div>
   )
 }
-
-export default MakeClass

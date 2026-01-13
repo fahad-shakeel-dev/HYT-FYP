@@ -50,7 +50,7 @@ const StudentSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "student",
+      default: "parent",
     },
     isApproved: {
       type: Boolean,

@@ -1,45 +1,36 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
-import { LucideUser, LucideBookOpen } from "lucide-react"
+import { LucideUser, LucideUsers, LucideActivity, LucideShieldCheck, LucideChevronRight } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
     const [hoveredCard, setHoveredCard] = useState(null)
     const router = useRouter()
 
-    const container = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.2,
-            },
-        },
-    }
-
-    const item = {
-        hidden: { y: 50, opacity: 0 },
-        show: { y: 0, opacity: 1, transition: { duration: 0.8 } },
-    }
-
     const cards = [
         {
-            id: "teacher",
-            title: "Login As Teacher",
+            id: "therapist",
+            title: "Therapist Portal",
+            subtitle: "Clinical Administration",
+            description: "Secure gateway for therapists to orchestrate therapy nodes and monitor patient neurological progress.",
             icon: LucideUser,
-            color: "from-blue-600 to-blue-400",
-            hoverColor: "from-blue-700 to-blue-500",
-            route: "/teacher",
+            secondaryIcon: LucideActivity,
+            color: "primary",
+            route: "/therapist",
+            stats: "1.2k+ Sessions Logged"
         },
         {
-            id: "student",
-            title: "Login As Student",
-            icon: LucideBookOpen,
-            color: "from-purple-600 to-purple-400",
-            hoverColor: "from-purple-700 to-purple-500",
-            route: "/student",
+            id: "parent",
+            title: "Parent Portal",
+            subtitle: "Caregiver Access",
+            description: "Dedicated access for parents to review clinical milestones, session logs, and therapeutic growth metrics.",
+            icon: LucideUsers,
+            secondaryIcon: LucideShieldCheck,
+            color: "secondary",
+            route: "/parent",
+            stats: "Real-time Progress Tracking"
         },
     ]
 
@@ -48,142 +39,173 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col items-center justify-center p-4">
-            <div className="absolute inset-0 overflow-hidden">
-                {[...Array(15)].map((_, i) => (
+        <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6 relative overflow-hidden font-outfit">
+            {/* Animated Background Orbs */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <motion.div
+                    animate={{
+                        x: [0, 100, 0],
+                        y: [0, 50, 0],
+                        scale: [1, 1.2, 1]
+                    }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-primary-100/30 rounded-full blur-[120px]"
+                />
+                <motion.div
+                    animate={{
+                        x: [0, -80, 0],
+                        y: [0, 120, 0],
+                        scale: [1, 1.1, 1]
+                    }}
+                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                    className="absolute top-1/2 -right-40 w-[500px] h-[500px] bg-teal-100/30 rounded-full blur-[100px]"
+                />
+                <motion.div
+                    animate={{
+                        x: [0, 60, 0],
+                        y: [0, -100, 0]
+                    }}
+                    transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+                    className="absolute -bottom-40 left-1/4 w-[450px] h-[450px] bg-indigo-100/30 rounded-full blur-[110px]"
+                />
+            </div>
+
+            {/* Content Header */}
+            <motion.div
+                initial={{ opacity: 0, y: -40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                className="text-center mb-16 z-10 relative"
+            >
+                <motion.div
+                    className="inline-flex items-center gap-3 px-6 py-3 bg-white shadow-xl shadow-slate-200/50 rounded-full mb-10 border border-slate-50"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                >
+                    <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-primary-200 animate-pulse">
+                        <LucideActivity size={20} />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Clinical Verification System</span>
+                </motion.div>
+
+                <h1 className="text-4xl md:text-6xl font-black text-slate-800 tracking-tight leading-[1.1] max-w-4xl mx-auto mb-6">
+                    Rehabilitation Therapy <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-primary-500 to-teal-500">Session Management</span> System
+                </h1>
+
+                <div className="flex flex-col items-center gap-3">
+                    <p className="text-slate-500 font-bold text-lg max-w-2xl mx-auto mb-2">
+                        Comprehensive clinical governance and caregiver transparency interface.
+                    </p>
+                    <div className="flex items-center gap-4">
+                        <div className="h-[2px] w-12 bg-slate-200"></div>
+                        <span className="text-slate-400 font-black text-[10px] uppercase tracking-[0.4em]">Project ID: R-2025-HYT</span>
+                        <div className="h-[2px] w-12 bg-slate-200"></div>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* Portal Selection Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-6xl z-10 relative px-4">
+                {cards.map((card, idx) => (
                     <motion.div
-                        key={i}
-                        className="absolute rounded-full bg-white/5"
-                        style={{
-                            width: Math.random() * 60 + 20,
-                            height: Math.random() * 60 + 20,
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                        }}
-                        animate={{
-                            y: [0, Math.random() * 100 - 50],
-                            x: [0, Math.random() * 100 - 50],
-                            opacity: [0.1, 0.3, 0.1],
-                        }}
-                        transition={{
-                            duration: Math.random() * 10 + 10,
-                            repeat: Number.POSITIVE_INFINITY,
-                            repeatType: "reverse",
-                        }}
-                    />
+                        key={card.id}
+                        initial={{ opacity: 0, x: idx === 0 ? -50 : 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                        onMouseEnter={() => setHoveredCard(card.id)}
+                        onMouseLeave={() => setHoveredCard(null)}
+                        className="group relative"
+                    >
+                        {/* Card Glow Effect */}
+                        <div className={`absolute -inset-1 bg-gradient-to-r ${card.id === 'therapist' ? 'from-primary-600 to-indigo-600' : 'from-teal-500 to-primary-600'} rounded-[3rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200`}></div>
+
+                        <div
+                            onClick={() => handleCardClick(card.route)}
+                            className="relative bg-white/80 backdrop-blur-xl border border-white rounded-[3rem] p-12 h-full flex flex-col justify-between cursor-pointer shadow-2xl transition-all duration-500 group-hover:-translate-y-3"
+                        >
+                            <div>
+                                <div className="flex items-start justify-between mb-12">
+                                    <motion.div
+                                        className={`w-20 h-20 rounded-[2.5rem] ${card.id === 'therapist' ? 'bg-primary-600 shadow-primary-200' : 'bg-slate-900 shadow-slate-400'} flex items-center justify-center text-white shadow-2xl relative overflow-hidden`}
+                                        whileHover={{ rotate: 15, scale: 1.1 }}
+                                    >
+                                        <card.icon size={36} className="relative z-10" />
+                                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-50"></div>
+                                    </motion.div>
+
+                                    <div className="text-right">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 mb-1 leading-none">{card.subtitle}</p>
+                                        <p className="text-sm font-black text-slate-400 leading-none">{card.stats}</p>
+                                    </div>
+                                </div>
+
+                                <h2 className="text-3xl font-black text-slate-800 mb-4 tracking-tight group-hover:text-primary-600 transition-colors">
+                                    {card.title}
+                                </h2>
+                                <p className="text-slate-500 font-bold text-sm leading-relaxed mb-10 max-w-xs">
+                                    {card.description}
+                                </p>
+                            </div>
+
+                            <div className="relative">
+                                <motion.div
+                                    className={`w-full py-5 ${card.id === 'therapist' ? 'bg-primary-600' : 'bg-slate-900'} text-white font-black rounded-2xl shadow-xl flex items-center justify-center gap-3 group/btn overflow-hidden relative`}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                >
+                                    <span className="relative z-10 text-[10px] uppercase tracking-[0.3em]">Access Authorized Portal</span>
+                                    <LucideChevronRight size={18} className="relative z-10 group-hover/btn:translate-x-1 transition-transform" />
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
+                                </motion.div>
+
+                                <div className="mt-6 flex items-center justify-center gap-6">
+                                    <div className="flex items-center gap-2 text-slate-300 font-black text-[8px] uppercase tracking-widest">
+                                        <card.secondaryIcon size={12} />
+                                        Verified Node
+                                    </div>
+                                    <div className="w-1 h-1 bg-slate-200 rounded-full"></div>
+                                    <div className="flex items-center gap-2 text-slate-300 font-black text-[8px] uppercase tracking-widest">
+                                        <LucideShieldCheck size={12} />
+                                        256-bit Encryption
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
                 ))}
             </div>
 
+            {/* Institutional Footer */}
             <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="text-center mb-16 z-10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5 }}
+                className="mt-20 z-10 flex flex-col items-center gap-4"
             >
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">UCP Portal</h1>
-                <motion.div
-                    className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: "60%" }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                />
-                <motion.p
-                    className="text-gray-300 mt-4 max-w-md mx-auto"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 }}
-                >
-                    Select your role to continue to the portal
-                </motion.p>
+                <div className="flex items-center gap-6">
+                    <div className="text-left">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none mb-1">Lead Researcher</p>
+                        <p className="text-sm font-black text-slate-700 leading-none">Hafiza Yusra Tariq</p>
+                    </div>
+                    <div className="h-8 w-[1px] bg-slate-200"></div>
+                    <div className="text-left">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none mb-1">Academic Unit</p>
+                        <p className="text-sm font-black text-slate-700 leading-none">UCP Faisalabad • 2025</p>
+                    </div>
+                </div>
+
+                <div className="px-6 py-2 bg-slate-100/50 backdrop-blur-sm rounded-full border border-slate-50">
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em]">Department of Computer Science & Information Technology</p>
+                </div>
             </motion.div>
 
-            <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl z-10"
-            >
-                {cards.map((card) => (
-                    <motion.div
-                        key={card.id}
-                        variants={item}
-                        className="w-full"
-                        onMouseEnter={() => setHoveredCard(card.id)}
-                        onMouseLeave={() => setHoveredCard(null)}
-                    >
-                        <motion.div
-                            className={`relative overflow-hidden rounded-xl p-8 h-64 flex flex-col items-center justify-center cursor-pointer bg-gradient-to-br ${hoveredCard === card.id ? card.hoverColor : card.color
-                                } shadow-lg`}
-                            whileHover={{
-                                scale: 1.05,
-                                boxShadow:
-                                    "0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)",
-                            }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                            onClick={() => handleCardClick(card.route)}
-                        >
-                            <motion.div
-                                className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent"
-                                animate={{
-                                    opacity: hoveredCard === card.id ? 0.2 : 0.1,
-                                }}
-                            />
-
-                            <motion.div
-                                className="mb-6 bg-white/20 p-5 rounded-full"
-                                whileHover={{ rotate: 5 }}
-                                animate={{
-                                    y: [0, -10, 0],
-                                    transition: {
-                                        duration: 2,
-                                        repeat: Number.POSITIVE_INFINITY,
-                                        repeatType: "loop",
-                                    },
-                                }}
-                            >
-                                <card.icon size={40} className="text-white" />
-                            </motion.div>
-
-                            <motion.h2
-                                className="text-2xl font-bold text-white mb-2 text-center"
-                                animate={{
-                                    scale: hoveredCard === card.id ? 1.1 : 1,
-                                }}
-                                transition={{ type: "spring", stiffness: 300 }}
-                            >
-                                {card.title}
-                            </motion.h2>
-
-                            <motion.button
-                                className="mt-4 px-6 py-2 bg-white/20 hover:bg-white/30 rounded-full text-white font-medium transition-all"
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleCardClick(card.route)
-                                }}
-                            >
-                                Login
-                            </motion.button>
-
-                            <motion.div
-                                className="absolute -bottom-16 -right-16 w-32 h-32 rounded-full bg-white/10"
-                                animate={{
-                                    scale: hoveredCard === card.id ? 1.2 : 1,
-                                }}
-                                transition={{ duration: 0.5 }}
-                            />
-                            <motion.div
-                                className="absolute -top-16 -left-16 w-32 h-32 rounded-full bg-white/10"
-                                animate={{
-                                    scale: hoveredCard === card.id ? 1.2 : 1,
-                                }}
-                                transition={{ duration: 0.5 }}
-                            />
-                        </motion.div>
-                    </motion.div>
-                ))}
-            </motion.div>
+            <style jsx global>{`
+                @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;400;700;900&display=swap');
+                
+                .font-outfit {
+                    font-family: 'Outfit', sans-serif;
+                }
+            `}</style>
         </div>
     )
 }

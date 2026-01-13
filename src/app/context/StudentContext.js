@@ -11,8 +11,8 @@
 
 //   const fetchStudentData = async () => {
 //     try {
-//       console.log("Fetching student data from /api/student/me");
-//       const response = await fetch("/api/student/me", {
+//       console.log("Fetching student data from /api/parent/me");
+//       const response = await fetch("/api/parent/me", {
 //         method: "GET",
 //         credentials: "include",
 //       });
@@ -62,7 +62,7 @@ export function StudentProvider({ children }) {
 
   const fetchStudentData = async () => {
     try {
-      console.log("Fetching student data from /api/student/me")
+      console.log("Fetching student data from /api/parent/me")
 
       // Check if we have a token in localStorage or cookies
       const token = localStorage.getItem("token") || getCookie("token")
@@ -75,7 +75,7 @@ export function StudentProvider({ children }) {
         return
       }
 
-      const response = await fetch("/api/student/me", {
+      const response = await fetch("/api/parent/me", {
         method: "GET",
         credentials: "include",
         headers: {

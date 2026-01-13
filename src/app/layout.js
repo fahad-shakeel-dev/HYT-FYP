@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 
 // Page metadata
 export const metadata = {
-    title: "UCP Portal",
-    description: "University portal for teachers and students",
+    title: "Rehabilitation Therapy Session Management System",
+    description: "A structured, secure, and organized platform for managing therapy session documentation.",
     icons: {
         icon: "/images/2ndLogo.jpg",
     },
@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
             </Head>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <StudentProvider>
-                {children}
+                    {children}
                 </StudentProvider>
             </body>
         </html>

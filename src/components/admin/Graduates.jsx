@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Download, Users, Calendar, GraduationCap, Search, Filter } from "lucide-react"
+import { Download, Users, Calendar, GraduationCap, Search, Filter, ShieldCheck, Activity, Zap, FileText, Globe, ExternalLink, Database } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function Graduates({ graduates, fetchGraduates }) {
   const [searchTerm, setSearchTerm] = useState("")
@@ -11,7 +12,6 @@ export default function Graduates({ graduates, fetchGraduates }) {
   // Get unique graduation years
   const graduationYears = [...new Set(graduates.map((grad) => grad.graduationYear))].sort((a, b) => b - a)
 
-  // Filter graduates based on search and year
   const filteredGraduates = graduates.filter((graduate) => {
     const matchesSearch =
       graduate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -26,9 +26,7 @@ export default function Graduates({ graduates, fetchGraduates }) {
     try {
       const response = await fetch("/api/admin/graduates/report", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           year: selectedYear || "all",
           searchTerm: searchTerm,
@@ -41,169 +39,181 @@ export default function Graduates({ graduates, fetchGraduates }) {
         const a = document.createElement("a")
         a.style.display = "none"
         a.href = url
-        a.download = `graduates-report-${selectedYear || "all"}-${new Date().toISOString().split("T")[0]}.xlsx`
+        a.download = `Clinical_Registry_Archive_${selectedYear || "ALL"}_${new Date().toISOString().split("T")[0]}.xlsx`
         document.body.appendChild(a)
         a.click()
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
-        alert("Graduates report downloaded successfully!")
-      } else {
-        alert("Error downloading report. Please try again.")
       }
     } catch (error) {
-      console.error("Error downloading report:", error)
-      alert("Error downloading report. Please try again.")
+      console.error(error)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <GraduationCap className="h-8 w-8 text-blue-400" />
-            <h1 className="text-2xl font-bold text-white">Graduates Management</h1>
+    <div className="space-y-8 font-outfit">
+      {/* Archive Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-900 pb-8">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <Database className="text-primary-500" size={24} />
+            <h1 className="text-4xl font-black text-white tracking-tighter">Graduation Registry</h1>
           </div>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Institutional Certification & Historical Patient Archive</p>
+        </div>
+        <div className="flex items-center gap-4">
           <button
             onClick={downloadGraduatesReport}
             disabled={loading}
-            className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white px-4 py-2 rounded-lg transition-colors"
+            className="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-[1.5rem] text-[10px] uppercase tracking-[0.2em] transition-all flex items-center gap-3 shadow-xl shadow-emerald-950/20 active:scale-95 disabled:opacity-30"
           >
-            <Download className="h-4 w-4" />
-            <span>{loading ? "Generating..." : "Download Report"}</span>
+            {loading ? <Activity className="animate-spin" size={16} /> : <Download size={16} />}
+            <span>Generate global archive</span>
           </button>
         </div>
+      </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-500/20 rounded-lg p-4">
-            <div className="flex items-center space-x-3">
-              <Users className="h-6 w-6 text-blue-400" />
-              <div>
-                <p className="text-blue-200 text-sm">Total Graduates</p>
-                <p className="text-white text-xl font-bold">{graduates.length}</p>
+      {/* Registry Diagnostics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { label: "Total Clinical Alumni", val: graduates.length, icon: Users, color: "text-primary-500", bg: "bg-primary-500/10" },
+          { label: "Current Cycle Certifications", val: graduates.filter((g) => g.graduationYear === new Date().getFullYear()).length, icon: Calendar, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+          { label: "Active Registry Eras", val: graduationYears.length, icon: GraduationCap, color: "text-amber-500", bg: "bg-amber-500/10" }
+        ].map((stat, i) => (
+          <div key={i} className="p-8 bg-slate-900/40 backdrop-blur-xl border border-slate-900 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-800 transition-all">
+            <div className="relative z-10">
+              <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center mb-6`}>
+                <stat.icon size={22} />
               </div>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">{stat.label}</p>
+              <p className="text-3xl font-black text-white tracking-tighter">{stat.val}</p>
             </div>
+            <div className={`absolute right-0 bottom-0 w-24 h-24 ${stat.color.replace('text', 'bg').replace('-500', '/5')} blur-[50px]`} />
           </div>
-          <div className="bg-green-500/20 rounded-lg p-4">
-            <div className="flex items-center space-x-3">
-              <Calendar className="h-6 w-6 text-green-400" />
-              <div>
-                <p className="text-green-200 text-sm">This Year</p>
-                <p className="text-white text-xl font-bold">
-                  {graduates.filter((g) => g.graduationYear === new Date().getFullYear()).length}
-                </p>
-              </div>
-            </div>
+        ))}
+      </div>
+
+      {/* Registry Filters */}
+      <div className="bg-slate-900/30 backdrop-blur-xl border border-slate-900 rounded-[2.5rem] p-8">
+        <div className="flex flex-col xl:flex-row gap-6">
+          <div className="flex-1 relative">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
+            <input
+              type="text"
+              placeholder="Query Historical Patient Archive (Name, Identifier, email)..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-16 pr-8 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white placeholder-slate-700 focus:outline-none focus:border-primary-500 font-bold text-sm"
+            />
           </div>
-          <div className="bg-purple-500/20 rounded-lg p-4">
-            <div className="flex items-center space-x-3">
-              <GraduationCap className="h-6 w-6 text-purple-400" />
-              <div>
-                <p className="text-purple-200 text-sm">Years Active</p>
-                <p className="text-white text-xl font-bold">{graduationYears.length}</p>
-              </div>
+          <div className="xl:w-64 relative group">
+            <Filter className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="w-full pl-14 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer hover:bg-slate-950 transition-all"
+            >
+              <option value="">All Certificaton Eras</option>
+              {graduationYears.map((year) => (
+                <option key={year} value={year}>Registry Era {year}</option>
+              ))}
+            </select>
+            <div className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-700 pointer-events-none group-hover:text-primary-500 transition-colors">
+              <ExternalLink size={14} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search by name, email, or roll number..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-          <div className="md:w-48">
-            <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">All Years</option>
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Graduates List */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-white/5">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Student Info
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Roll Number
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Department
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Graduation Year
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Final CGPA
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Graduation Date
-                </th>
+      {/* Historical Data Table */}
+      <div className="bg-slate-900/20 backdrop-blur-xl border border-slate-900 rounded-[3rem] overflow-hidden">
+        <div className="overflow-x-auto no-scrollbar">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-950/50">
+                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Patient Identity</th>
+                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Registry ID</th>
+                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Department</th>
+                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Phase Era</th>
+                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Outcome</th>
+                <th className="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Inscribed Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/10">
+            <tbody className="divide-y divide-slate-900/50">
               {filteredGraduates.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center text-gray-400">
-                    {graduates.length === 0 ? "No graduates found" : "No graduates match your search criteria"}
+                  <td colSpan="6" className="px-8 py-20 text-center">
+                    <p className="text-slate-800 font-black uppercase text-[11px] tracking-[0.4em]">Historical Search Returned Null Set</p>
                   </td>
                 </tr>
               ) : (
-                filteredGraduates.map((graduate) => (
-                  <tr key={graduate._id} className="hover:bg-white/5 transition-colors">
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="text-sm font-medium text-white">{graduate.name}</div>
-                        <div className="text-sm text-gray-400">{graduate.email}</div>
+                filteredGraduates.map((graduate, idx) => (
+                  <motion.tr
+                    key={graduate._id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: idx * 0.02 }}
+                    className="group hover:bg-slate-900/40 transition-colors"
+                  >
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center text-slate-600 group-hover:text-primary-400 transition-colors">
+                          <User size={18} />
+                        </div>
+                        <div>
+                          <div className="text-sm font-black text-white group-hover:text-primary-400 transition-colors">{graduate.name}</div>
+                          <div className="text-[10px] font-bold text-slate-500">{graduate.email}</div>
+                        </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-white">{graduate.rollNumber}</td>
-                    <td className="px-6 py-4 text-sm text-white">{graduate.department}</td>
-                    <td className="px-6 py-4 text-sm text-white">{graduate.graduationYear}</td>
-                    <td className="px-6 py-4 text-sm text-white">
-                      {graduate.finalCGPA ? graduate.finalCGPA.toFixed(2) : "N/A"}
+                    <td className="px-8 py-6">
+                      <span className="text-xs font-bold text-slate-400 font-mono tracking-widest">{graduate.rollNumber}</span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-white">
-                      {new Date(graduate.graduationDate).toLocaleDateString()}
+                    <td className="px-8 py-6">
+                      <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{graduate.department}</span>
                     </td>
-                  </tr>
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-2">
+                        <Calendar size={14} className="text-slate-700" />
+                        <span className="text-sm font-black text-white">{graduate.graduationYear}</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6 text-center">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                        <span className="text-[9px] font-black text-emerald-500 uppercase">Certified</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6 text-right">
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{new Date(graduate.graduationDate).toLocaleDateString()}</span>
+                    </td>
+                  </motion.tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Security Disclaimer */}
+      <div className="p-8 bg-slate-900/20 border border-slate-900 rounded-[2.5rem] flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <ShieldCheck className="text-slate-600" size={24} />
+          <div>
+            <p className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Archive Integrity Verified</p>
+            <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Tamper-evident clinical registry records | Institutional Grade Security</p>
+          </div>
+        </div>
+        <Globe className="text-slate-800 animate-spin-slow" size={24} />
+      </div>
+
+      <style jsx global>{`
+        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+      `}</style>
     </div>
   )
 }

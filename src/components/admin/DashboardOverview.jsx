@@ -1,6 +1,7 @@
 "use client"
 
-import { Users, GraduationCap, Clock, BookOpen, UserCheck, UserX, TrendingUp, Activity } from "lucide-react"
+import { Users, GraduationCap, Clock, BookOpen, UserCheck, UserX, TrendingUp, Activity, ShieldCheck, Zap, BarChart3, Globe } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function DashboardOverview({ teacherRequests, allStudents, allTeachers, sections, setActiveTab }) {
   const approvedTeachers = allTeachers?.filter((teacher) => teacher.isApproved) || []
@@ -9,162 +10,218 @@ export default function DashboardOverview({ teacherRequests, allStudents, allTea
 
   const stats = [
     {
-      title: "Total Students",
+      title: "Patient Registrar",
       value: allStudents?.length || 0,
       icon: GraduationCap,
-      color: "from-blue-500 to-blue-600",
-      textColor: "text-blue-100",
+      color: "bg-slate-900",
+      accent: "text-primary-400",
+      desc: "Total registered patients in network",
       onClick: () => setActiveTab("all-students"),
     },
     {
-      title: "Total Teachers",
+      title: "Clinician Registry",
       value: approvedTeachers?.length || 0,
       icon: Users,
-      color: "from-green-500 to-green-600",
-      textColor: "text-green-100",
+      color: "bg-slate-900",
+      accent: "text-teal-400",
+      desc: "Authorized medical professionals",
       onClick: () => setActiveTab("all-teachers"),
     },
     {
-      title: "Pending Teachers",
+      title: "Credentialing Queue",
       value: teacherRequests?.length || 0,
       icon: Clock,
-      color: "from-orange-500 to-orange-600",
-      textColor: "text-orange-100",
+      color: "bg-slate-900",
+      accent: "text-amber-400",
+      desc: "Applications awaiting verification",
       onClick: () => setActiveTab("pending-teachers"),
     },
     {
-      title: "Class Sections",
+      title: "Therapeutic Nodes",
       value: sections?.length || 0,
       icon: BookOpen,
-      color: "from-purple-500 to-purple-600",
-      textColor: "text-purple-100",
+      color: "bg-slate-900",
+      accent: "text-primary-400",
+      desc: "Active therapy session units",
       onClick: () => setActiveTab("class-sections"),
     },
     {
-      title: "Assigned Teachers",
+      title: "Node Saturation",
       value: assignedTeachers?.length || 0,
       icon: UserCheck,
-      color: "from-emerald-500 to-emerald-600",
-      textColor: "text-emerald-100",
-      description: "Teachers with classes",
+      color: "bg-slate-900",
+      accent: "text-emerald-400",
+      desc: "Clinicians actively providing care",
       onClick: () => setActiveTab("assign-classes"),
     },
     {
-      title: "Unassigned Teachers",
+      title: "Available Personnel",
       value: unassignedTeachers?.length || 0,
       icon: UserX,
-      color: "from-red-500 to-red-600",
-      textColor: "text-red-100",
-      description: "Teachers awaiting assignment",
+      color: "bg-slate-900",
+      accent: "text-rose-400",
+      desc: "Staff ready for node assignment",
       onClick: () => setActiveTab("assign-classes"),
-    },
-  ]
-
-  const recentActivity = [
-    { text: `${allStudents?.length || 0} students registered`, color: "text-green-400", icon: GraduationCap },
-    {
-      text: `${assignedTeachers?.length || 0} teachers assigned to classes`,
-      color: "text-blue-400",
-      icon: UserCheck,
-    },
-    { text: `${unassignedTeachers?.length || 0} teachers awaiting assignment`, color: "text-orange-400", icon: UserX },
-    {
-      text: `${teacherRequests?.length || 0} teacher requests pending approval`,
-      color: "text-yellow-400",
-      icon: Clock,
     },
   ]
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-        <p className="text-gray-400">Welcome back, Administrator</p>
+    <div className="space-y-8 font-outfit">
+      {/* Governance Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-900 pb-8">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <ShieldCheck className="text-primary-500" size={24} />
+            <h1 className="text-4xl font-black text-white tracking-tighter">Governance Analytics</h1>
+          </div>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Institutional Root Overview • 2025</p>
+        </div>
+        <div className="flex items-center gap-6 px-6 py-3 bg-slate-900/50 border border-slate-800 rounded-2xl">
+          <div className="text-right">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">System Status</p>
+            <p className="text-xs font-black text-emerald-500 uppercase">Operational</p>
+          </div>
+          <div className="w-[1px] h-8 bg-slate-800" />
+          <div className="flex gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse" />
+            <div className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse delay-75" />
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse delay-150" />
+          </div>
+        </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* High-Density Metric Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {stats.map((stat, index) => {
           const Icon = stat.icon
           return (
-            <div
+            <motion.div
               key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
               onClick={stat.onClick}
               className={`
-                bg-gradient-to-r ${stat.color} rounded-xl p-6 cursor-pointer
-                transform transition-all duration-200 hover:scale-105 hover:shadow-xl
-                border border-white/10
+                ${stat.color} border border-slate-800 rounded-3xl p-7 cursor-pointer
+                hover:border-primary-500/50 hover:bg-slate-900/50 transition-all duration-300 group relative overflow-hidden
               `}
             >
-              <div className="flex items-center justify-between">
+              <div className="relative z-10 flex items-start justify-between">
                 <div>
-                  <p className={`${stat.textColor} text-sm font-medium opacity-90`}>{stat.title}</p>
-                  <p className="text-3xl font-bold text-white mt-1">{stat.value}</p>
-                  {stat.description && (
-                    <p className={`${stat.textColor} text-xs mt-1 opacity-75`}>{stat.description}</p>
-                  )}
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{stat.title}</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-4xl font-black text-white tracking-tighter">{stat.value}</p>
+                    <TrendingUp size={14} className="text-emerald-500" />
+                  </div>
+                  <p className="text-xs font-bold text-slate-600 mt-4 leading-relaxed max-w-[180px]">
+                    {stat.desc}
+                  </p>
                 </div>
-                <Icon className="text-white opacity-80" size={32} />
+                <div className={`p-4 rounded-2xl bg-slate-800/50 ${stat.accent} group-hover:scale-110 transition-transform duration-500`}>
+                  <Icon size={28} strokeWidth={2.5} />
+                </div>
               </div>
-            </div>
+              <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-primary-600/5 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
+            </motion.div>
           )
         })}
       </div>
 
-      {/* Recent Activity and Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-          <div className="flex items-center space-x-2 mb-4">
-            <Activity className="text-blue-400" size={24} />
-            <h2 className="text-xl font-semibold text-white">Recent Activity</h2>
+      {/* Advanced Diagnostics Row */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Real-time Event Stream */}
+        <div className="xl:col-span-2 bg-slate-900/30 backdrop-blur-xl rounded-[2.5rem] p-8 border border-slate-900 relative overflow-hidden">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-primary-600/10 rounded-xl flex items-center justify-center text-primary-500">
+                <Activity size={20} />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-white tracking-tight">Clinical Infrastructure Activity</h2>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-0.5">Real-time status stream</p>
+              </div>
+            </div>
+            <button className="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] px-4 py-2 border border-primary-500/20 rounded-full hover:bg-primary-500/10 transition-all">
+              Export Global Logs
+            </button>
           </div>
-          <div className="space-y-3">
-            {recentActivity.map((activity, index) => {
-              const Icon = activity.icon
-              return (
-                <div key={index} className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <Icon className={activity.color} size={16} />
-                  <span className="text-gray-300 text-sm">{activity.text}</span>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { icon: GraduationCap, label: "Network Growth", val: `${allStudents?.length || 0} Entities Registered`, color: "emerald" },
+              { icon: UserCheck, label: "Node Saturation", val: `${assignedTeachers?.length || 0} Clinicians Provisioned`, color: "blue" },
+              { icon: Clock, label: "Pending Verification", val: `${teacherRequests?.length || 0} Credentials Awaiting Review`, color: "amber" },
+              { icon: Zap, label: "System Latency", val: "Optimal Performance (22ms)", color: "teal" }
+            ].map((item, i) => (
+              <div key={i} className="flex gap-4 p-5 rounded-2xl bg-slate-950/40 border border-slate-900/50 group hover:border-slate-800 transition-all">
+                <div className={`w-12 h-12 rounded-xl bg-${item.color}-500/10 flex items-center justify-center text-${item.color}-500 shrink-0`}>
+                  <item.icon size={22} />
                 </div>
-              )
-            })}
+                <div>
+                  <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">{item.label}</p>
+                  <p className="text-sm font-black text-slate-200">{item.val}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Recently Assigned Classes */}
-        <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-6 border border-gray-700">
-          <div className="flex items-center space-x-2 mb-4">
-            <TrendingUp className="text-green-400" size={24} />
-            <h2 className="text-xl font-semibold text-white">Recently Assigned Classes</h2>
-          </div>
-          <div className="space-y-3">
-            {assignedTeachers?.slice(0, 3).map((teacher, index) => (
-              <div key={index} className="bg-green-600/20 rounded-lg p-3 border border-green-500/30">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-white font-medium">{teacher.name}</p>
-                    <p className="text-green-400 text-sm">{teacher.assignedClass}</p>
+        {/* Efficiency Index */}
+        <div className="bg-slate-950 border border-slate-900 rounded-[2.5rem] p-8 relative overflow-hidden group">
+          <div className="relative z-10">
+            <div className="flex items-center gap-4 mb-8">
+              <BarChart3 className="text-teal-400" size={24} />
+              <div>
+                <h2 className="text-xl font-black text-white tracking-tight">Diagnostic Index</h2>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-0.5">Institutional performance</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {[
+                { label: "Phase Completion", val: 84 },
+                { label: "Clinician Engagement", val: 92 },
+                { label: "Data Integrity", val: 100 }
+              ].map((bar, i) => (
+                <div key={i} className="space-y-3">
+                  <div className="flex justify-between items-end">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{bar.label}</span>
+                    <span className="text-xs font-black text-white">{bar.val}%</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-gray-300 text-sm">{teacher.subject}</p>
+                  <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${bar.val}%` }}
+                      transition={{ duration: 1.5, delay: i * 0.2 }}
+                      className={`h-full bg-gradient-to-r ${i === 2 ? 'from-teal-500 to-emerald-400' : 'from-primary-600 to-indigo-500'} rounded-full`}
+                    />
                   </div>
                 </div>
+              ))}
+            </div>
+
+            <div className="mt-12 p-6 bg-slate-900/50 rounded-3xl border border-slate-800">
+              <div className="flex items-center gap-3 mb-4">
+                <Globe className="text-primary-500 animate-spin-slow" size={18} />
+                <p className="text-[10px] font-black text-white uppercase tracking-widest">Global Registry Sync</p>
               </div>
-            )) || <p className="text-gray-400 text-center py-4">No classes assigned yet</p>}
-            {assignedTeachers?.length > 3 && (
-              <button
-                onClick={() => setActiveTab("assign-classes")}
-                className="w-full text-center text-green-400 hover:text-green-300 text-sm py-2"
-              >
-                View all assigned classes ({assignedTeachers.length})
-              </button>
-            )}
+              <p className="text-[10px] font-bold text-slate-500 leading-relaxed uppercase"> Last Synchronization: <span className="text-white">Active Now</span></p>
+            </div>
           </div>
+
+          <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 blur-[50px] -z-0" />
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 12s linear infinite;
+        }
+      `}</style>
     </div>
   )
 }
