@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 // Page metadata
 export const metadata = {
-    title: "Rehabilitation Therapy Session Management System",
+    title: "Lumos Milestone Care",
     description: "A structured, secure, and organized platform for managing therapy session documentation.",
     icons: {
         icon: "/images/2ndLogo.jpg",

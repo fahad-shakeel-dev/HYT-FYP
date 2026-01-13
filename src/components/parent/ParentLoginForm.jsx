@@ -99,9 +99,9 @@ export default function ParentLoginForm() {
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="relative z-10 w-full max-w-md text-left"
                 >
-                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 backdrop-blur-xl rounded-full mb-8 border border-white/10">
+                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 backdrop-blur-xl rounded-full mb-8 border border-white/20">
                         <LucideHeart className="text-rose-400" size={16} />
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/60">Secure Caregiver Node</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/80">Secure Caregiver Node</span>
                     </div>
 
                     <h1 className="text-4xl xl:text-5xl font-black text-white mb-6 tracking-tight leading-[1.1]">
@@ -110,7 +110,7 @@ export default function ParentLoginForm() {
                         Progress
                     </h1>
 
-                    <p className="text-white/40 font-bold text-base leading-relaxed mb-10 max-w-sm">
+                    <p className="text-white/60 font-medium text-base leading-relaxed mb-10 max-w-sm">
                         Real-time visualization of therapeutic milestones and clinician feedback.
                     </p>
 
@@ -131,8 +131,8 @@ export default function ParentLoginForm() {
                 </motion.div>
 
                 <div className="absolute bottom-8 left-8 flex items-center gap-4">
-                    <div className="w-6 h-[1px] bg-white/10"></div>
-                    <span className="text-[7px] font-black text-white/20 uppercase tracking-[0.4em]">Care Portal v2.0</span>
+                    <div className="w-6 h-[1px] bg-white/20"></div>
+                    <span className="text-[7px] font-black text-white/40 uppercase tracking-[0.4em]">Milestone Care Portal v2.0</span>
                 </div>
             </div>
 
@@ -145,7 +145,7 @@ export default function ParentLoginForm() {
                         transition={{ duration: 0.6 }}
                     >
                         <header className="mb-8">
-                            <Link href="/" className="inline-flex items-center text-slate-400 hover:text-primary-600 font-black text-[9px] uppercase tracking-widest mb-6 transition-all group">
+                            <Link href="/" className="inline-flex items-center text-slate-500 hover:text-primary-600 font-black text-[9px] uppercase tracking-widest mb-6 transition-all group">
                                 <LucideArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" size={14} />
                                 Exit to Selection
                             </Link>
@@ -155,8 +155,8 @@ export default function ParentLoginForm() {
                                     <LucideUsers size={24} />
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none mb-1">Parent Sign-in</h2>
-                                    <p className="text-slate-400 font-bold text-sm">Authorized Caregiver Access</p>
+                                    <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none mb-1">Lumos Milestone Sign-in</h2>
+                                    <p className="text-slate-500 font-bold text-sm">Authorized Caregiver Access</p>
                                 </div>
                             </div>
                         </header>
@@ -164,9 +164,9 @@ export default function ParentLoginForm() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-5">
                                 <div className="space-y-2">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Family Email</label>
+                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Family Email</label>
                                     <div className="relative group">
-                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors">
+                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors">
                                             <LucideMail size={18} />
                                         </div>
                                         <input
@@ -175,7 +175,7 @@ export default function ParentLoginForm() {
                                             placeholder="parent@domain.com"
                                             value={formData.email}
                                             onChange={handleInputChange}
-                                            className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
+                                            className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
                                             required
                                         />
                                     </div>
@@ -183,13 +183,13 @@ export default function ParentLoginForm() {
 
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between ml-1">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Access Key</label>
+                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Access Key</label>
                                         <Link href="#" className="text-[9px] font-black text-primary-600 hover:text-primary-700 uppercase tracking-widest">
                                             Forgot Key?
                                         </Link>
                                     </div>
                                     <div className="relative group">
-                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors">
+                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors">
                                             <LucideLock size={18} />
                                         </div>
                                         <input
@@ -198,13 +198,13 @@ export default function ParentLoginForm() {
                                             placeholder="••••••••"
                                             value={formData.password}
                                             onChange={handleInputChange}
-                                            className="w-full pl-14 pr-14 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
+                                            className="w-full pl-14 pr-14 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
                                             required
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-primary-600 transition-colors"
+                                            className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-600 transition-colors"
                                         >
                                             {showPassword ? <LucideEyeOff size={18} /> : <LucideEye size={18} />}
                                         </button>
@@ -221,10 +221,10 @@ export default function ParentLoginForm() {
                                         onChange={handleInputChange}
                                         className="peer sr-only"
                                     />
-                                    <div className="w-5 h-5 bg-white border-2 border-slate-200 rounded-lg peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all flex items-center justify-center">
+                                    <div className="w-5 h-5 bg-white border-2 border-slate-300 rounded-lg peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all flex items-center justify-center">
                                         <LucideShieldCheck size={12} className="text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
                                     </div>
-                                    <span className="ml-3 text-[9px] font-black text-slate-500 uppercase tracking-widest">Maintain Portal Active</span>
+                                    <span className="ml-3 text-[9px] font-black text-slate-600 uppercase tracking-widest">Maintain Portal Active</span>
                                 </label>
                             </div>
 
@@ -245,11 +245,11 @@ export default function ParentLoginForm() {
                             </motion.button>
                         </form>
 
-                        <footer className="mt-10 pt-8 border-t border-slate-50 text-center">
-                            <p className="text-[11px] font-bold text-slate-400 mb-4">
+                        <footer className="mt-10 pt-8 border-t border-slate-100 text-center">
+                            <p className="text-[11px] font-bold text-slate-500 mb-4">
                                 New family registered with our network?
                             </p>
-                            <Link href="/parent/register" className="inline-flex items-center gap-2 px-8 py-3 bg-slate-100 hover:bg-primary-50 text-slate-600 hover:text-primary-600 font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all border border-slate-100 hover:border-primary-100">
+                            <Link href="/parent/register" className="inline-flex items-center gap-2 px-8 py-3 bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-600 font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all border border-slate-200 hover:border-primary-200">
                                 Register Account
                                 <LucideChevronRight size={14} />
                             </Link>
@@ -257,8 +257,8 @@ export default function ParentLoginForm() {
                     </motion.div>
                 </div>
 
-                <div className="mt-10 pb-4 text-[7px] font-black text-slate-300 uppercase tracking-[0.4em] text-center shrink-0">
-                    Family Transparency Module • Rehabilitative Clinical Network • 2025
+                <div className="mt-10 pb-4 text-[7px] font-black text-slate-400 uppercase tracking-[0.4em] text-center shrink-0">
+                    Lumos Milestone Care • Patient Care Network • 2025
                 </div>
             </div>
 

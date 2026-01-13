@@ -31,7 +31,7 @@ export async function GET(request) {
         const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
         if (user.isVerified) {
-            return NextResponse.redirect(new URL("/teacher?message=Email already verified", baseURL));
+            return NextResponse.redirect(new URL("/therapist?message=Email already verified", baseURL));
         }
 
         if (user.verificationToken !== token) {
@@ -42,8 +42,8 @@ export async function GET(request) {
         user.verificationToken = null;
         await user.save();
 
-        // return NextResponse.redirect(new URL("/teacher?message=Email verified successfully", baseURL));
-        return NextResponse.redirect(new URL("/teacher", baseURL));
+        // return NextResponse.redirect(new URL("/therapist?message=Email verified successfully", baseURL));
+        return NextResponse.redirect(new URL("/therapist", baseURL));
 
     } catch (error) {
         console.error("Verification error:", error);

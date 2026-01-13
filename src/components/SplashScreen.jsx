@@ -59,12 +59,12 @@ export default function SplashScreen() {
                     transition={{ delay: 0.6 }}
                 >
                     <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary-400 mb-6 leading-none">
-                        Clinical Governance Registry
+                        Lumos Milestone Care
                     </p>
                     <h1 className="text-4xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-[1.1]">
-                        Rehabilitation Therapy <br />
+                        Milestone <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 via-teal-300 to-primary-500">
-                            Session Management
+                            Care Portal
                         </span>
                     </h1>
                 </motion.div>
@@ -108,7 +108,7 @@ export default function SplashScreen() {
             >
                 <div className="inline-block px-6 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/5 shadow-2xl">
                     <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">
-                        UCP Faisalabad • Dept. of Computer Science • 2025
+                        Lumos Milestone Care • 2025
                     </span>
                 </div>
             </motion.div>

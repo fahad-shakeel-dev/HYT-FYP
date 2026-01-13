@@ -87,12 +87,12 @@ export default function LoginPage() {
                     <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-primary-200 animate-pulse">
                         <LucideActivity size={20} />
                     </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Clinical Verification System</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Lumos Milestone Care</span>
                 </motion.div>
 
                 <h1 className="text-4xl md:text-6xl font-black text-slate-800 tracking-tight leading-[1.1] max-w-4xl mx-auto mb-6">
-                    Rehabilitation Therapy <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-primary-500 to-teal-500">Session Management</span> System
+                    Lumos Milestone <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-primary-500 to-teal-500">Care Portal</span>
                 </h1>
 
                 <div className="flex flex-col items-center gap-3">
@@ -101,7 +101,7 @@ export default function LoginPage() {
                     </p>
                     <div className="flex items-center gap-4">
                         <div className="h-[2px] w-12 bg-slate-200"></div>
-                        <span className="text-slate-400 font-black text-[10px] uppercase tracking-[0.4em]">Project ID: R-2025-HYT</span>
+                        <span className="text-slate-400 font-black text-[10px] uppercase tracking-[0.4em]">Project ID: Lumos-2025</span>
                         <div className="h-[2px] w-12 bg-slate-200"></div>
                     </div>
                 </div>
@@ -189,17 +189,17 @@ export default function LoginPage() {
                 <div className="flex items-center gap-6">
                     <div className="text-left">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none mb-1">Lead Researcher</p>
-                        <p className="text-sm font-black text-slate-700 leading-none">Hafiza Yusra Tariq</p>
+                        <p className="text-sm font-black text-slate-700 leading-none">Lead Clinical Governance</p>
                     </div>
                     <div className="h-8 w-[1px] bg-slate-200"></div>
                     <div className="text-left">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none mb-1">Academic Unit</p>
-                        <p className="text-sm font-black text-slate-700 leading-none">UCP Faisalabad • 2025</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none mb-1">Branding Unit</p>
+                        <p className="text-sm font-black text-slate-700 leading-none">Lumos Milestone Care • 2025</p>
                     </div>
                 </div>
 
                 <div className="px-6 py-2 bg-slate-100/50 backdrop-blur-sm rounded-full border border-slate-50">
-                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em]">Department of Computer Science & Information Technology</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em]">Institutional Milestone Tracker & Patient Care Network</p>
                 </div>
             </motion.div>
 

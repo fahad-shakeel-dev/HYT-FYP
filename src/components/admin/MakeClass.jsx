@@ -18,7 +18,7 @@ export default function MakeClass({ fetchData }) {
 
   const programs = ["BSCS", "BBA", "ADP CS"]
   const semesters = ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5", "Phase 6", "Phase 7", "Phase 8"]
-  const sections = ["Node A", "Node B", "Node C", "Node D", "Node E", "Node F"]
+  const sections = ["Section A", "Section B", "Section C", "Section D", "Section E", "Section F"]
 
   const generateClassName = (program, semester, sections) => {
     if (!program || !semester || sections.length === 0) return ""
@@ -148,13 +148,13 @@ export default function MakeClass({ fetchData }) {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Layers className="text-primary-500" size={24} />
-            <h1 className="text-4xl font-black text-white tracking-tighter">Node Construction</h1>
+            <h1 className="text-4xl font-black text-white tracking-tighter">Session Configuration</h1>
           </div>
-          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Institutional Care Unit & Discipline Architecture</p>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Architecture & Session Group Management</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="px-6 py-2 bg-slate-900/50 border border-slate-800 rounded-2xl">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none"> Total Registry Units </span>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none"> Total Configured Sessions </span>
             <p className="text-lg font-black text-white">{classes.length}</p>
           </div>
         </div>
@@ -184,14 +184,15 @@ export default function MakeClass({ fetchData }) {
         <div className="bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] p-8 border border-slate-900 relative group overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-xl font-black text-white tracking-tight mb-8 flex items-center gap-3">
+              {/* <h2 className="text-xl font-black text-white tracking-tight mb-8 flex items-center gap-3"> */}
               <Plus className="text-primary-500" size={22} />
-              Unit Architect
+              Session Architect
             </h2>
 
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Registry Division</label>
+                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Program / Department</label>
                   <div className="relative group">
                     <select value={selectedProgram} onChange={(e) => setSelectedProgram(e.target.value)} disabled={isEditMode} className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer hover:bg-slate-950 transition-all disabled:opacity-30">
                       <option value="">Division Taxonomy...</option>
@@ -201,7 +202,7 @@ export default function MakeClass({ fetchData }) {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Clinical Phase</label>
+                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Session Phase</label>
                   <div className="relative">
                     <select value={selectedSemester} onChange={(e) => setSelectedSemester(e.target.value)} className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer">
                       <option value="">Phase Registry...</option>
@@ -212,7 +213,7 @@ export default function MakeClass({ fetchData }) {
               </div>
 
               <div className="space-y-4">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Target Nodes (Provision multiple units)</label>
+                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Target Sections (Select all that apply)</label>
                 <div className="grid grid-cols-3 gap-3">
                   {sections.map(sec => (
                     <button key={sec} onClick={() => handleSectionChange(sec)} className={`px-4 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-widest transition-all ${selectedSections.includes(sec) ? 'bg-primary-600 border-primary-500 text-white shadow-lg shadow-primary-950/20' : 'bg-slate-950/40 border-slate-900 text-slate-500 hover:border-slate-800'}`}>
@@ -224,9 +225,9 @@ export default function MakeClass({ fetchData }) {
 
               <div className="space-y-4 pt-4">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Unit Disciplines</label>
+                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4">Activities / Disciplines</label>
                   <button onClick={addSubject} className="text-secondary-400 font-black text-[9px] uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors">
-                    <Plus size={14} /> Add Discipline
+                    <Plus size={14} /> Add Activity
                   </button>
                 </div>
                 <div className="space-y-3 max-h-[200px] overflow-y-auto pr-2 no-scrollbar">
@@ -255,7 +256,7 @@ export default function MakeClass({ fetchData }) {
                 className="w-full py-5 bg-primary-600 hover:bg-emerald-600 text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-950/20 active:scale-95 disabled:opacity-30 group/btn"
               >
                 {loading ? <Activity className="animate-spin" size={20} /> : <Save size={20} className="group-hover/btn:scale-110 transition-transform" />}
-                <span className="text-[10px] uppercase tracking-[0.2em]">{isEditMode ? "Update Unit Configuration" : "Provision New Unit Network"}</span>
+                <span className="text-[10px] uppercase tracking-[0.2em]">{isEditMode ? "Update Configuration" : "Create Session Group"}</span>
               </button>
             </div>
           </div>
@@ -268,7 +269,7 @@ export default function MakeClass({ fetchData }) {
             <div className="relative z-10">
               <h2 className="text-xl font-black text-white tracking-tight mb-10 flex items-center gap-4">
                 <Activity className="text-teal-400" size={22} />
-                Unit Blueprint
+                Configuration Blueprint
               </h2>
 
               {selectedProgram && selectedSemester && selectedSections.length > 0 ? (
@@ -280,7 +281,7 @@ export default function MakeClass({ fetchData }) {
                         <h3 className="text-2xl font-black text-white tracking-tighter">{generateClassName(selectedProgram, selectedSemester, selectedSections)}</h3>
                       </div>
                       <div className="px-3 py-1 bg-teal-500/10 border border-teal-500/20 rounded-lg">
-                        <span className="text-[9px] font-black text-teal-500 uppercase">Valid Blueprint</span>
+                        <span className="text-[9px] font-black text-teal-500 uppercase">Valid Config</span>
                       </div>
                     </div>
 
@@ -293,14 +294,14 @@ export default function MakeClass({ fetchData }) {
                         </div>
                       </div>
                       <div>
-                        <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-2">Affected Nodes</p>
+                        <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-2">Affected Sections</p>
                         <p className="text-xs font-black text-primary-400">{selectedSections.join(", ")}</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="p-6 bg-slate-900/30 border border-slate-900 rounded-3xl">
-                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4">Provisioned Disciplines</p>
+                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4">Included Activities</p>
                     <div className="flex flex-wrap gap-2">
                       {subjects.filter(s => s.name.trim()).map(s => (
                         <div key={s.id} className="px-4 py-2 bg-slate-950 rounded-xl border border-slate-800 text-[10px] font-black text-emerald-500 uppercase tracking-widest">
@@ -316,7 +317,7 @@ export default function MakeClass({ fetchData }) {
                   <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-slate-700 mb-6">
                     <ClipboardList size={32} />
                   </div>
-                  <p className="text-slate-600 font-black uppercase text-[11px] tracking-[0.3em] leading-relaxed">CONFIGURE UNIT PARAMETERS TO VIEW ARCHITECTURAL BLUEPRINT</p>
+                  <p className="text-slate-600 font-black uppercase text-[11px] tracking-[0.3em] leading-relaxed">CONFIGURE SESSION PARAMETERS TO VIEW BLUEPRINT</p>
                 </div>
               )}
             </div>
@@ -330,7 +331,7 @@ export default function MakeClass({ fetchData }) {
         <div className="flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
             <Database className="text-primary-500" size={24} />
-            <h2 className="text-xl font-black text-white tracking-tight uppercase tracking-widest">Active Unit Registry</h2>
+            <h2 className="text-xl font-black text-white tracking-tight uppercase tracking-widest">Active Session Registry</h2>
           </div>
           <div className="flex gap-4">
             <div className="px-4 py-2 bg-slate-900/50 border border-slate-800 rounded-xl text-[10px] font-black text-slate-500 uppercase tracking-widest"> Registry Phase: {new Date().getFullYear()} </div>
@@ -365,17 +366,17 @@ export default function MakeClass({ fetchData }) {
 
                 <div className="space-y-3 mb-8 flex-1">
                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                    <span className="text-slate-600">Division</span>
+                    <span className="text-slate-600">Department</span>
                     <span className="text-slate-300">{cls.program}</span>
                   </div>
                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                    <span className="text-slate-600">Active Nodes</span>
+                    <span className="text-slate-600">Active Sections</span>
                     <span className="text-primary-400">{cls.sections.join(", ")}</span>
                   </div>
                 </div>
 
                 <div className="pt-6 border-t border-slate-800/50">
-                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-3">Provisioned Disciplines</p>
+                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-3">Activities</p>
                   <div className="flex flex-wrap gap-1.5">
                     {cls.subjects.slice(0, 3).map((sub, i) => (
                       <span key={i} className="px-2 py-1 bg-slate-950 rounded-lg text-[8px] font-black text-slate-500 uppercase border border-slate-900">{sub}</span>
@@ -389,7 +390,7 @@ export default function MakeClass({ fetchData }) {
           ))}
           {classes.length === 0 && !isFetchingClasses && (
             <div className="col-span-full py-20 text-center border border-dashed border-slate-900 rounded-[3rem]">
-              <p className="text-slate-700 font-black uppercase text-xs tracking-[0.5em]">Institutional Registry Purged</p>
+              <p className="text-slate-700 font-black uppercase text-xs tracking-[0.5em]">No Sessions Configured</p>
             </div>
           )}
         </div>

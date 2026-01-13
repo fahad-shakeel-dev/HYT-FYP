@@ -37,10 +37,10 @@ export async function GET(request) {
       return NextResponse.json({ message: "Student request not found" }, { status: 404 });
     }
 
-    const baseURL = process.env.NEXT_PUBLIC_BASE_URL ;
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
     if (unverifiedStudent.isVerified) {
-      return NextResponse.redirect(new URL("/student?message=Email%20already%20verified", baseURL));
+      return NextResponse.redirect(new URL("/parent?message=Email%20already%20verified", baseURL));
     }
 
     if (unverifiedStudent.verificationToken !== token) {
@@ -98,7 +98,7 @@ export async function GET(request) {
     await UnverifiedStudent.deleteOne({ _id: unverifiedStudent._id });
     console.log("UnverifiedStudent deleted, Student created:", newStudent);
 
-    return NextResponse.redirect(new URL("/student?message=Email%20verified%20successfully", baseURL));
+    return NextResponse.redirect(new URL("/parent?message=Email%20verified%20successfully", baseURL));
   } catch (error) {
     console.error("Verification error:", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });

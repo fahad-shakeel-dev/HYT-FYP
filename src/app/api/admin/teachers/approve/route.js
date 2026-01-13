@@ -35,18 +35,37 @@ export async function POST(request) {
             return NextResponse.json({ message: "Request has already been processed" }, { status: 400 })
         }
 
-        // Create new user from registration request
-        const newUser = new User({
-            name: registrationRequest.name,
-            email: registrationRequest.email,
-            phone: registrationRequest.phone,
-            password: registrationRequest.password,
-            image: registrationRequest.image,
-            role: "teacher",
-            isApproved: true,
-        })
+        // Check if user already exists
+        let newUser = await User.findOne({ email: registrationRequest.email })
 
-        await newUser.save()
+        if (newUser) {
+            // Update existing user
+            newUser.role = "therapist"
+            newUser.isApproved = true
+            // Update other fields to match the request if necessary
+            newUser.name = registrationRequest.name
+            newUser.phone = registrationRequest.phone
+            newUser.image = registrationRequest.image
+            // Only update password if needed, or assume the request has the correct one? 
+            // For safety in this context (approval), let's ensure the requested password is valid if checking/hashing isn't complex, 
+            // but here we are storing plain/hashed strings directly. Let's update it to ensure login works with what they just submitted.
+            newUser.password = registrationRequest.password
+
+            await newUser.save()
+            console.log("Updated existing user:", newUser.email)
+        } else {
+            // Create new user from registration request
+            newUser = new User({
+                name: registrationRequest.name,
+                email: registrationRequest.email,
+                phone: registrationRequest.phone,
+                password: registrationRequest.password,
+                image: registrationRequest.image,
+                role: "therapist",
+                isApproved: true,
+            })
+            await newUser.save()
+        }
 
         // Update registration request status
         registrationRequest.status = "approved"

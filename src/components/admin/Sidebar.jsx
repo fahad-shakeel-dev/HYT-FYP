@@ -13,6 +13,7 @@ import {
   Settings,
   ShieldCheck,
   Activity,
+  LogOut,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -31,60 +32,60 @@ export default function Sidebar({
   const menuItems = [
     {
       id: "session-management",
-      label: "Phase Governance",
+      label: "Session Management",
       icon: Settings,
       count: null,
       alwaysEnabled: true,
-      desc: "System cycles & active sessions"
+      desc: "Manage academic cycles"
     },
     {
       id: "dashboard",
-      label: "Governance Analytics",
+      label: "System Overview",
       icon: LayoutDashboard,
       count: null,
-      desc: "High-level diagnostic overview"
+      desc: "Dashboard & Analytics"
     },
     {
       id: "pending-teachers",
-      label: "Therapist Verification",
+      label: "Therapist Requests",
       icon: Clock,
       count: teacherRequests?.length || 0,
-      desc: "Awaiting clinical approval"
+      desc: "Pending approval queue"
     },
     {
       id: "all-teachers",
-      label: "Clinician Registry",
+      label: "Manage Therapists",
       icon: Users,
       count: allTeachers?.length || 0,
-      desc: "Authorized medical personnel"
+      desc: "Active accounts"
     },
     {
       id: "all-students",
-      label: "Patient Registrar",
+      label: "Child Profiles",
       icon: GraduationCap,
       count: allStudents?.length || 0,
-      desc: "Unified patient database"
+      desc: "Enrolled children"
     },
     {
       id: "make-class",
-      label: "Node Architecture",
+      label: "Create Session",
       icon: Plus,
       count: null,
-      desc: "Create new therapy nodes"
+      desc: "New therapy sessions"
     },
     {
       id: "assign-classes",
-      label: "Node Provisioning",
+      label: "Assign Therapist",
       icon: UserCheck,
       count: null,
-      desc: "Assign clinicians to nodes"
+      desc: "Link therapists"
     },
     {
       id: "class-sections",
-      label: "Clinical Node Registry",
+      label: "Therapy Groups",
       icon: BookOpen,
       count: classes?.length || 0,
-      desc: "Active therapeutic sections"
+      desc: "Active sections"
     },
   ]
 
@@ -93,7 +94,7 @@ export default function Sidebar({
       {/* Mobile menu button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-6 left-6 z-50 p-3 bg-slate-900 border border-slate-800 text-white rounded-2xl shadow-2xl active:scale-95 transition-transform"
+        className="lg:hidden fixed top-6 left-6 z-50 p-3 bg-white border border-slate-200 text-slate-600 rounded-2xl shadow-lg active:scale-95 transition-transform"
       >
         {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
@@ -101,34 +102,36 @@ export default function Sidebar({
       {/* Sidebar Container */}
       <div
         className={`
-        fixed lg:relative inset-y-0 left-0 z-40 w-72 bg-slate-950 border-r border-slate-900
+        fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200
         transform transition-all duration-300 ease-in-out font-outfit
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}
       >
         <div className="flex flex-col h-full">
           {/* Institutional Header */}
-          <div className="p-8 pb-6">
+          <div className="p-8 pb-6 flex-none">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-primary-600 rounded-[1.25rem] flex items-center justify-center text-white shadow-xl shadow-primary-900/40">
+              <div className="w-12 h-12 bg-primary-600 rounded-[1.25rem] flex items-center justify-center text-white shadow-xl shadow-primary-600/20">
                 <ShieldCheck size={26} />
               </div>
               <div>
-                <h1 className="text-xl font-black text-white tracking-tight leading-none mb-1">Governance</h1>
-                <p className="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em]">Institutional Root</p>
+                <h1 className="text-xl font-black text-slate-800 tracking-tight leading-none mb-1">Lumos Admin</h1>
+                <p className="text-[10px] font-black text-primary-600 uppercase tracking-[0.2em]">Therapy System</p>
               </div>
             </div>
 
-            <div className={`p-4 rounded-2xl border flex items-center gap-3 transition-colors ${hasActiveSession ? "bg-slate-900/50 border-slate-800" : "bg-rose-950/20 border-rose-900/30"}`}>
-              <div className={`w-2 h-2 rounded-full ${hasActiveSession ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`} />
-              <span className={`text-[10px] font-black uppercase tracking-widest ${hasActiveSession ? "text-emerald-400" : "text-rose-400"}`}>
-                {hasActiveSession ? "Active Phase Verified" : "System Propagation Halted"}
-              </span>
+            <div className={`p-4 rounded-2xl border flex items-center gap-3 transition-colors ${hasActiveSession ? "bg-emerald-50 border-emerald-100" : "bg-slate-50 border-slate-200"}`}>
+              <div className={`w-2.5 h-2.5 rounded-full ${hasActiveSession ? "bg-emerald-500 animate-pulse" : "bg-slate-400"} `} />
+              <div className="flex flex-col">
+                <span className={`text-[10px] font-bold uppercase tracking-widest leading-tight ${hasActiveSession ? "text-emerald-700" : "text-slate-500"}`}>
+                  {hasActiveSession ? "Session Active" : "No Session"}
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Navigation Section */}
-          <nav className="flex-1 px-6 py-4 space-y-1.5 overflow-y-auto no-scrollbar">
+          <nav className="flex-1 px-6 py-4 space-y-2 overflow-y-auto no-scrollbar">
             {menuItems.map((item) => {
               const Icon = item.icon
               const isActive = activeTab === item.id
@@ -147,30 +150,30 @@ export default function Sidebar({
                   className={`
                     w-full group flex flex-col p-4 rounded-2xl text-left transition-all relative
                     ${isActive
-                      ? "bg-primary-600 text-white shadow-2xl shadow-primary-900/20 active:scale-[0.98]"
+                      ? "bg-primary-600 text-white shadow-lg shadow-primary-600/30 ring-4 ring-primary-50"
                       : isDisabled
-                        ? "text-slate-600 cursor-not-allowed opacity-40"
-                        : "text-slate-400 hover:bg-slate-900 hover:text-white"
+                        ? "text-slate-400 cursor-not-allowed opacity-50 bg-slate-50/50"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                     }
                   `}
                 >
                   <div className="flex items-center justify-between w-full mb-1">
                     <div className="flex items-center gap-3">
-                      <Icon size={18} className={isActive ? "text-white" : "group-hover:text-primary-400 transition-colors"} />
+                      <Icon size={18} className={isActive ? "text-white" : "text-slate-400 group-hover:text-primary-500 transition-colors"} />
                       <span className="font-bold text-sm tracking-tight">{item.label}</span>
                     </div>
                     {item.count !== null && (
                       <span
                         className={`
-                        text-[9px] font-black px-2 py-0.5 rounded-full
-                        ${isActive ? "bg-white/20 text-white" : "bg-slate-800 text-slate-400"}
+                        text-[9px] font-bold px-2 py-0.5 rounded-full
+                        ${isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500 group-hover:bg-white group-hover:shadow-sm"}
                       `}
                       >
                         {item.count}
                       </span>
                     )}
                   </div>
-                  <p className={`text-[10px] font-medium leading-none pl-7 ${isActive ? "text-white/60" : "text-slate-600"}`}>
+                  <p className={`text-[10px] font-medium leading-none pl-7 ${isActive ? "text-white/80" : "text-slate-400"}`}>
                     {item.desc}
                   </p>
                 </button>
@@ -178,18 +181,18 @@ export default function Sidebar({
             })}
           </nav>
 
-          {/* Performance Footer */}
-          <div className="p-8 pt-4">
-            <div className="bg-slate-900/30 rounded-2xl p-4 border border-slate-900 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Activity size={14} className="text-primary-500" />
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Network Latency</span>
+          {/* Footer & Sign Out */}
+          <div className="p-8 pt-6 flex-none mt-auto border-t border-slate-100 bg-white z-20">
+            <button
+              onClick={() => window.location.href = '/'}
+              className="w-full p-4 rounded-2xl border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-all flex items-center gap-3 group"
+            >
+              <LogOut size={18} className="group-hover:scale-110 transition-transform" />
+              <div className="text-left">
+                <p className="text-xs font-bold uppercase tracking-wider">Sign Out</p>
+                <p className="text-[10px] font-medium opacity-60">End session</p>
               </div>
-              <span className="text-[10px] font-black text-emerald-500">22ms</span>
-            </div>
-            <p className="text-[7px] font-black text-slate-700 uppercase tracking-[0.4em] text-center mt-6">
-              Institutional Ops • 2025
-            </p>
+            </button>
           </div>
         </div>
       </div>
@@ -201,7 +204,7 @@ export default function Sidebar({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="lg:hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-30"
+            className="lg:hidden fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-30"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -211,7 +214,6 @@ export default function Sidebar({
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;400;700;900&display=swap');
         .font-outfit { font-family: 'Outfit', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
     </>
   )

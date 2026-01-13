@@ -95,7 +95,7 @@ export default function TherapistResetPasswordForm() {
                 className="w-full max-w-lg bg-white/80 backdrop-blur-xl rounded-[3rem] shadow-2xl p-12 border border-white relative z-10"
             >
                 <div className="text-center mb-12">
-                    <Link href="/therapist" className="inline-flex items-center text-slate-400 hover:text-primary-600 font-black text-[10px] uppercase tracking-widest mb-10 transition-all group">
+                    <Link href="/therapist" className="inline-flex items-center text-slate-500 hover:text-primary-600 font-black text-[10px] uppercase tracking-widest mb-10 transition-all group">
                         <LucideArrowLeft className="mr-3 group-hover:-translate-x-1 transition-transform" size={16} />
                         Abort Security Update
                     </Link>
@@ -107,22 +107,22 @@ export default function TherapistResetPasswordForm() {
                     </div>
 
                     <h1 className="text-3xl font-black text-slate-800 mb-3 tracking-tight">Establish New Key</h1>
-                    <p className="text-slate-400 font-bold text-sm uppercase tracking-widest">Authorized Credential Update</p>
+                    <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">Authorized Credential Update</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     <div className="space-y-6">
                         <div className="space-y-3">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">New Clinical Security Key</label>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">New Clinical Security Key</label>
                             <div className="relative group">
-                                <LucideStethoscope className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={20} />
+                                <LucideStethoscope className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={20} />
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     name="password"
                                     placeholder="••••••••••••"
                                     value={formData.password}
                                     onChange={handleInputChange}
-                                    className="w-full pl-16 pr-16 py-5 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
+                                    className="w-full pl-16 pr-16 py-5 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
                                     required
                                 />
                                 <button
@@ -136,16 +136,16 @@ export default function TherapistResetPasswordForm() {
                         </div>
 
                         <div className="space-y-3">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm Security Key</label>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Confirm Security Key</label>
                             <div className="relative group">
-                                <LucideShieldCheck className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={20} />
+                                <LucideShieldCheck className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={20} />
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     name="confirmPassword"
                                     placeholder="••••••••••••"
                                     value={formData.confirmPassword}
                                     onChange={handleInputChange}
-                                    className="w-full pl-16 pr-16 py-5 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
+                                    className="w-full pl-16 pr-16 py-5 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
                                     required
                                 />
                             </div>
@@ -184,7 +184,7 @@ export default function TherapistResetPasswordForm() {
                 </form>
 
                 <div className="mt-12 text-center">
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-4 leading-relaxed">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 leading-relaxed">
                         Secure Facility Data Synchronization Active
                     </p>
                     <div className="h-1 w-24 bg-slate-50 mx-auto rounded-full overflow-hidden">

@@ -73,7 +73,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
 
   const sectionOptions = selectedClassData?.sections.map((section) => ({
     value: section,
-    label: `Node ${section}`,
+    label: `Session ${section}`,
   })) || [];
 
   const generateCredentials = () => {
@@ -189,12 +189,12 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Database className="text-primary-500" size={24} />
-            <h1 className="text-4xl font-black text-white tracking-tighter">Node Provisioning</h1>
+            <h1 className="text-4xl font-black text-white tracking-tighter">Assign Therapist</h1>
           </div>
-          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Institutional Clinician-Patient Assignment Engine</p>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Link Therapists to Sessions & Groups</p>
         </div>
         <div className="px-6 py-2 bg-slate-900/50 border border-slate-800 rounded-2xl">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none"> Global Active Nodes </span>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none"> Total Assignments </span>
           <p className="text-lg font-black text-white">{assignedClasses.length}</p>
         </div>
       </div>
@@ -205,14 +205,14 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
           <div className="relative z-10">
             <h2 className="text-xl font-black text-white tracking-tight mb-8 flex items-center gap-3">
               <Zap className="text-primary-500" size={20} />
-              Resource Coordinator
+              Assignment Manager
             </h2>
 
             <div className="space-y-6">
               {/* Clinician Select */}
               <div className="space-y-2">
                 <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                  <User size={12} /> Authorized Clinician
+                  <User size={12} /> Select Therapist
                 </label>
                 <div className="relative group">
                   <select
@@ -220,7 +220,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                     onChange={(e) => setSelectedTeacher(e.target.value)}
                     className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer hover:bg-slate-950 transition-all"
                   >
-                    <option value="">Authorize Medical Staff...</option>
+                    <option value="">Select Therapist...</option>
                     {availableTeachers.map((t) => (
                       <option key={t._id} value={t._id}>{t.name} (ID: {t._id.slice(-4).toUpperCase()})</option>
                     ))}
@@ -233,7 +233,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                 {/* Unit Select */}
                 <div className="space-y-2">
                   <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                    <ClipboardList size={12} /> Institutional Unit
+                    <ClipboardList size={12} /> Session Group
                   </label>
                   <div className="relative">
                     <select
@@ -280,7 +280,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
               {/* Node Multi-Select */}
               <div className="space-y-2">
                 <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                  <Activity size={12} /> Target Clinical Nodes
+                  <Activity size={12} /> Targeted Sections
                 </label>
                 <Select
                   isMulti
@@ -288,7 +288,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                   value={sectionOptions.filter((opt) => selectedSections.includes(opt.value))}
                   onChange={(sel) => setSelectedSections(sel.map((opt) => opt.value))}
                   styles={customSelectStyles}
-                  placeholder="SELECT NODES..."
+                  placeholder="SELECT SECTIONS..."
                   isDisabled={!selectedClass}
                 />
               </div>
@@ -301,7 +301,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                 className="w-full py-5 bg-primary-600 hover:bg-emerald-600 text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-950/20 active:scale-95 disabled:opacity-30 group/btn"
               >
                 {loading ? <Activity className="animate-spin" size={20} /> : <Send size={20} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />}
-                <span className="text-[10px] uppercase tracking-[0.2em]">Synchronize Provisioning</span>
+                <span className="text-[10px] uppercase tracking-[0.2em]">Confirm Assignment</span>
               </button>
             </div>
           </div>
@@ -318,8 +318,8 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                     <Lock size={22} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black text-white tracking-tight leading-none uppercase text-[12px] tracking-widest">Access Provisioning</h2>
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-1">Generated node credentials</p>
+                    <h2 className="text-xl font-black text-white tracking-tight leading-none uppercase text-[12px] tracking-widest">Session Credentials</h2>
+                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-1">Generated login for students</p>
                   </div>
                 </div>
                 <button
@@ -327,13 +327,13 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                   disabled={!selectedClass || !subject || selectedSections.length === 0}
                   className="px-6 py-3 bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-white font-black rounded-2xl text-[9px] uppercase tracking-widest transition-all active:scale-95 disabled:opacity-20"
                 >
-                  Auto-Generate
+                  Generate New
                 </button>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1 opacity-50">Node Identifier</label>
+                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1 opacity-50">Session Username</label>
                   <div className="px-6 py-5 bg-slate-900/50 border border-slate-800 rounded-3xl font-mono text-primary-400 text-sm font-black break-all">
                     {classCredentials.username || "NODE_AUTH_PENDING"}
                   </div>
@@ -352,7 +352,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                   <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Institutional Privacy Active</span>
                 </div>
                 <p className="text-[10px] font-bold text-slate-600 leading-relaxed uppercase">
-                  Provisioning credentials will be automatically transmitted to the authorized clinician's legal registry email.
+                  These credentials will be automatically emailed to the assigned therapist.
                 </p>
               </div>
             </div>
@@ -366,7 +366,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
         <div className="flex items-center justify-between px-6">
           <div className="flex items-center gap-4">
             <Activity className="text-primary-500" size={24} />
-            <h2 className="text-xl font-black text-white tracking-tight uppercase tracking-widest">Active Provisioning Log</h2>
+            <h2 className="text-xl font-black text-white tracking-tight uppercase tracking-widest">Active Assignments Log</h2>
           </div>
           <button onClick={fetchAssignedClasses} className="p-3 bg-slate-900 border border-slate-800 text-slate-500 hover:text-white rounded-xl transition-all active:scale-90">
             <RefreshCw size={20} className={loadingAssigned ? "animate-spin" : ""} />
@@ -388,7 +388,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                     <User size={32} />
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Assigned Clinician</p>
+                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Assigned Therapist</p>
                     <h3 className="text-lg font-black text-white">{assignment.teacherName}</h3>
                     <p className="text-xs font-bold text-slate-500 font-mono mt-1">{assignment.teacherEmail}</p>
                   </div>
@@ -396,10 +396,10 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
 
                 <div className="lg:col-span-5 grid grid-cols-2 gap-4">
                   <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-900">
-                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Node Unit</p>
+                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Session Unit</p>
                     <div className="flex items-center gap-3">
                       <span className="text-xs font-black text-primary-400 uppercase tracking-widest">{assignment.assignedClass}</span>
-                      <div className="px-2 py-0.5 bg-slate-900 rounded text-[9px] font-black text-slate-500">NODE {assignment.section}</div>
+                      <div className="px-2 py-0.5 bg-slate-900 rounded text-[9px] font-black text-slate-500">SECTION {assignment.section}</div>
                     </div>
                   </div>
                   <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-900">
@@ -417,7 +417,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
                     className="px-8 py-4 bg-slate-800/50 hover:bg-rose-900 border border-slate-800 hover:border-rose-900 text-slate-400 hover:text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 active:scale-95 group/del"
                   >
                     <Trash2 size={16} className="group-hover/del:rotate-12 transition-transform" />
-                    <span className="text-[9px] uppercase tracking-widest">Revoke Link</span>
+                    <span className="text-[9px] uppercase tracking-widest">Remove Assignment</span>
                   </button>
                 </div>
               </div>
@@ -426,7 +426,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
           ))}
           {assignedClasses.length === 0 && (
             <div className="text-center py-20 bg-slate-900/10 rounded-[2.5rem] border border-dashed border-slate-800">
-              <p className="text-slate-600 font-black uppercase text-[10px] tracking-[0.4em]">Zero Active Clinical Links Provisioned</p>
+              <p className="text-slate-600 font-black uppercase text-[10px] tracking-[0.4em]">No active assignments found</p>
             </div>
           )}
         </div>

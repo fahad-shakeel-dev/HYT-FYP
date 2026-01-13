@@ -70,8 +70,8 @@ export async function POST(request) {
         html: `
           <div style="max-width: 600px; margin: 0 auto; font-family: 'Outfit', sans-serif; background-color: #fcfcfd; padding: 40px; border-radius: 20px; border: 1px solid #f1f5f9;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #0f172a; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.05em;">INSTITUTIONAL REGISTRY</h1>
-              <p style="color: #64748b; margin: 5px 0 0 0; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;">Professional Authorization System</p>
+              <h1 style="color: #0f172a; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.05em;">LUMOS MILESTONE CARE</h1>
+              <p style="color: #64748b; margin: 5px 0 0 0; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;">Professional Caregiver Network</p>
             </div>
             
             <h2 style="color: #1e293b; margin-bottom: 20px; font-weight: 800;">Welcome, ${name}</h2>
@@ -100,7 +100,7 @@ export async function POST(request) {
             
             <div style="text-align: center;">
               <p style="color: #94a3b8; font-size: 10px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 0.1em;">
-                © 2025 Institutional Governance • UCP Informatics Ecosystem
+                © 2025 Lumos Milestone Care • Institutional Governance Registry
               </p>
             </div>
           </div>

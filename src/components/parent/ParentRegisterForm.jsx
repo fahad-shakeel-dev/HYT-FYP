@@ -102,7 +102,7 @@ export default function ParentRegisterForm() {
                 </div>
                 <div>
                   <h3 className="text-white font-black text-[10px] uppercase tracking-widest mb-1">{feat.title}</h3>
-                  <p className="text-white/30 text-[11px] font-bold leading-tight">{feat.desc}</p>
+                  <p className="text-white/60 text-[11px] font-bold leading-tight">{feat.desc}</p>
                 </div>
               </div>
             ))}
@@ -120,16 +120,16 @@ export default function ParentRegisterForm() {
           >
             <header className="mb-8 flex items-baseline justify-between">
               <div>
-                <Link href="/parent" className="inline-flex items-center text-slate-400 hover:text-primary-600 font-black text-[9px] uppercase tracking-widest mb-6 transition-all group">
+                <Link href="/parent" className="inline-flex items-center text-slate-500 hover:text-primary-600 font-black text-[9px] uppercase tracking-widest mb-6 transition-all group">
                   <LucideArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" size={14} />
                   Access Portal
                 </Link>
                 <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none mb-1">Caregiver Registry</h2>
-                <p className="text-slate-400 font-bold text-sm">Patient & Guardian Provisioning</p>
+                <p className="text-slate-500 font-bold text-sm">Patient & Guardian Provisioning</p>
               </div>
               <div className="text-right">
-                <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Phase</p>
-                <p className="text-2xl font-black text-primary-600">{step}<span className="text-slate-200">/2</span></p>
+                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Phase</p>
+                <p className="text-2xl font-black text-primary-600">{step}<span className="text-slate-400">/2</span></p>
               </div>
             </header>
 
@@ -145,58 +145,58 @@ export default function ParentRegisterForm() {
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Guardian Full Name</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Guardian Full Name</label>
                         <div className="relative group">
-                          <LucideUser className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={18} />
-                          <input name="name" placeholder="Johnathan Doe" value={formData.name} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
+                          <LucideUser className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={18} />
+                          <input name="name" placeholder="Johnathan Doe" value={formData.name} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Primary Email</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Primary Email</label>
                         <div className="relative group">
-                          <LucideMail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={18} />
-                          <input name="email" type="email" placeholder="care@family.com" value={formData.email} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
+                          <LucideMail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={18} />
+                          <input name="email" type="email" placeholder="care@family.com" value={formData.email} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
                         </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Contact Number</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Contact Number</label>
                         <div className="relative group">
-                          <LucidePhone className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={18} />
-                          <input name="phone" placeholder="+1 (555) 000-0000" value={formData.phone} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
+                          <LucidePhone className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={18} />
+                          <input name="phone" placeholder="+1 (555) 000-0000" value={formData.phone} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Patient Registry ID</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Patient Registry ID</label>
                         <div className="relative group">
-                          <LucideShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={18} />
-                          <input name="registrationNumber" placeholder="P-882-90" value={formData.registrationNumber} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
+                          <LucideShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={18} />
+                          <input name="registrationNumber" placeholder="P-882-90" value={formData.registrationNumber} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
                         </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Gender</label>
-                        <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full px-4 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm appearance-none">
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Gender</label>
+                        <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm appearance-none">
                           <option>Male</option>
                           <option>Female</option>
                           <option>Other</option>
                         </select>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Phase</label>
-                        <input name="semester" type="number" min="1" max="12" value={formData.semester} onChange={handleInputChange} className="w-full px-4 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm" required />
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Phase</label>
+                        <input name="semester" type="number" min="1" max="12" value={formData.semester} onChange={handleInputChange} className="w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm" required />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Node</label>
-                        <input name="section" placeholder="A" value={formData.section} onChange={handleInputChange} className="w-full px-4 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm uppercase" required />
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Node</label>
+                        <input name="section" placeholder="A" value={formData.section} onChange={handleInputChange} className="w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm uppercase" required />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Care Type</label>
-                        <input name="program" placeholder="OT/SLP" value={formData.program} onChange={handleInputChange} className="w-full px-4 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm font-black uppercase text-[10px]" required />
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Care Type</label>
+                        <input name="program" placeholder="OT/SLP" value={formData.program} onChange={handleInputChange} className="w-full px-4 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm font-black uppercase text-[10px]" required />
                       </div>
                     </div>
 
@@ -214,29 +214,29 @@ export default function ParentRegisterForm() {
                     className="space-y-5"
                   >
                     <div className="space-y-2">
-                      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Residential Address</label>
-                      <input name="address" placeholder="123 Care Street, Medical District" value={formData.address} onChange={handleInputChange} className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm" required />
+                      <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Residential Address</label>
+                      <input name="address" placeholder="123 Care Street, Medical District" value={formData.address} onChange={handleInputChange} className="w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 transition-all font-bold text-sm shadow-sm" required />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Access Password</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Access Password</label>
                         <div className="relative group">
-                          <LucideLock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={18} />
-                          <input name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
+                          <LucideLock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={18} />
+                          <input name="password" type="password" placeholder="••••••••" value={formData.password} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm Password</label>
+                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Confirm Password</label>
                         <div className="relative group">
-                          <LucideShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={18} />
-                          <input name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
+                          <LucideShieldCheck className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={18} />
+                          <input name="confirmPassword" type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={handleInputChange} className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm" required />
                         </div>
                       </div>
                     </div>
 
                     <div className="flex gap-4 pt-6">
-                      <button type="button" onClick={() => setStep(1)} className="flex-1 py-5 bg-white border border-slate-100 text-slate-400 font-black rounded-2xl hover:bg-slate-50 transition-all text-[10px] uppercase tracking-[0.2em]">Back</button>
+                      <button type="button" onClick={() => setStep(1)} className="flex-1 py-5 bg-white border border-slate-200 text-slate-500 font-black rounded-2xl hover:bg-slate-50 transition-all text-[10px] uppercase tracking-[0.2em]">Back</button>
                       <button type="submit" disabled={loading} className="flex-[2] py-5 bg-primary-600 text-white font-black rounded-2xl shadow-xl shadow-primary-200 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 group">
                         {loading ? <LucideActivity className="animate-spin" size={20} /> : (
                           <>
@@ -253,7 +253,7 @@ export default function ParentRegisterForm() {
           </motion.div>
         </div>
 
-        <div className="mt-10 pb-4 text-[7px] font-black text-slate-300 uppercase tracking-[0.4em] text-center shrink-0">
+        <div className="mt-10 pb-4 text-[7px] font-black text-slate-400 uppercase tracking-[0.4em] text-center shrink-0">
           Caregiver Transparency Unit • Department of Clinical Informatics • 2025
         </div>
       </div>
