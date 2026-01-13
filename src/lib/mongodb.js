@@ -2,10 +2,6 @@ import mongoose from "mongoose"
 
 const MONGODB_URI = process.env.MONGODB_URI
 
-if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable inside .env.local")
-}
-
 let cached = global.mongoose
 
 if (!cached) {
@@ -13,6 +9,15 @@ if (!cached) {
 }
 
 export async function connectDB() {
+  // Bypassing database connection check during Vercel's static analysis phase
+  if (!MONGODB_URI) {
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      console.warn("MONGODB_URI is not defined, but skipping check during production build phase.");
+      return null;
+    }
+    throw new Error("Please define the MONGODB_URI environment variable inside .env.local")
+  }
+
   if (cached.conn) {
     return cached.conn
   }
