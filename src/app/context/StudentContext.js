@@ -51,7 +51,7 @@
 
 
 "use client"
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect, useCallback } from "react"
 
 const StudentContext = createContext()
 
@@ -60,7 +60,7 @@ export function StudentProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  const fetchStudentData = async () => {
+  const fetchStudentData = useCallback(async () => {
     try {
       console.log("Fetching student data from /api/parent/me")
 
@@ -114,7 +114,7 @@ export function StudentProvider({ children }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   // Helper function to get cookie
   const getCookie = (name) => {
@@ -152,7 +152,7 @@ export function StudentProvider({ children }) {
 
   useEffect(() => {
     fetchStudentData()
-  }, [])
+  }, [fetchStudentData])
 
   return (
     <StudentContext.Provider
