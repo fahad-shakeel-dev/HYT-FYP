@@ -94,9 +94,9 @@ export default function TherapistLoginForm() {
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="relative z-10 w-full max-w-md"
                 >
-                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 backdrop-blur-xl rounded-full mb-8 border border-white/10">
+                    <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 backdrop-blur-xl rounded-full mb-8 border border-white/20">
                         <LucideStethoscope className="text-primary-400" size={16} />
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/60">Therapist Portal</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/80">Therapist Portal</span>
                     </div>
 
                     <h1 className="text-4xl xl:text-5xl font-black text-white mb-6 tracking-tight leading-[1.1]">
@@ -105,25 +105,25 @@ export default function TherapistLoginForm() {
                         Interventions
                     </h1>
 
-                    <p className="text-white/40 font-bold text-base leading-relaxed mb-10 max-w-sm">
+                    <p className="text-white/60 font-medium text-base leading-relaxed mb-10 max-w-sm">
                         Execute advanced session monitoring, manage clinical nodes, and orchestrate patient recovery breakthroughs.
                     </p>
 
-                    <div className="grid grid-cols-2 gap-6 pt-8 border-t border-white/5">
+                    <div className="grid grid-cols-2 gap-6 pt-8 border-t border-white/10">
                         <div className="space-y-1">
                             <p className="text-2xl font-black text-white">100%</p>
-                            <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Secure Sync</p>
+                            <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">Secure Sync</p>
                         </div>
                         <div className="space-y-1">
                             <p className="text-2xl font-black text-white leading-none">Global</p>
-                            <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">Registry</p>
+                            <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">Registry</p>
                         </div>
                     </div>
                 </motion.div>
 
                 <div className="absolute bottom-8 left-8 flex items-center gap-4">
-                    <div className="w-6 h-[1px] bg-white/10"></div>
-                    <span className="text-[7px] font-black text-white/20 uppercase tracking-[0.4em]">Auth Layer v2.1.0</span>
+                    <div className="w-6 h-[1px] bg-white/20"></div>
+                    <span className="text-[7px] font-black text-white/40 uppercase tracking-[0.4em]">Auth Layer v2.1.0</span>
                 </div>
             </div>
 
@@ -136,7 +136,7 @@ export default function TherapistLoginForm() {
                         transition={{ duration: 0.6 }}
                     >
                         <header className="mb-8">
-                            <Link href="/" className="inline-flex items-center text-slate-400 hover:text-primary-600 font-black text-[9px] uppercase tracking-widest mb-6 transition-all group">
+                            <Link href="/" className="inline-flex items-center text-slate-500 hover:text-primary-600 font-black text-[9px] uppercase tracking-widest mb-6 transition-all group">
                                 <LucideArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" size={14} />
                                 Portal Selection
                             </Link>
@@ -147,7 +147,7 @@ export default function TherapistLoginForm() {
                                 </div>
                                 <div>
                                     <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none mb-1">Therapist Sign-in</h2>
-                                    <p className="text-slate-400 font-bold text-sm">Clinical Personnel Only</p>
+                                    <p className="text-slate-500 font-bold text-sm">Clinical Personnel Only</p>
                                 </div>
                             </div>
                         </header>
@@ -166,9 +166,9 @@ export default function TherapistLoginForm() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-5">
                                 <div className="space-y-2">
-                                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Work Email</label>
+                                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Work Email</label>
                                     <div className="relative group">
-                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors">
+                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors">
                                             <LucideMail size={18} />
                                         </div>
                                         <input
@@ -177,7 +177,7 @@ export default function TherapistLoginForm() {
                                             placeholder="credentials@clinical.system"
                                             value={formData.email}
                                             onChange={handleInputChange}
-                                            className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
+                                            className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
                                             required
                                         />
                                     </div>
@@ -185,13 +185,13 @@ export default function TherapistLoginForm() {
 
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between ml-1">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Access Token</label>
+                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Access Token</label>
                                         <Link href="/therapistForgotpassword" title="Forgot Password" className="text-[9px] font-black text-primary-600 hover:text-primary-700 uppercase tracking-widest">
                                             Recovery
                                         </Link>
                                     </div>
                                     <div className="relative group">
-                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors">
+                                        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors">
                                             <LucideLock size={18} />
                                         </div>
                                         <input
@@ -200,13 +200,13 @@ export default function TherapistLoginForm() {
                                             placeholder="••••••••"
                                             value={formData.password}
                                             onChange={handleInputChange}
-                                            className="w-full pl-14 pr-14 py-4 bg-white border border-slate-100 rounded-2xl text-slate-800 placeholder-slate-200 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
+                                            className="w-full pl-14 pr-14 py-4 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/5 focus:border-primary-600 shadow-sm transition-all font-bold text-sm"
                                             required
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-primary-600 transition-colors"
+                                            className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-600 transition-colors"
                                         >
                                             {showPassword ? <LucideEyeOff size={18} /> : <LucideEye size={18} />}
                                         </button>
@@ -223,10 +223,10 @@ export default function TherapistLoginForm() {
                                         onChange={handleInputChange}
                                         className="peer sr-only"
                                     />
-                                    <div className="w-5 h-5 bg-white border-2 border-slate-200 rounded-lg peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all flex items-center justify-center">
+                                    <div className="w-5 h-5 bg-white border-2 border-slate-300 rounded-lg peer-checked:bg-primary-600 peer-checked:border-primary-600 transition-all flex items-center justify-center">
                                         <LucideShieldCheck size={12} className="text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
                                     </div>
-                                    <span className="ml-3 text-[9px] font-black text-slate-500 uppercase tracking-widest">Maintain Active Session</span>
+                                    <span className="ml-3 text-[9px] font-black text-slate-600 uppercase tracking-widest">Maintain Active Session</span>
                                 </label>
                             </div>
 
@@ -247,11 +247,11 @@ export default function TherapistLoginForm() {
                             </motion.button>
                         </form>
 
-                        <footer className="mt-10 pt-8 border-t border-slate-50 text-center">
-                            <p className="text-[11px] font-bold text-slate-400 mb-4">
+                        <footer className="mt-10 pt-8 border-t border-slate-100 text-center">
+                            <p className="text-[11px] font-bold text-slate-500 mb-4">
                                 Need a new clinical account?
                             </p>
-                            <Link href="/therapistRegister" className="inline-flex items-center gap-2 px-8 py-3 bg-slate-100 hover:bg-primary-50 text-slate-600 hover:text-primary-600 font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all border border-slate-100 hover:border-primary-100">
+                            <Link href="/therapistRegister" className="inline-flex items-center gap-2 px-8 py-3 bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-600 font-black text-[10px] uppercase tracking-[0.2em] rounded-xl transition-all border border-slate-200 hover:border-primary-200">
                                 Create Account
                                 <LucideChevronRight size={14} />
                             </Link>
@@ -259,7 +259,7 @@ export default function TherapistLoginForm() {
                     </motion.div>
                 </div>
 
-                <div className="mt-10 pb-4 text-[7px] font-black text-slate-300 uppercase tracking-[0.4em] text-center shrink-0">
+                <div className="mt-10 pb-4 text-[7px] font-black text-slate-400 uppercase tracking-[0.4em] text-center shrink-0">
                     Secure Facility Management • Department of Health Informatics • 2025
                 </div>
             </div>
