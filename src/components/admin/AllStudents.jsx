@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Edit, Trash2, User, Mail, GraduationCap, Hash, Filter, Activity, ShieldCheck, MoreHorizontal, CheckCircle2 } from "lucide-react"
+import { Search, Edit, Trash2, User, Mail, Users, Hash, Filter, Activity, ShieldCheck, MoreHorizontal, CheckCircle2 } from "lucide-react"
 import { motion } from "framer-motion"
 
 export default function AllStudents({ allStudents, handleDeleteStudent, handleUpdateStudent, sections }) {
@@ -59,8 +59,8 @@ export default function AllStudents({ allStudents, handleDeleteStudent, handleUp
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <GraduationCap className="text-primary-600" size={24} />
-                        <h1 className="text-3xl font-black text-slate-800 tracking-tight">Child Profiles</h1>
+                        <Users className="text-primary-600" size={24} />
+                        <h1 className="text-3xl font-black text-slate-800 tracking-tight">Patient Registry</h1>
                     </div>
                     <p className="text-slate-500 font-bold text-sm">Manage enrolled children & therapy details</p>
                 </div>
@@ -76,7 +76,7 @@ export default function AllStudents({ allStudents, handleDeleteStudent, handleUp
                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-500 transition-colors" size={20} />
                     <input
                         type="text"
-                        placeholder="Search by Name, ID, or Parent Email..."
+                        placeholder="Search by Patient Name, Case ID, or Parent Email..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-14 pr-8 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 font-bold text-sm transition-all"
@@ -140,7 +140,7 @@ export default function AllStudents({ allStudents, handleDeleteStudent, handleUp
                                     <div className="space-y-6 relative z-10">
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             <div className="space-y-2 col-span-1 md:col-span-2 lg:col-span-1">
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Child Name</label>
+                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Patient Name</label>
                                                 <input type="text" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-primary-500 font-bold text-sm" />
                                             </div>
                                             <div className="space-y-2">
@@ -152,7 +152,7 @@ export default function AllStudents({ allStudents, handleDeleteStudent, handleUp
                                                 <input type="tel" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-primary-500 font-bold text-sm" />
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Reg ID</label>
+                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Case ID</label>
                                                 <input type="text" value={editForm.registrationNumber} onChange={(e) => setEditForm({ ...editForm, registrationNumber: e.target.value })} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-primary-500 font-bold text-sm" />
                                             </div>
                                             <div className="space-y-2">
@@ -181,7 +181,7 @@ export default function AllStudents({ allStudents, handleDeleteStudent, handleUp
                                     <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 relative z-10">
                                         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Child Name</label>
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Patient Name</label>
                                                 <div className="flex items-center space-x-3">
                                                     <div className="w-10 h-10 bg-primary-50 rounded-full flex items-center justify-center text-primary-600 shrink-0">
                                                         <User size={18} />
@@ -199,7 +199,7 @@ export default function AllStudents({ allStudents, handleDeleteStudent, handleUp
                                             </div>
 
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reg ID</label>
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Case ID</label>
                                                 <div className="flex items-center space-x-3">
                                                     <Hash className="text-slate-400" size={16} />
                                                     <span className="text-slate-700 font-bold text-sm">{student.registrationNumber}</span>

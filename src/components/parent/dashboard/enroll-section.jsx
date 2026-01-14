@@ -126,25 +126,22 @@ export default function EnrollSection({ onEnrollSuccess }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Enrollment Form */}
-        <div className="lg:col-span-7 bg-white rounded-[3.5rem] p-12 shadow-sm border border-slate-50 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-10 text-slate-50/50">
-            <LucidePlus size={120} strokeWidth={1} />
-          </div>
+        <div className="lg:col-span-7 bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-slate-200 relative overflow-hidden">
           <div className="relative z-10">
-            <h2 className="text-2xl font-black text-slate-800 mb-10 flex items-center gap-4">
-              <div className="p-3 bg-primary-50 text-primary-600 rounded-2xl shadow-sm">
+            <h2 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-3">
+              <div className="p-3 bg-blue-600 text-white rounded-xl shadow-md">
                 <LucideStethoscope size={24} />
               </div>
               Node Authorization Form
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="space-y-3">
-                <label htmlFor="username" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label htmlFor="username" className="text-sm font-bold text-slate-700 block ml-1">
                   Clinical Node ID
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-5 top-5 text-slate-300 group-focus-within:text-primary-600 transition-colors">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
                     <LucideShieldCheck size={20} />
                   </div>
                   <input
@@ -153,19 +150,19 @@ export default function EnrollSection({ onEnrollSuccess }) {
                     name="username"
                     value={formData.username}
                     onChange={handleInputChange}
-                    placeholder="e.g. PED-SPEECH-2025"
-                    className="w-full pl-14 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold tracking-tight"
+                    placeholder="Enter Credential ID"
+                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all font-medium"
                     disabled={loading}
                   />
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <label htmlFor="password" className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                  Secure Node Access Key
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-bold text-slate-700 block ml-1">
+                  Secure Access Key
                 </label>
                 <div className="relative group">
-                  <div className="absolute left-5 top-5 text-slate-300 group-focus-within:text-primary-600 transition-colors">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
                     <LucideLock size={20} />
                   </div>
                   <input
@@ -174,8 +171,8 @@ export default function EnrollSection({ onEnrollSuccess }) {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    placeholder="••••••••••••"
-                    className="w-full pl-14 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold tracking-tight"
+                    placeholder="Enter Access Key"
+                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all font-medium"
                     disabled={loading}
                   />
                 </div>
@@ -183,23 +180,20 @@ export default function EnrollSection({ onEnrollSuccess }) {
 
               <button
                 type="submit"
-                className="w-full bg-primary-600 hover:bg-primary-700 text-white font-black py-5 px-6 rounded-[1.5rem] transition-all flex items-center justify-center gap-4 shadow-xl shadow-primary-100 disabled:opacity-50 uppercase tracking-[0.2em] relative overflow-hidden group"
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl disabled:opacity-70 mt-4"
                 disabled={loading}
               >
-                <span className="relative z-10 flex items-center gap-3">
-                  {loading ? (
-                    <>
-                      <LucideActivity className="animate-spin" size={20} />
-                      Authorizing...
-                    </>
-                  ) : (
-                    <>
-                      <LucidePlus size={20} />
-                      Authorize Node Access
-                    </>
-                  )}
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                {loading ? (
+                  <>
+                    <LucideActivity className="animate-spin" size={20} />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    <LucidePlus size={20} />
+                    Authorize Access
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -207,80 +201,47 @@ export default function EnrollSection({ onEnrollSuccess }) {
 
         {/* Protocol Sidebar */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-50 relative overflow-hidden group">
-            <h3 className="text-xl font-black text-slate-800 mb-8 flex items-center gap-3">
-              <div className="p-2 bg-teal-50 text-teal-600 rounded-xl">
-                <LucideCheckCircle size={20} />
-              </div>
-              Authorization Protocol
+          <div className="bg-slate-50 rounded-[2rem] p-8 md:p-10 border border-slate-200">
+            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <LucideCheckCircle size={20} className="text-emerald-600" />
+              Authorization Steps
             </h3>
-            <div className="space-y-6">
+            <div className="space-y-5">
               {[
-                { step: 1, text: "Obtain clinical credentials from lead therapist or facility coordinator" },
-                { step: 2, text: "Input the unique Clinical Node ID into the authorization field" },
-                { step: 3, text: "Enter the secure node access key exactly as provided" },
-                { step: 4, text: "Submit for verification to grant immediate portal synchronization" }
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-start gap-4 group/item">
-                  <div className="w-8 h-8 bg-slate-50 text-slate-400 group-hover/item:bg-teal-600 group-hover/item:text-white rounded-xl flex items-center justify-center text-xs font-black shrink-0 transition-all">
-                    {item.step}
+                "Obtain credentials from your lead therapist.",
+                "Input the Node ID and Access Key.",
+                "Submit to sync your clinical dashboard."
+              ].map((text, idx) => (
+                <div key={idx} className="flex items-start gap-4">
+                  <div className="w-6 h-6 bg-white border border-slate-200 text-slate-500 rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
+                    {idx + 1}
                   </div>
-                  <p className="text-slate-500 font-bold text-sm leading-relaxed">{item.text}</p>
+                  <p className="text-slate-600 text-sm font-medium leading-relaxed">{text}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-slate-900 rounded-[2.5rem] p-10 shadow-sm border border-slate-800 relative overflow-hidden">
-            <LucideAlertCircle className="absolute right-[-20px] top-[-20px] text-white/5 w-32 h-32" />
-            <h3 className="text-xl font-black text-white mb-6 flex items-center gap-3">
-              <div className="p-2 bg-amber-500/10 text-amber-500 rounded-xl">
-                <LucideInfo size={20} />
-              </div>
-              Security Policies
+          <div className="bg-slate-900 rounded-[2rem] p-8 md:p-10 border border-slate-800 text-white">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <LucideInfo size={20} className="text-blue-400" />
+              Support
             </h3>
-            <div className="space-y-4">
-              <div className="flex gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
-                <div className="w-1.5 h-full bg-amber-500 rounded-full"></div>
-                <p className="text-white/60 font-bold text-xs italic leading-relaxed">Ensure node ID matches your Child's clinical phase and specialization area.</p>
-              </div>
-              <div className="flex gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
-                <div className="w-1.5 h-full bg-amber-500 rounded-full"></div>
-                <p className="text-white/60 font-bold text-xs italic leading-relaxed">Keys are case-sensitive. Multiple incorrect attempts may trigger security lock.</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-50">
-            <h3 className="text-lg font-black text-slate-800 mb-6 tracking-tight">Need Support?</h3>
-            <p className="text-slate-500 font-bold text-sm mb-8 leading-relaxed">
-              If authorization fails, please verify credentials with the facility coordinator or contact central support.
+            <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+              Having trouble connecting? Contact the facility IT desk for credential verification.
             </p>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-slate-600">
-                <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary-600 shadow-sm">
-                  <LucideMail size={18} />
-                </div>
-                <span className="text-sm font-black tracking-tight underline">support@rehab-session.com</span>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3 text-sm font-medium text-slate-300">
+                <LucideMail size={16} /> support@portal.com
               </div>
-              <div className="flex items-center gap-3 text-slate-600">
-                <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary-600 shadow-sm">
-                  <LucidePhone size={18} />
-                </div>
-                <span className="text-sm font-black tracking-tight">+1 (555) 098-7654</span>
-              </div>
-              <div className="flex items-center gap-3 text-slate-400">
-                <LucideClock size={16} />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Live Support: 8AM-5PM CST</span>
+              <div className="flex items-center gap-3 text-sm font-medium text-slate-300">
+                <LucidePhone size={16} /> +1 (555) 123-4567
               </div>
             </div>
-            <button className="w-full mt-8 py-4 bg-slate-50 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-2xl transition-all font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3">
-              Full Security PDF
-              <LucideArrowRight size={14} />
-            </button>
           </div>
         </div>
       </div>
     </motion.div>
   );
 }
+

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import ChildClinicalFile from "./ChildClinicalFile"
+import ShareResourceModal from "./ShareResourceModal"
 import {
   LucideUsers,
   LucideSearch,
@@ -28,6 +29,15 @@ export default function PatientManagement() {
   const [selectedPatient, setSelectedPatient] = useState(null)
   const [patients, setPatients] = useState([])
   const [loading, setLoading] = useState(true)
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [shareRecipient, setShareRecipient] = useState(null);
+
+  const handlePrivateMessage = (patient) => {
+    setShareRecipient({ id: patient._id, name: patient.name });
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -216,7 +226,11 @@ export default function PatientManagement() {
                   >
                     View File
                   </button>
-                  <button className="p-3.5 bg-primary-600 text-white rounded-[1.2rem] hover:bg-primary-700 transition-all shadow-lg shadow-primary-100 flex items-center justify-center active:scale-95">
+                  <button
+                    onClick={() => handlePrivateMessage(patient)}
+                    className="p-3.5 bg-primary-600 text-white rounded-[1.2rem] hover:bg-primary-700 transition-all shadow-lg shadow-primary-100 flex items-center justify-center active:scale-95"
+                    title="Send Private Message/Resource"
+                  >
                     <LucideMessageCircle size={18} />
                   </button>
                 </div>
@@ -237,7 +251,12 @@ export default function PatientManagement() {
       </div>
 
       {/* Patient Detail Modal */}
-
+      <ShareResourceModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        recipient={shareRecipient}
+        onSend={() => console.log("Sent!")}
+      />
     </div>
   )
 }

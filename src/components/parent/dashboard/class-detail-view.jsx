@@ -91,7 +91,7 @@ export default function NodeDetailView({ selectedClass, recentAssignments, onBac
               <h1 className="text-3xl font-black text-slate-800 tracking-tight">{selectedClass.name}</h1>
               <div className="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-green-100">Live Optimization</div>
             </div>
-            <p className="text-primary-600 font-bold text-lg leading-none mb-4">Lead Therapist: {selectedClass.teacher}</p>
+            <p className="text-primary-600 font-bold text-lg leading-none mb-4">Lead Therapist: {typeof selectedClass.teacher === 'object' ? selectedClass.teacher?.name : selectedClass.teacher}</p>
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-[0.15em]">
                 <LucideActivity size={14} className="text-primary-400" />
@@ -139,6 +139,73 @@ export default function NodeDetailView({ selectedClass, recentAssignments, onBac
           <div>
             <p className="text-3xl font-black text-slate-800 leading-none">{selectedClass.pending}</p>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Awaiting Initiation</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Clinical Resources & Files */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Therapist Resources */}
+        <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-50">
+          <h2 className="text-xl font-black text-slate-800 flex items-center gap-4 mb-8">
+            <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
+              <LucideDownload size={24} />
+            </div>
+            Shared Resources
+          </h2>
+          <div className="space-y-4">
+            {[
+              { id: 1, name: "Home_Exercise_Plan_Week4.pdf", size: "2.4 MB", date: "2 days ago", type: "pdf" },
+              { id: 2, name: "Sensory_Diet_Guidelines.docx", size: "1.1 MB", date: "1 week ago", type: "doc" },
+              { id: 3, name: "Focus_Techniques_Video.mp4", size: "156 MB", date: "2 weeks ago", type: "video" }
+            ].map((file) => (
+              <div key={file.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-200 transition-all group">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm font-black text-xs uppercase">
+                    {file.type}
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-700 text-sm truncate max-w-[150px] sm:max-w-xs">{file.name}</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{file.size} • {file.date}</p>
+                  </div>
+                </div>
+                <button className="p-2 text-slate-300 hover:text-indigo-600 transition-colors">
+                  <LucideDownload size={20} />
+                </button>
+              </div>
+            ))}
+            <button className="w-full py-4 text-xs font-black text-indigo-600 uppercase tracking-widest hover:bg-indigo-50 rounded-xl transition-all">
+              View All Resources
+            </button>
+          </div>
+        </div>
+
+        {/* Patient Uploads */}
+        <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-50">
+          <h2 className="text-xl font-black text-slate-800 flex items-center gap-4 mb-8">
+            <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl">
+              <LucideUpload size={24} />
+            </div>
+            Your Uploads
+          </h2>
+          <div className="space-y-4">
+            <div className="p-8 border-2 border-dashed border-slate-200 rounded-[2rem] flex flex-col items-center justify-center text-center hover:border-teal-400 hover:bg-teal-50/10 transition-all cursor-pointer group">
+              <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <LucideUpload size={24} />
+              </div>
+              <p className="text-slate-600 font-bold text-sm">Click to upload files</p>
+              <p className="text-slate-400 text-xs mt-1">Videos, Docs, or Images (Max 50MB)</p>
+            </div>
+
+            <div className="space-y-2 mt-6">
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center gap-3">
+                  <LucideActivity size={16} className="text-teal-500" />
+                  <span className="text-xs font-bold text-slate-600">Home_Practice_Video_01.mp4</span>
+                </div>
+                <span className="text-[10px] font-black text-teal-600 bg-teal-50 px-2 py-1 rounded-lg">SENT</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

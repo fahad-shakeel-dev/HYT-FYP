@@ -646,16 +646,18 @@ export async function POST(request) {
       );
     }
 
-    // Find or create ClassSection
-    let classSection = await ClassSection.findOne({ program, semester, section });
+    // Find or create ClassSection (Mapping academic terms to clinical schema)
+    // program -> category
+    // section -> schedule
+    // semester -> (unused/deprecated in ClassSection)
+    let classSection = await ClassSection.findOne({ category: program, schedule: section });
     if (!classSection) {
       const classId = `${program}_${semester}_${section}_${Date.now()}`;
       const room = `Room-${Math.floor(Math.random() * 100) + 1}`;
 
       classSection = new ClassSection({
-        program,
-        semester,
-        section,
+        category: program,
+        schedule: section,
         classId,
         room,
         enrolledStudents: 0,

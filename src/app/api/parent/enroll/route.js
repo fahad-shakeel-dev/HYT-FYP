@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secure-jwt-secret";
-const COOKIE_NAME = "auth_token";
+const COOKIE_NAME = "p_auth_token";
 
 export async function POST(request) {
   let sanitizedUsername = "undefined";
@@ -65,7 +65,7 @@ export async function POST(request) {
 
         const teacher = await User.findOne(
           {
-            "classAssignments.classCredentials.username": sanitizedUsername,
+            "classAssignments.classCredentials.username": { $regex: new RegExp(`^${sanitizedUsername}$`, "i") },
           },
           null,
           { session }
@@ -91,7 +91,16 @@ export async function POST(request) {
           isHashed: assignment.classCredentials.password.startsWith("$2a$") || assignment.classCredentials.password.startsWith("$2b$"),
         });
 
-        const isPasswordValid = await bcrypt.compare(password, assignment.classCredentials.password);
+        const storedPassword = assignment.classCredentials.password;
+        const isHashed = storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$");
+        let isPasswordValid = false;
+
+        if (isHashed) {
+          isPasswordValid = await bcrypt.compare(password, storedPassword);
+        } else {
+          isPasswordValid = password === storedPassword;
+        }
+
         if (!isPasswordValid) {
           console.log("Password verification failed for username:", sanitizedUsername);
           throw new Error("Invalid class credentials: Incorrect password");
@@ -101,33 +110,62 @@ export async function POST(request) {
         // Normalize semester format (e.g., "1st" -> "1")
         const normalizedSemester = student.semester.replace(/st|nd|rd|th/, "");
 
-        // Include subject in the ClassSection query
-        const classSection = await ClassSection.findOne(
+        // Include activity (subject) in the ClassSection query
+        // Mapping: section -> schedule, subject -> activity
+
+        // 1. Try to find a ClassSection that matches the student's current section
+        let classSection = await ClassSection.findOne(
           {
             classId: assignment.classId,
-            program: student.program,
-            semester: normalizedSemester,
-            section: student.section,
-            subject: assignment.subject, // Match the specific subject
+            schedule: student.section,
+            activity: assignment.subject,
           },
           null,
           { session }
         );
+
+        // 2. If not found, find ANY ClassSection allowed by the assignment's credentials
+        // Use assignment.sections (which is an array of allowed schedules)
+        if (!classSection && assignment.sections && assignment.sections.length > 0) {
+          console.log("Primary section match failed. Trying assignment sections:", assignment.sections);
+          classSection = await ClassSection.findOne(
+            {
+              classId: assignment.classId,
+              schedule: { $in: assignment.sections },
+              activity: assignment.subject,
+            },
+            null,
+            { session }
+          );
+        } else if (!classSection) {
+          // Fallback if assignment.sections is missing/empty but credentials matched (legacy support?)
+          // Try to find ANY section for this class & activity
+          console.log("Trying wildcard section match for activity:", assignment.subject);
+          classSection = await ClassSection.findOne(
+            {
+              classId: assignment.classId,
+              activity: assignment.subject,
+            },
+            null,
+            { session }
+          );
+        }
+
         if (!classSection) {
           console.log("ClassSection not found for:", {
             classId: assignment.classId,
-            program: student.program,
-            semester: normalizedSemester,
-            section: student.section,
-            subject: assignment.subject,
+            schedule: student.section,
+            sections: assignment.sections,
+            activity: assignment.subject,
           });
           throw new Error(
-            `No matching class section found for program: ${student.program}, semester: ${student.semester}, section: ${student.section}, subject: ${assignment.subject}`
+            `No matching class section found for activity: ${assignment.subject}. Please contact your therapist.`
           );
         }
         console.log("ClassSection found:", {
           classSectionId: classSection._id,
-          subject: classSection.subject,
+          activity: classSection.activity,
+          category: classSection.category,
         });
 
         // Check for duplicate enrollment in this specific ClassSection (by classSectionId)
@@ -135,16 +173,16 @@ export async function POST(request) {
           (enrollment) => enrollment.classSectionId.toString() === classSection._id.toString()
         );
         if (isAlreadyEnrolled) {
-          throw new Error(`You are already enrolled in ${classSection.subject} for section ${classSection.section}`);
+          throw new Error(`You are already enrolled in ${classSection.activity} for schedule ${classSection.schedule}`);
         }
 
         const enrollmentData = {
           classSectionId: classSection._id,
           classId: classSection.classId,
-          subject: classSection.subject,
-          program: classSection.program,
-          semester: classSection.semester,
-          section: classSection.section,
+          subject: classSection.activity, // UI expects 'subject', DB has 'activity'
+          program: classSection.category, // UI expects 'program' (Use Class Category, not Student Program)
+          semester: student.semester,     // Student's semester
+          section: classSection.schedule, // UI expects 'section'
           enrolledAt: new Date(),
         };
 
@@ -157,14 +195,28 @@ export async function POST(request) {
           { session }
         );
 
-        await ClassSection.updateOne(
+        const updateResult = await ClassSection.updateOne(
           { _id: classSection._id },
           {
-            $push: { students: student._id },
-            $inc: { enrolledStudents: 1 },
+            $addToSet: { students: student._id },
           },
           { session }
         );
+        console.log("ClassSection update result:", updateResult);
+
+        if (updateResult.modifiedCount > 0) {
+          await ClassSection.updateOne(
+            { _id: classSection._id },
+            { $inc: { enrolledStudents: 1 } },
+            { session }
+          );
+        }
+
+        if (updateResult.modifiedCount === 0) {
+          console.error("CRITICAL: Failed to update ClassSection with new student!");
+          // We might want to throw here to abort the transaction if this is critical
+          // throw new Error("Failed to link student to group"); 
+        }
 
         result = {
           message: `Successfully enrolled in ${classSection.subject} (${classSection.program} - ${classSection.section})`,
@@ -199,8 +251,8 @@ export async function POST(request) {
       {
         status:
           error.message.includes("not found") ||
-          error.message.includes("already enrolled") ||
-          error.message.includes("Invalid class credentials")
+            error.message.includes("already enrolled") ||
+            error.message.includes("Invalid class credentials")
             ? 400
             : 500,
       }

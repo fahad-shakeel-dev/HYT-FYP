@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import User from "@/models/User";
+import Student from "@/models/Student";
 import ClassSection from "@/models/ClassSection";
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -21,27 +22,95 @@ export async function DELETE(request) {
 
     await connectToDatabase();
 
-    // Remove assignment from teacher's classAssignments
-    // Note: In User model we likely still store 'sections' and 'subject' as keys in the objects pushed
-    await User.findByIdAndUpdate(
+    console.log(`Unassigning therapist ${teacherId} from class ${classId}, section ${section}, subject ${subject}`);
+
+    // Split sections if comma-separated (e.g., "A, B" -> ["A", "B"])
+    const sectionList = section.split(",").map(s => s.trim()).filter(Boolean);
+    console.log(`Unassigning sections:`, sectionList);
+
+    let totalUnenrolled = 0;
+
+    for (const sectionItem of sectionList) {
+      // 1. Unenroll students from this specific section
+      const studentUpdate = await Student.updateMany(
+        {
+          enrollments: {
+            $elemMatch: {
+              classId: classId,
+              subject: subject,
+              section: sectionItem
+            }
+          }
+        },
+        {
+          $pull: {
+            enrollments: {
+              classId: classId,
+              subject: subject,
+              section: sectionItem
+            }
+          }
+        }
+      );
+
+      totalUnenrolled += studentUpdate.modifiedCount;
+
+      // 2. Clear patient data in ClassSection for this specific section
+      const sectionUpdate = await ClassSection.updateOne(
+        {
+          classId: new mongoose.Types.ObjectId(classId),
+          schedule: sectionItem,
+          activity: subject
+        },
+        {
+          $set: {
+            assignedTeacher: null,
+            assignedAt: null,
+            students: [],
+            enrolledStudents: 0
+          },
+        }
+      );
+      console.log(`[Unassign] ClassSection (${sectionItem}): matched ${sectionUpdate.matchedCount}, modified ${sectionUpdate.modifiedCount}`);
+    }
+
+    // 3. Remove assignment from teacher's classAssignments
+    // We match by classId and subject. We use $all for sections to be resilient to order.
+    const userUpdate = await User.findByIdAndUpdate(
       teacherId,
       {
         $pull: {
-          classAssignments: { classId, subject, "sections": section },
+          classAssignments: {
+            classId: classId,
+            subject: subject,
+            sections: { $all: sectionList } // Removed $size for better resilience
+          },
         },
-      }
+      },
+      { new: true }
     );
+    console.log(`[Unassign] User ${teacherId}: assignments remaining ${userUpdate?.classAssignments?.length || 0}`);
 
-    // Clear assignedTeacher in ClassSection
-    // In DB, these are 'schedule' and 'activity'
-    await ClassSection.updateOne(
-      { classId, schedule: section, activity: subject },
-      {
-        $set: { assignedTeacher: null, assignedAt: null },
+    // 4. Final step: Global sync of enrollmentCount for all students to ensure absolute accuracy
+    const allStudents = await Student.find({}).select("_id enrollments");
+    for (const student of allStudents) {
+      if (student.enrollmentCount !== student.enrollments.length) {
+        await Student.updateOne(
+          { _id: student._id },
+          { $set: { enrollmentCount: student.enrollments.length } }
+        );
       }
-    );
+    }
 
-    return NextResponse.json({ message: "Therapy Group unassigned successfully" }, { status: 200 });
+    return NextResponse.json({
+      message: "Therapy Group unassigned successfully",
+      details: {
+        sectionsProcessed: sectionList.length,
+        totalStudentsUnenrolled: totalUnenrolled,
+        teacherFound: !!userUpdate
+      }
+    }, { status: 200 });
+
   } catch (error) {
     console.error("❌ Error unassigning therapy group:", error);
     return NextResponse.json({ message: "Internal server error", error: error.message }, { status: 500 });

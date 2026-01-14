@@ -6,7 +6,7 @@ import ClassSection from "@/models/ClassSection";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secure-jwt-secret";
-const COOKIE_NAME = "auth_token";
+const COOKIE_NAME = "p_auth_token";
 
 export async function GET(request) {
   try {

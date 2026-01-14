@@ -60,9 +60,9 @@ export async function GET(request) {
           : (classData && Array.isArray(classData.sections) && classData.sections.length > 0 ? classData.sections : ["Unknown"]);
 
         const classSections = await ClassSection.find({
-          classId: assignment.classId,
-          section: { $in: sections },
-          subject: assignment.subject,
+          classId: new mongoose.Types.ObjectId(assignment.classId),
+          schedule: { $in: sections },
+          activity: assignment.subject,
         }).lean();
 
         console.log("📌 Found class sections:", classSections.length, "for classId:", assignment.classId);
@@ -88,15 +88,15 @@ export async function GET(request) {
           classId: assignment.classId?.toString() || "N/A",
           classDetails: classSections.length > 0 || classData
             ? {
-              program: classSections[0]?.program || classData?.program || "N/A",
-              semester: classSections[0]?.semester || classData?.semester || "N/A",
+              program: classSections[0]?.category || classData?.category || "N/A",
+              semester: classData?.semester || "N/A",
               section: sections.join(", "),
               room: classSections[0]?.room || "N/A",
               enrolledStudents: classSections[0]?.enrolledStudents || 0,
               classId: (classSections[0]?.classId || assignment.classId)?.toString() || "N/A",
             }
             : {
-              program: classData?.program || "N/A",
+              program: classData?.category || "N/A",
               semester: classData?.semester || "N/A",
               section: sections.join(", "),
               room: "N/A",

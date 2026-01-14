@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 import User from "@/models/User";
 import Class from "@/models/ClassSchema";
 import ClassSection from "@/models/ClassSection";
-import bcrypt from "bcryptjs";
+
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const transporter = nodemailer.createTransport({
@@ -135,10 +135,7 @@ export async function POST(request) {
       }
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(credentials.password, 12);
-
-    // Prepare assignment data
+    // Store assignment data with plain text password
     const classDisplayName = `${classData.className} (${classData.category}) - ${sections.join(", ")}`;
     const assignmentData = {
       classId: classId.toString(),
@@ -146,8 +143,8 @@ export async function POST(request) {
       subject,
       classDisplayName,
       classCredentials: {
-        username: credentials.username,
-        password: hashedPassword,
+        username: credentials.username.toLowerCase(),
+        password: credentials.password, // Storing plain text as requested
       },
       assignedAt: new Date(),
     };

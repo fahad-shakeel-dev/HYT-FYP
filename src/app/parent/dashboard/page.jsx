@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -33,6 +33,7 @@ import SidebarClassDropdown from "@/components/ui/sidebar-class-dropdown";
 import OverviewSection from "@/components/parent/dashboard/overview-section";
 import ClassDetailView from "@/components/parent/dashboard/class-detail-view";
 import EnrollSection from "@/components/parent/dashboard/enroll-section";
+import ProfileSection from "@/components/parent/dashboard/profile-section";
 
 const recentTherapyTasks = [
   {
@@ -94,7 +95,10 @@ const clinicalAlerts = [
 export default function ParentDashboard() {
   const router = useRouter();
   const { studentData, loading, setStudentData } = useStudent();
-  const [activeSection, setActiveSection] = useState("overview");
+  const searchParams = useSearchParams();
+  const initialSection = searchParams.get("tab") || "overview";
+
+  const [activeSection, setActiveSection] = useState(initialSection);
   const [selectedClass, setSelectedClass] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showClassmates, setShowClassmates] = useState(false);
@@ -106,7 +110,15 @@ export default function ParentDashboard() {
     fetchStudentData();
   }, []);
 
-  // Fetch enrolled classes
+  // Update active section when URL changes
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) {
+      setActiveSection(tab);
+    }
+  }, [searchParams]);
+
+  // Fetch enrolled classes and restore selected class if needed
   useEffect(() => {
     async function fetchEnrolledClasses() {
       try {
@@ -116,6 +128,16 @@ export default function ParentDashboard() {
         if (response.ok) {
           const data = await response.json();
           setEnrolledClasses(data.enrolledClasses);
+
+          // Restore selected class from URL if applicable
+          const classId = searchParams.get("classId");
+          if (classId && data.enrolledClasses) {
+            const cls = data.enrolledClasses.find(c => (c.id === classId || c._id === classId));
+            if (cls) {
+              setSelectedClass(cls);
+              setActiveSection("node-detail");
+            }
+          }
         } else {
           toast.error("Failed to fetch enrolled clinical nodes");
         }
@@ -124,7 +146,19 @@ export default function ParentDashboard() {
       }
     }
     if (studentData) fetchEnrolledClasses();
-  }, [studentData]);
+  }, [studentData, searchParams]); // Added searchParams to dependency to re-check on URL change (careful with loops, but fetch logic is guarded)
+
+  // Avoid re-fetching if data exists, just restore selection
+  useEffect(() => {
+    if (enrolledClasses.length > 0 && searchParams.get("classId")) {
+      const classId = searchParams.get("classId");
+      const cls = enrolledClasses.find(c => (c.id === classId || c._id === classId));
+      if (cls && (!selectedClass || selectedClass.id !== cls.id)) {
+        setSelectedClass(cls);
+        if (activeSection !== "node-detail") setActiveSection("node-detail");
+      }
+    }
+  }, [enrolledClasses, searchParams]);
 
   // Fetch student data
   const fetchStudentData = async () => {
@@ -143,6 +177,20 @@ export default function ParentDashboard() {
       console.error("Error fetching student data:", error);
     }
   };
+
+  // Update URL helper
+  const updateUrl = (tab, classId = null) => {
+    const params = new URLSearchParams(window.location.search);
+    if (tab) params.set("tab", tab);
+    if (classId) {
+      params.set("classId", classId);
+    } else {
+      params.delete("classId");
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+
 
   // Show welcome toast
   useEffect(() => {
@@ -191,12 +239,14 @@ export default function ParentDashboard() {
   const handleClassSelect = (classData) => {
     setSelectedClass(classData);
     setActiveSection("node-detail");
+    updateUrl("node-detail", classData.id || classData._id);
     setIsSidebarOpen(false);
   };
 
   const handleBackToOverview = () => {
     setSelectedClass(null);
     setActiveSection("overview");
+    updateUrl("overview");
   };
 
   const navigationItems = [
@@ -205,7 +255,7 @@ export default function ParentDashboard() {
     { id: "tasks", label: "Therapy Tasks", icon: LucideClipboardList },
     { id: "calendar", label: "Clinical Calendar", icon: LucideCalendar },
     { id: "progress", label: "Growth Metrics", icon: LucideTrendingUp },
-    { id: "profile", label: "Family Profile", icon: LucideUser },
+    { id: "profile", label: "Profile", icon: LucideUser },
   ];
 
   const unreadCount = clinicalAlerts.filter((n) => !n.read).length;
@@ -397,100 +447,10 @@ export default function ParentDashboard() {
         );
       case "profile":
         return (
-          <motion.div
-            key="profile"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-6xl mx-auto"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-50">
-                <h2 className="text-2xl font-black text-slate-800 mb-8 tracking-tight">Patient Authorization</h2>
-                <div className="flex items-center gap-6 mb-10 pb-10 border-b border-slate-100">
-                  <div className="w-24 h-24 bg-primary-100 rounded-[2.5rem] flex items-center justify-center text-primary-600 text-3xl font-black shadow-lg shadow-primary-50">
-                    {studentData.student.name.split(" ").map((n) => n[0]).join("")}
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-black text-slate-800 tracking-tight">{studentData.student.name}</h3>
-                    <p className="text-primary-600 font-bold text-sm">{studentData.student.email}</p>
-                    <div className="mt-2 text-[10px] font-black bg-green-50 text-green-600 px-3 py-1 rounded-full uppercase tracking-widest w-fit">Authorized Profile</div>
-                  </div>
-                </div>
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center group">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Registry ID</span>
-                    <span className="text-sm font-black text-slate-700 tracking-wider font-mono">{studentData.student.registrationNumber}</span>
-                  </div>
-                  <div className="flex justify-between items-center group">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Therapy Type</span>
-                    <span className="text-sm font-black text-slate-700">{studentData.student.program || "General Care"}</span>
-                  </div>
-                  <div className="flex justify-between items-center group">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Clinical Phase</span>
-                    <span className="text-sm font-black text-slate-700">Phase {studentData.student.semester}</span>
-                  </div>
-                  <div className="flex justify-between items-center group">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Clinical Node</span>
-                    <span className="text-sm font-black text-slate-700">Node {studentData.student.section}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-50">
-                <h2 className="text-2xl font-black text-slate-800 mb-8 tracking-tight">Clinical Assignment</h2>
-                <div className="grid grid-cols-2 gap-6 mb-10">
-                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-1">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Auth Room</span>
-                    <span className="text-lg font-black text-slate-800 block">{studentData.classInfo?.room || "N/A"}</span>
-                  </div>
-                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-1">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Peer Group</span>
-                    <span className="text-lg font-black text-slate-800 block">{studentData.classInfo?.totalStudents || "0"} Patients</span>
-                  </div>
-                </div>
-
-                <div className="mb-10 p-8 bg-primary-600 rounded-[2.5rem] shadow-xl shadow-primary-100 relative overflow-hidden">
-                  <LucideStethoscope className="absolute right-[-20px] bottom-[-20px] text-white/10 w-40 h-40" />
-                  <h3 className="text-sm font-black text-white/60 uppercase tracking-widest mb-4">Lead Therapist</h3>
-                  <div className="relative z-10">
-                    <p className="text-2xl font-black text-white tracking-tight">{studentData.teacher?.name || "Unassigned"}</p>
-                    <p className="text-white/80 font-bold text-sm">{studentData.teacher?.email || "No contact info"}</p>
-                    <p className="text-white/60 font-black text-[10px] uppercase tracking-widest mt-4">{studentData.teacher?.subject || "Specialization N/A"}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <button
-                    onClick={() => setShowClassmates(!showClassmates)}
-                    className="flex items-center justify-between w-full p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-all font-black text-xs uppercase tracking-widest text-slate-600"
-                  >
-                    View Authorized Peer Group ({studentData.classmates?.length || 0})
-                    {showClassmates ? <LucideX className="h-4 w-4" /> : <LucideChevronDown className="h-4 w-4" />}
-                  </button>
-                  <AnimatePresence>
-                    {showClassmates && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="space-y-3 mt-4 overflow-hidden"
-                      >
-                        {studentData.classmates?.map((classmate) => (
-                          <div key={classmate._id} className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100 flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-black text-slate-700">{classmate.name}</p>
-                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: {classmate.registrationNumber}</p>
-                            </div>
-                            <LucideArrowLeft className="rotate-180 text-slate-300" size={16} />
-                          </div>
-                        )) || <p className="text-slate-400 text-xs italic text-center py-4">No peers assigned to this node</p>}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+          <ProfileSection
+            studentData={studentData}
+            onProfileUpdate={fetchStudentData}
+          />
         );
       default:
         return null;
@@ -522,11 +482,12 @@ export default function ParentDashboard() {
                   key={item.id}
                   onClick={() => {
                     setActiveSection(item.id);
+                    updateUrl(item.id);
                     setIsSidebarOpen(false);
                   }}
                   className={`flex items-center gap-4 w-full px-5 py-4 rounded-2xl transition-all group ${activeSection === item.id
-                      ? "bg-primary-600 text-white shadow-xl shadow-primary-100"
-                      : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                    ? "bg-primary-600 text-white shadow-xl shadow-primary-100"
+                    : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
                     }`}
                 >
                   <item.icon className={`h-5 w-5 ${activeSection === item.id ? "text-white" : "group-hover:text-primary-600 transition-colors"}`} />
@@ -536,12 +497,43 @@ export default function ParentDashboard() {
               ))}
 
               <div className="pt-8 px-4">
-                <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-4">Authorized Nodes</div>
-                <SidebarClassDropdown
-                  classes={enrolledClasses}
-                  onClassSelect={handleClassSelect}
-                  selectedClass={selectedClass}
-                />
+                <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-4">My Therapy Groups</div>
+                <div className="space-y-2">
+                  {enrolledClasses && enrolledClasses.length > 0 ? (
+                    enrolledClasses.map((cls) => (
+                      <button
+                        key={cls.id || cls._id}
+                        onClick={() => handleClassSelect(cls)}
+                        className={`flex items-center gap-4 w-full px-5 py-4 rounded-2xl transition-all group text-left ${selectedClass?.id === cls.id
+                          ? "bg-primary-600 text-white shadow-xl shadow-primary-100"
+                          : "bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-primary-600 border border-slate-100"
+                          }`}
+                      >
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${selectedClass?.id === cls.id ? "bg-white/20 text-white" : "bg-white text-primary-600 shadow-sm"
+                          }`}>
+                          <LucideStethoscope size={16} />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-black text-xs uppercase tracking-widest truncate">{cls.subject}</div>
+                          <div className={`text-[10px] font-bold truncate ${selectedClass?.id === cls.id ? "text-white/70" : "text-slate-400"}`}>
+                            {cls.teacher?.name || "No Instructor"}
+                          </div>
+                        </div>
+                        {selectedClass?.id === cls.id && <LucideChevronRight className="ml-auto opacity-50" size={14} />}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-5 py-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">No Groups Yet</p>
+                      <button
+                        onClick={() => setActiveSection('enroll')}
+                        className="text-primary-600 text-xs font-black hover:underline"
+                      >
+                        Join a Group
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </nav>
 
@@ -568,7 +560,10 @@ export default function ParentDashboard() {
                       className="absolute bottom-full left-0 right-0 mb-4 bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden"
                     >
                       <button
-                        onClick={() => setActiveSection("profile")}
+                        onClick={() => {
+                          setActiveSection("profile");
+                          updateUrl("profile");
+                        }}
                         className="flex items-center gap-3 w-full px-6 py-4 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all border-b border-slate-50"
                       >
                         <LucideUser className="h-4 w-4 text-primary-600" />

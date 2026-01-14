@@ -59,10 +59,10 @@ export default function Sidebar({
     },
     {
       id: "make-class",
-      label: "Create Session",
+      label: "Create Group",
       icon: Plus,
       count: null,
-      desc: "New therapy sessions"
+      desc: "New therapy groups"
     },
     {
       id: "assign-classes",
@@ -106,8 +106,8 @@ export default function Sidebar({
                 <ShieldCheck size={26} />
               </div>
               <div>
-                <h1 className="text-xl font-black text-slate-800 tracking-tight leading-none mb-1">Lumos Admin</h1>
-                <p className="text-[10px] font-black text-primary-600 uppercase tracking-[0.2em]">Therapy System</p>
+                <h1 className="text-xl font-black text-slate-800 tracking-tight leading-none mb-1">Clinic Admin</h1>
+                <p className="text-[10px] font-black text-primary-600 uppercase tracking-[0.2em]">Clinical Management</p>
               </div>
             </div>
 

@@ -48,18 +48,19 @@ export async function GET(request) {
     }
 
     // Find or create ClassSection
+    // Mapping academic terms to clinical schema
     let classSection = await ClassSection.findOne({
-      program: unverifiedStudent.program,
-      semester: unverifiedStudent.semester,
-      section: unverifiedStudent.section,
+      category: unverifiedStudent.program,
+      schedule: unverifiedStudent.section,
     });
+
     if (!classSection) {
       const classId = `${unverifiedStudent.program}_${unverifiedStudent.semester}_${unverifiedStudent.section}_${Date.now()}`;
-      const room = `Room-${Math.random() * 100 + 1}`;
+      const room = `Room-${Math.floor(Math.random() * 100) + 1}`;
+
       classSection = new ClassSection({
-        program: unverifiedStudent.program,
-        semester: unverifiedStudent.semester,
-        section: unverifiedStudent.section,
+        category: unverifiedStudent.program,
+        schedule: unverifiedStudent.section,
         classId,
         room,
         enrolledStudents: 0,

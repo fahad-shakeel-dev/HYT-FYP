@@ -22,9 +22,9 @@ export default function ClassSections({ sections, allStudents, handleDeleteStude
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Layers className="text-primary-500" size={24} />
-            <h1 className="text-4xl font-black text-white tracking-tighter">Unit Registry</h1>
+            <h1 className="text-4xl font-black text-white tracking-tighter">Group Directory</h1>
           </div>
-          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Institutional Clinical Resource Mapping</p>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Clinical Session Organization</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="px-6 py-2 bg-slate-900/50 border border-slate-800 rounded-2xl">
@@ -41,7 +41,7 @@ export default function ClassSections({ sections, allStudents, handleDeleteStude
             <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-slate-700 mx-auto mb-6">
               <BookOpen size={32} />
             </div>
-            <p className="text-slate-600 font-black uppercase text-[10px] tracking-[0.4em]">Zero Clinical Units Discovered</p>
+            <p className="text-slate-600 font-black uppercase text-[10px] tracking-[0.4em]">Zero Active Groups Discovered</p>
           </div>
         ) : (
           sections?.map((section, idx) => {
@@ -67,8 +67,8 @@ export default function ClassSections({ sections, allStudents, handleDeleteStude
                         <Activity size={24} />
                       </div>
                       <div>
-                        <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Inscribed Unit</p>
-                        <h3 className="text-lg font-black text-white leading-none">{section.semester} - {section.section}</h3>
+                        <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Active Group</p>
+                        <h3 className="text-lg font-black text-white leading-none">Phase {section.semester} - {section.section}</h3>
                       </div>
                     </div>
 
@@ -76,7 +76,7 @@ export default function ClassSections({ sections, allStudents, handleDeleteStude
                       <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-emerald-500" />
                         <div>
-                          <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">Resource ID</p>
+                          <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">Group ID</p>
                           <span className="text-xs font-bold text-slate-400 font-mono">{section.classId}</span>
                         </div>
                       </div>
@@ -138,7 +138,7 @@ export default function ClassSections({ sections, allStudents, handleDeleteStude
                               >
                                 <div className="flex gap-4 items-center overflow-hidden">
                                   <div className="w-10 h-10 bg-slate-950 rounded-xl flex items-center justify-center text-slate-600 group-hover/card:text-primary-400 transition-colors">
-                                    <User size={18} />
+                                    <Users size={18} />
                                   </div>
                                   <div className="overflow-hidden">
                                     <p className="text-sm font-black text-white truncate">{student.name}</p>

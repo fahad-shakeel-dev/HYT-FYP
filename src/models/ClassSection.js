@@ -12,7 +12,8 @@ const ClassSectionSchema = new mongoose.Schema(
       required: true,
     },
     classId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
       required: true,
     },
     room: {

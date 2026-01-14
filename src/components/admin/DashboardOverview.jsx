@@ -1,6 +1,6 @@
 "use client"
 
-import { Users, GraduationCap, Clock, BookOpen, UserCheck, UserX, TrendingUp, Activity, ShieldCheck, Zap, BarChart3, Globe } from "lucide-react"
+import { Users, ClipboardList, Clock, BookOpen, UserCheck, UserX, TrendingUp, Activity, ShieldCheck, Zap, BarChart3, Globe } from "lucide-react"
 import { motion } from "framer-motion"
 
 export default function DashboardOverview({ teacherRequests, allStudents, allTeachers, sections, setActiveTab }) {
@@ -10,14 +10,14 @@ export default function DashboardOverview({ teacherRequests, allStudents, allTea
 
   const stats = [
     {
-      title: "Child Profiles",
+      title: "Patient Registry",
       value: allStudents?.length || 0,
-      icon: GraduationCap,
+      icon: Users,
       color: "bg-white",
       border: "border-slate-200",
       accent: "text-primary-600",
       iconBg: "bg-primary-50",
-      desc: "Total children enrolled",
+      desc: "Total patients enrolled",
       onClick: () => setActiveTab("all-students"),
     },
     {
@@ -160,7 +160,7 @@ export default function DashboardOverview({ teacherRequests, allStudents, allTea
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { icon: GraduationCap, label: "Child Enrollment", val: `${allStudents?.length || 0} Children`, color: "emerald", bg: "bg-emerald-50", text: "text-emerald-600" },
+              { icon: Users, label: "Patient Enrollment", val: `${allStudents?.length || 0} Patients`, color: "emerald", bg: "bg-emerald-50", text: "text-emerald-600" },
               { icon: UserCheck, label: "Therapist Assignment", val: `${assignedTeachers?.length || 0} Assigned`, color: "blue", bg: "bg-blue-50", text: "text-blue-600" },
               { icon: Clock, label: "Pending Approvals", val: `${teacherRequests?.length || 0} Awaiting`, color: "amber", bg: "bg-amber-50", text: "text-amber-600" },
               { icon: Zap, label: "System Latency", val: "Optimal (22ms)", color: "teal", bg: "bg-teal-50", text: "text-teal-600" }

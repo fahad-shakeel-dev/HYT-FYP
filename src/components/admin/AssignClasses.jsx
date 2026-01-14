@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, BookOpen, Send, Key, User, CheckCircle, AlertCircle, RefreshCw, Trash2, ShieldCheck, Activity, Zap, ClipboardList, Database, Lock, Calendar } from "lucide-react";
+import { Users, BookOpen, Send, Key, User, CheckCircle, AlertCircle, RefreshCw, Trash2, ShieldCheck, Activity, Zap, ClipboardList, Database, Lock, Calendar, Eye, EyeOff, Layers } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Select from "react-select";
 
@@ -16,6 +16,13 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
   const [assignedClasses, setAssignedClasses] = useState([]);
   const [loadingAssigned, setLoadingAssigned] = useState(false);
   const [error, setError] = useState(null);
+
+  // Toggle visibility for each assignment's password
+  const [visiblePasswords, setVisiblePasswords] = useState({});
+
+  const togglePasswordVisibility = (id) => {
+    setVisiblePasswords(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const fetchAssignedClasses = async () => {
     setLoadingAssigned(true);
@@ -42,12 +49,6 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
     fetchAssignedClasses();
   }, []);
 
-  // Update available activities based on selected class and schedules
-  // In the new model, activities are defined per group, but we might want to check overlap/availability?
-  // For now, simpler: getting activities from the selected class is enough.
-  // The API call 'available-subjects' might fail if backend isn't updated, 
-  // so let's rely on class data directly if possible or update the flow.
-  // Assuming for now verification of availability happens on assignment or we just show all class activities.
   useEffect(() => {
     if (!selectedClass) {
       setAvailableActivities([]);
@@ -73,10 +74,6 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
 
   const generateCredentials = () => {
     if (selectedClassData && activity && selectedSchedules.length > 0) {
-      const schedulePart = selectedSchedules.length === selectedClassData.schedules.length
-        ? "all"
-        : "multi"; // Simplified for brevity
-
       // Sanitized username generation
       const safeGroup = selectedClassData.className.replace(/\s+/g, '_').toLowerCase().slice(0, 10);
       const safeActivity = activity.replace(/\s+/g, '_').toLowerCase().slice(0, 10);
@@ -112,6 +109,7 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
         setClassCredentials({ username: "", password: "" });
         setAvailableActivities([]);
         await Promise.all([fetchData(), fetchAssignedClasses()]);
+        alert("Therapist assigned successfully!");
       } else {
         alert("Failed to assign.")
       }
@@ -140,301 +138,411 @@ export default function AssignClasses({ allTeachers, classes, fetchData }) {
   const customSelectStyles = {
     control: (provided, state) => ({
       ...provided,
-      backgroundColor: "rgba(2, 6, 23, 0.4)",
-      borderColor: state.isFocused ? "#3b82f6" : "#0f172a",
-      color: "#ffffff",
-      borderRadius: "1.25rem",
-      padding: "0.5rem 0.75rem",
+      backgroundColor: "#f8fafc", // slate-50
+      borderColor: state.isFocused ? "#3b82f6" : "#e2e8f0", // slate-200
+      color: "#1e293b", // slate-800
+      borderRadius: "1rem",
+      padding: "0.5rem 0.5rem",
       boxShadow: "none",
-      "&:hover": { borderColor: "#1e293b" },
+      "&:hover": { borderColor: "#cbd5e1" },
     }),
     menu: (provided) => ({
       ...provided,
-      backgroundColor: "#0f172a",
-      borderRadius: "1.25rem",
-      border: "1px solid #1e293b",
+      backgroundColor: "#ffffff",
+      borderRadius: "1rem",
+      border: "1px solid #e2e8f0",
       overflow: "hidden",
+      zIndex: 50,
+      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "rgba(59, 130, 246, 0.1)" : "transparent",
-      color: "#ffffff",
+      backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "#eff6ff" : "transparent",
+      color: state.isSelected ? "#ffffff" : "#1e293b",
       cursor: "pointer",
       fontWeight: "600",
-      fontSize: "0.875rem",
+      fontSize: "0.80rem",
     }),
     multiValue: (provided) => ({
       ...provided,
-      backgroundColor: "rgba(59, 130, 246, 0.1)",
+      backgroundColor: "#eff6ff",
       borderRadius: "0.5rem",
-      border: "1px solid rgba(59, 130, 246, 0.2)",
+      border: "1px solid #dbeafe",
     }),
     multiValueLabel: (provided) => ({
       ...provided,
-      color: "#3b82f6",
-      fontWeight: "800",
-      fontSize: "10px",
+      color: "#2563eb",
+      fontWeight: "700",
+      fontSize: "11px",
       textTransform: "uppercase",
       letterSpacing: "0.05em",
     }),
     multiValueRemove: (provided) => ({
       ...provided,
-      color: "#3b82f6",
-      "&:hover": { backgroundColor: "transparent", color: "#60a5fa" },
+      color: "#2563eb",
+      "&:hover": { backgroundColor: "transparent", color: "#1e40af" },
     }),
+    input: (provided) => ({
+      ...provided,
+      color: '#1e293b'
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: '#94a3b8',
+      fontWeight: '500',
+      fontSize: '0.75rem'
+    })
   };
 
   return (
-    <div className="space-y-8 font-outfit">
-      {/* Node Provisioning Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-900 pb-8">
+    <div className="space-y-8 font-outfit max-w-[1600px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Database className="text-primary-500" size={24} />
-            <h1 className="text-4xl font-black text-white tracking-tighter">Assign Therapist</h1>
+            <h1 className="text-4xl font-black text-slate-800 tracking-tighter">Therapist Allocation</h1>
           </div>
-          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Link Therapists to Groups</p>
+          <p className="text-slate-500 font-bold text-sm uppercase tracking-widest pl-9">Manage Clinical assignments and credentials</p>
         </div>
-        <div className="px-6 py-2 bg-slate-900/50 border border-slate-800 rounded-2xl">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none"> Total Assignments </span>
-          <p className="text-lg font-black text-white">{assignedClasses.length}</p>
+        <div className="flex items-center gap-4">
+          <div className="px-6 py-2 bg-white border border-slate-200 rounded-2xl shadow-sm">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none"> Total Links </span>
+            <p className="text-lg font-black text-slate-800">{assignedClasses.length}</p>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* Assignment Engine */}
-        <div className="bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] p-8 border border-slate-900 relative group overflow-hidden">
-          <div className="relative z-10">
-            <h2 className="text-xl font-black text-white tracking-tight mb-8 flex items-center gap-3">
-              <Zap className="text-primary-500" size={20} />
-              Assignment Manager
-            </h2>
-
-            <div className="space-y-6">
-              {/* Clinician Select */}
-              <div className="space-y-2">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                  <User size={12} /> Select Therapist
-                </label>
-                <div className="relative group">
-                  <select
-                    value={selectedTeacher}
-                    onChange={(e) => setSelectedTeacher(e.target.value)}
-                    className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer hover:bg-slate-950 transition-all"
-                  >
-                    <option value="">Select Therapist...</option>
-                    {availableTeachers.map((t) => (
-                      <option key={t._id} value={t._id}>{t.name} (ID: {t._id.slice(-4).toUpperCase()})</option>
-                    ))}
-                  </select>
-                  <RefreshCw className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-700 pointer-events-none" size={16} />
-                </div>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+        {/* Allocation Engine (Left/Top) */}
+        <div className="xl:col-span-8 space-y-8">
+          <div className="bg-white rounded-[2.5rem] p-8 border border-slate-200 relative group overflow-hidden shadow-xl shadow-slate-200/50">
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-8">
+                <Zap className="text-primary-500" size={20} />
+                <h2 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+                  Allocation Controller
+                </h2>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                {/* Unit Select */}
+              <div className="space-y-8">
+                {/* Therapist Selection */}
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                    <ClipboardList size={12} /> Therapy Group
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+                    <User size={12} /> Select Therapist
                   </label>
-                  <div className="relative">
+                  <div className="relative group/select">
                     <select
-                      value={selectedClass}
-                      onChange={(e) => {
-                        setSelectedClass(e.target.value);
-                        setActivity("");
-                        setSelectedSchedules([]);
-                        setAvailableActivities([]);
-                        setClassCredentials({ username: "", password: "" });
-                      }}
-                      className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer"
+                      value={selectedTeacher}
+                      onChange={(e) => setSelectedTeacher(e.target.value)}
+                      className="w-full pl-5 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-3xl text-slate-800 focus:outline-none focus:border-primary-500 font-bold text-xs appearance-none cursor-pointer shadow-inner transition-all hover:bg-white"
                     >
-                      <option value="">Select Group...</option>
-                      {availableClasses.map((cls) => (
-                        <option key={cls._id} value={cls._id}>{cls.className} ({cls.category})</option>
+                      <option value="">Choose a therapist from the registry...</option>
+                      {availableTeachers.map((t) => (
+                        <option key={t._id} value={t._id}>{t.name} — {t.email}</option>
                       ))}
                     </select>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                      <RefreshCw size={16} />
+                    </div>
                   </div>
                 </div>
-                {/* Discipline Select */}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Group Selection */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+                      <ClipboardList size={12} /> Therapy Group
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={selectedClass}
+                        onChange={(e) => {
+                          setSelectedClass(e.target.value);
+                          setActivity("");
+                          setSelectedSchedules([]);
+                          setAvailableActivities([]);
+                          setClassCredentials({ username: "", password: "" });
+                        }}
+                        className="w-full pl-5 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-3xl text-slate-800 focus:outline-none focus:border-primary-500 font-bold text-xs appearance-none cursor-pointer shadow-inner transition-all hover:bg-white"
+                      >
+                        <option value="">Select Target Group...</option>
+                        {availableClasses.map((cls) => (
+                          <option key={cls._id} value={cls._id}>{cls.className}</option>
+                        ))}
+                      </select>
+                      <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                        <div className="w-2 h-2 rounded-full bg-slate-400" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Activity Selection */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+                      <BookOpen size={12} /> Activity Module
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={activity}
+                        onChange={(e) => setActivity(e.target.value)}
+                        className="w-full pl-5 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-3xl text-slate-800 focus:outline-none focus:border-primary-500 font-bold text-xs appearance-none cursor-pointer disabled:opacity-50 shadow-inner transition-all hover:bg-white"
+                        disabled={!selectedClass}
+                      >
+                        <option value="">Select Module...</option>
+                        {availableActivities.map((act) => (
+                          <option key={act} value={act}>{act}</option>
+                        ))}
+                      </select>
+                      <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                        <div className="w-2 h-2 rounded-full bg-slate-400" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Schedule Selection */}
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                    <BookOpen size={12} /> Activity/Service
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+                    <Calendar size={12} /> Session Schedule
                   </label>
-                  <div className="relative">
-                    <select
-                      value={activity}
-                      onChange={(e) => setActivity(e.target.value)}
-                      className="w-full pl-6 pr-10 py-5 bg-slate-950/50 border border-slate-900 rounded-3xl text-white focus:outline-none focus:border-primary-500 font-black uppercase text-[10px] tracking-widest appearance-none cursor-pointer disabled:opacity-30"
-                      disabled={!selectedClass}
-                    >
-                      <option value="">Select Activity...</option>
-                      {availableActivities.map((act) => (
-                        <option key={act} value={act}>
-                          {act}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select
+                    isMulti
+                    options={scheduleOptions}
+                    value={scheduleOptions.filter((opt) => selectedSchedules.includes(opt.value))}
+                    onChange={(sel) => setSelectedSchedules(sel.map((opt) => opt.value))}
+                    styles={customSelectStyles}
+                    placeholder="Select time slots..."
+                    isDisabled={!selectedClass}
+                    className="text-sm font-medium"
+                  />
                 </div>
               </div>
 
-              {/* Node Multi-Select */}
-              <div className="space-y-2">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-4 flex items-center gap-2">
-                  <Calendar size={12} /> Session Schedule
-                </label>
-                <Select
-                  isMulti
-                  options={scheduleOptions}
-                  value={scheduleOptions.filter((opt) => selectedSchedules.includes(opt.value))}
-                  onChange={(sel) => setSelectedSchedules(sel.map((opt) => opt.value))}
-                  styles={customSelectStyles}
-                  placeholder="SELECT TIME SLOTS..."
-                  isDisabled={!selectedClass}
-                />
+              <div className="mt-10 pt-8 border-t border-slate-100 flex items-center justify-end">
+                <button
+                  onClick={handleAssignClass}
+                  disabled={loading || !selectedTeacher || !selectedClass || !activity || selectedSchedules.length === 0 || !classCredentials.username}
+                  className="w-full md:w-auto px-10 py-5 bg-primary-600 hover:bg-primary-700 text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group/btn hover:shadow-primary-300 transform"
+                >
+                  {loading ? <Activity className="animate-spin" size={20} /> : <CheckCircle size={20} className="group-hover/btn:scale-110 transition-transform" />}
+                  <span className="uppercase tracking-widest text-[10px] tracking-[0.2em]">Confirm Allocation</span>
+                </button>
               </div>
-            </div>
-
-            <div className="mt-8 pt-8 border-t border-slate-800/50">
-              <button
-                onClick={handleAssignClass}
-                disabled={loading || !selectedTeacher || !selectedClass || !activity || selectedSchedules.length === 0 || !classCredentials.username}
-                className="w-full py-5 bg-primary-600 hover:bg-emerald-600 text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-950/20 active:scale-95 disabled:opacity-30 group/btn"
-              >
-                {loading ? <Activity className="animate-spin" size={20} /> : <Send size={20} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />}
-                <span className="text-[10px] uppercase tracking-[0.2em]">Confirm Assignment</span>
-              </button>
             </div>
           </div>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-600/5 blur-[80px] -z-0" />
         </div>
 
-        {/* Credentials & Registry Status */}
-        <div className="space-y-8">
-          <div className="bg-slate-950 border border-slate-900 rounded-[2.5rem] p-8 relative overflow-hidden h-full">
+        {/* Credentials Panel (Right) */}
+        <div className="xl:col-span-4 space-y-8 h-full">
+          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 relative overflow-hidden min-h-[500px] flex flex-col justify-between shadow-xl shadow-slate-200/50">
             <div className="relative z-10">
-              <div className="flex justify-between items-center mb-10">
+              <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500">
-                    <Lock size={22} />
+                  <div className="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 border border-teal-100">
+                    <Key size={24} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black text-white tracking-tight leading-none uppercase text-[12px] tracking-widest">Session Credentials</h2>
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-1">Generated login for students</p>
+                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider">Access Keys</h3>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Session Authentication</p>
                   </div>
                 </div>
-                <button
-                  onClick={generateCredentials}
-                  disabled={!selectedClass || !activity || selectedSchedules.length === 0}
-                  className="px-6 py-3 bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-white font-black rounded-2xl text-[9px] uppercase tracking-widest transition-all active:scale-95 disabled:opacity-20"
-                >
-                  Generate New
-                </button>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1 opacity-50">Session Username</label>
-                  <div className="px-6 py-5 bg-slate-900/50 border border-slate-800 rounded-3xl font-mono text-primary-400 text-sm font-black break-all">
-                    {classCredentials.username || "NODE_AUTH_PENDING"}
+                  <div className="flex justify-between items-end">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Session Username</label>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(classCredentials.username)}
+                      className="text-[10px] font-bold text-teal-600 hover:text-teal-500 flex items-center gap-1 uppercase tracking-wider transition-colors"
+                      disabled={!classCredentials.username}
+                    >
+                      <ClipboardList size={12} /> Copy User
+                    </button>
+                  </div>
+                  <div className="relative group">
+                    <input
+                      type="text"
+                      value={classCredentials.username}
+                      onChange={(e) => setClassCredentials({ ...classCredentials, username: e.target.value })}
+                      maxLength={30}
+                      placeholder="Auto-generated or type custom..."
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-mono text-teal-700 text-sm font-bold tracking-wide focus:outline-none focus:border-teal-500 focus:bg-white transition-all placeholder:text-slate-400"
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      {classCredentials.username && <CheckCircle size={14} className="text-teal-500" />}
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1 opacity-50">Encryption Key</label>
-                  <div className="px-6 py-5 bg-slate-900/50 border border-slate-800 rounded-3xl font-mono text-emerald-500 text-sm font-black tracking-widest break-all">
-                    {classCredentials.password || "••••••••••••"}
-                  </div>
-                </div>
-              </div>
 
-              <div className="mt-12 p-6 bg-slate-900/40 rounded-3xl border border-slate-900">
-                <div className="flex items-center gap-3 mb-4">
-                  <ShieldCheck className="text-slate-500" size={16} />
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Institutional Privacy Active</span>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-end">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Access Key (Password)</label>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(classCredentials.password)}
+                      className="text-[10px] font-bold text-amber-600 hover:text-amber-500 flex items-center gap-1 uppercase tracking-wider transition-colors"
+                      disabled={!classCredentials.password}
+                    >
+                      <ClipboardList size={12} /> Copy Key
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={classCredentials.password}
+                      onChange={(e) => setClassCredentials({ ...classCredentials, password: e.target.value })}
+                      placeholder="Auto-generated or type custom..."
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-mono text-amber-600 text-sm font-bold tracking-wide focus:outline-none focus:border-amber-500 focus:bg-white transition-all placeholder:text-slate-400"
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      {classCredentials.password && <Lock size={14} className="text-amber-500" />}
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-2 px-1">
+                    * Plain text key only. No encryption used.
+                  </p>
                 </div>
-                <p className="text-[10px] font-bold text-slate-600 leading-relaxed uppercase">
-                  These credentials will be automatically emailed to the assigned therapist.
-                </p>
+
+                <div className="pt-6">
+                  <button
+                    onClick={generateCredentials}
+                    disabled={!selectedClass || !activity || selectedSchedules.length === 0}
+                    className="w-full py-4 bg-amber-50 md:bg-amber-50 border border-amber-200 text-amber-600 hover:bg-amber-500 hover:text-white font-bold rounded-2xl text-xs uppercase tracking-widest transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <RefreshCw size={16} />
+                    Generate New Keys
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="absolute right-0 bottom-0 w-48 h-48 bg-amber-500/5 blur-[80px] -z-0" />
+
+            <div className="mt-8 p-5 bg-slate-50 rounded-2xl border border-slate-200 relative z-10">
+              <div className="flex gap-3">
+                <ShieldCheck className="text-teal-600 shrink-0" size={18} />
+                <div>
+                  <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest mb-1">Plain Text Storage</p>
+                  <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
+                    Credentials can be viewed and copied repeatedly from the history log.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute right-0 bottom-0 w-64 h-64 bg-teal-500/5 blur-[100px] -z-0" />
           </div>
         </div>
       </div>
 
-      {/* Active Resource Registry List */}
-      <div className="space-y-6 pt-10">
-        <div className="flex items-center justify-between px-6">
-          <div className="flex items-center gap-4">
+      {/* History Log */}
+      <div className="pt-10 border-t border-slate-200">
+        <div className="flex items-center justify-between mb-8 px-2">
+          <h2 className="text-xl font-black text-slate-800 uppercase tracking-wider flex items-center gap-3">
             <Activity className="text-primary-500" size={24} />
-            <h2 className="text-xl font-black text-white tracking-tight uppercase tracking-widest">Active Assignments Log</h2>
-          </div>
-          <button onClick={fetchAssignedClasses} className="p-3 bg-slate-900 border border-slate-800 text-slate-500 hover:text-white rounded-xl transition-all active:scale-90">
-            <RefreshCw size={20} className={loadingAssigned ? "animate-spin" : ""} />
+            Allocation History
+          </h2>
+          <button onClick={fetchAssignedClasses} className="p-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-400 hover:text-slate-700 transition-all shadow-sm">
+            <RefreshCw size={18} className={loadingAssigned ? "animate-spin" : ""} />
           </button>
         </div>
 
-        <div className="space-y-4">
-          {assignedClasses.map((assignment, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              className="bg-slate-900/30 backdrop-blur-xl border border-slate-900 rounded-[2rem] p-8 group hover:border-slate-800 transition-all overflow-hidden relative"
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
-                <div className="lg:col-span-4 flex items-center gap-6">
-                  <div className="w-20 h-20 bg-primary-600/10 rounded-3xl flex items-center justify-center text-primary-500 group-hover:scale-110 transition-transform flex-shrink-0">
-                    <User size={32} />
+        <div className="grid grid-cols-1 gap-4">
+          <AnimatePresence>
+            {assignedClasses.map((assignment, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ delay: idx * 0.05 }}
+                className="bg-white border border-slate-200 rounded-[2rem] p-6 group hover:border-primary-200 transition-all shadow-md hover:shadow-xl"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                  {/* Therapist Info */}
+                  <div className="lg:col-span-3 flex items-center gap-4">
+                    <div className="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center text-primary-500 border border-primary-100 group-hover:scale-105 transition-transform">
+                      <User size={24} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Therapist</p>
+                      <h3 className="text-sm font-bold text-slate-800 leading-tight">{assignment.teacherName}</h3>
+                      <p className="text-[11px] text-slate-500 truncate max-w-[150px]">{assignment.teacherEmail}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Assigned Therapist</p>
-                    <h3 className="text-lg font-black text-white">{assignment.teacherName}</h3>
-                    <p className="text-xs font-bold text-slate-500 font-mono mt-1">{assignment.teacherEmail}</p>
-                  </div>
-                </div>
 
-                <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-                  <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-900">
-                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Therapy Group</p>
-                    <div className="flex flex-col gap-1">
-                      <span className="text-xs font-black text-primary-400 uppercase tracking-widest">
-                        {assignment.classDetails?.className || assignment.assignedClass || "Unknown Group"}
-                      </span>
+                  {/* Assignment Details */}
+                  <div className="lg:col-span-5 grid grid-cols-2 gap-4">
+                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Module & Group</p>
+                      <p className="text-xs font-bold text-primary-600 mb-1">{assignment.subject}</p>
+                      <p className="text-[10px] font-medium text-slate-500">{assignment.assignedClass}</p>
+                    </div>
+                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Scheduled Slot</p>
                       <div className="flex flex-wrap gap-1">
-                        <span className="px-2 py-0.5 bg-slate-900 rounded text-[9px] font-black text-slate-500">
-                          {assignment.section}
-                        </span>
+                        {assignment.section && assignment.section.split(',').map((s, i) => (
+                          <span key={i} className="px-2 py-0.5 bg-white rounded-md text-[10px] font-bold text-slate-600 border border-slate-200 shadow-sm">{s.trim()}</span>
+                        ))}
                       </div>
                     </div>
                   </div>
-                  <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-900">
-                    <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Activity</p>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      <span className="text-xs font-black text-white uppercase tracking-widest truncate">{assignment.subject}</span>
+
+                  {/* Credentials Display */}
+                  <div className="lg:col-span-3">
+                    <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-200 transition-colors relative overflow-hidden">
+                      <div className="flex justify-between items-center mb-3 relative z-10">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                          <Key size={10} className="text-amber-500" /> Access Credentials
+                        </p>
+                      </div>
+                      <div className="space-y-3 relative z-10">
+                        <div className="flex items-center justify-between gap-3 p-3 bg-white rounded-lg border border-slate-200 group/cred pl-4 shadow-sm">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-12 shrink-0">User</span>
+                          <code className="text-[13px] font-mono font-bold text-teal-700 select-all truncate">{assignment.classCredentials?.username || "N/A"}</code>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(assignment.classCredentials?.username)}
+                            className="text-slate-400 hover:text-teal-600 opacity-0 group-hover/cred:opacity-100 transition-opacity"
+                            title="Copy Username"
+                          >
+                            <ClipboardList size={14} />
+                          </button>
+                        </div>
+                        <div className="flex items-center justify-between gap-3 p-3 bg-white rounded-lg border border-slate-200 group/cred pl-4 shadow-sm">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider w-12 shrink-0">Key</span>
+                          <code className="text-[13px] font-mono font-bold text-amber-600 select-all tracking-wide truncate">
+                            {assignment.classCredentials?.password || "NO_KEY"}
+                          </code>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(assignment.classCredentials?.password)}
+                            className="text-slate-400 hover:text-amber-600 opacity-0 group-hover/cred:opacity-100 transition-opacity"
+                            title="Copy Key"
+                          >
+                            <ClipboardList size={14} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="lg:col-span-3 flex items-center justify-end">
-                  <button
-                    onClick={() => handleUnassignClass(assignment.teacherId, assignment.classDetails?.classId || assignment.classId, assignment.section, assignment.subject)}
-                    className="px-8 py-4 bg-slate-800/50 hover:bg-rose-900 border border-slate-800 hover:border-rose-900 text-slate-400 hover:text-white font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 active:scale-95 group/del"
-                  >
-                    <Trash2 size={16} className="group-hover/del:rotate-12 transition-transform" />
-                    <span className="text-[9px] uppercase tracking-widest">Remove Assignment</span>
-                  </button>
+                  {/* Actions */}
+                  <div className="lg:col-span-1 flex justify-end">
+                    <button
+                      onClick={() => handleUnassignClass(assignment.teacherId, assignment.classDetails?.classId || assignment.classId, assignment.section, assignment.subject)}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"
+                      title="Remove Allocation"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+
                 </div>
-              </div>
-              <div className="absolute right-0 top-0 w-32 h-32 bg-primary-600/5 blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
           {assignedClasses.length === 0 && (
-            <div className="text-center py-20 bg-slate-900/10 rounded-[2.5rem] border border-dashed border-slate-800">
-              <p className="text-slate-600 font-black uppercase text-[10px] tracking-[0.4em]">No active assignments found</p>
+            <div className="py-24 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No Active Allocations Found</p>
             </div>
           )}
         </div>

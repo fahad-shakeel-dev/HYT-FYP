@@ -48,7 +48,7 @@ export async function POST(request) {
         const token = jwt.sign(
             tokenPayload,
             process.env.JWT_SECRET || "fallback-clinical-secret",
-            { expiresIn: "4h" }
+            { expiresIn: "30d" }
         );
 
         // Create session-authorized response
@@ -65,12 +65,12 @@ export async function POST(request) {
 
         // Secure auth cookie configuration
         response.cookies.set({
-            name: "auth_token",
+            name: "t_auth_token",
             value: token,
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
-            maxAge: 60 * 60 * 4, // 4 hours
+            maxAge: 30 * 24 * 60 * 60, // 30 days
             path: "/",
         });
 

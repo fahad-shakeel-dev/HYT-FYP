@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { LucideCheck, LucideX, LucideGraduationCap, LucideMail, LucidePhone, LucideTrash2, User, Activity, Zap, ShieldCheck, ChevronRight, ClipboardList, Database } from "lucide-react"
+import { LucideCheck, LucideX, Users, LucideMail, LucidePhone, LucideTrash2, User, Activity, Zap, ShieldCheck, ChevronRight, ClipboardList, Database } from "lucide-react"
 
 export default function StudentRequests({
   studentRequests,
@@ -92,14 +92,14 @@ export default function StudentRequests({
                   {/* Demographics Cluster */}
                   <div className="lg:col-span-5 grid grid-cols-2 gap-4">
                     <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-900">
-                      <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Assigned Hierarchy</p>
+                      <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Clinical Assignment</p>
                       <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span className="text-[10px] font-black text-white uppercase tracking-widest truncate">{request.semester} - {request.section}</span>
+                        <span className="text-[10px] font-black text-white uppercase tracking-widest truncate">Phase {request.semester} - {request.section}</span>
                       </div>
                     </div>
                     <div className="p-5 bg-slate-950/50 rounded-2xl border border-slate-900">
-                      <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Institutional ID</p>
+                      <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-2">Patient Case ID</p>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-black text-primary-400 uppercase tracking-widest truncate">{request.registrationNumber}</span>
                       </div>

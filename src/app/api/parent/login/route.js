@@ -240,7 +240,7 @@ export async function POST(request) {
       role: student.role || "student",
     };
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET || "fallback-secret", {
-      expiresIn: "1h", // Token expires in 1 hour
+      expiresIn: "30d", // Token expires in 30 days
     });
 
     // Create response
@@ -260,20 +260,20 @@ export async function POST(request) {
         },
         teacher: teacher
           ? {
-              name: teacher.name,
-              email: teacher.email,
-              subject: classSection.subject,
-            }
+            name: teacher.name,
+            email: teacher.email,
+            subject: classSection.subject,
+          }
           : null,
         classmates,
         classInfo: classSection
           ? {
-              program: classSection.program,
-              semester: classSection.semester,
-              section: classSection.section,
-              room: classSection.room,
-              totalStudents: classSection.enrolledStudents,
-            }
+            program: classSection.program,
+            semester: classSection.semester,
+            section: classSection.section,
+            room: classSection.room,
+            totalStudents: classSection.enrolledStudents,
+          }
           : null,
       },
       { status: 200 }
@@ -281,12 +281,12 @@ export async function POST(request) {
 
     // Set JWT as HTTP-only cookie
     response.cookies.set({
-      name: "auth_token",
+      name: "p_auth_token",
       value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Secure in production
       sameSite: "strict",
-      maxAge: 60 * 60, // 1 hour in seconds
+      maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
       path: "/",
     });
 

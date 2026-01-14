@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secure-jwt-secret";
-const COOKIE_NAME = "auth_token";
+const COOKIE_NAME = "p_auth_token";
 
 // Clear cached model to ensure updated schema is used
 delete mongoose.models.Student;
@@ -113,37 +113,37 @@ export async function GET(request) {
             enrolledAt: enrollment.enrolledAt,
             classDetails: enrollment.classSectionId
               ? {
-                  program: enrollment.classSectionId.program,
-                  room: enrollment.classSectionId.room,
-                  totalStudents: enrollment.classSectionId.enrolledStudents,
-                  teacher: enrollment.classSectionId.assignedTeacher
-                    ? {
-                        name: enrollment.classSectionId.assignedTeacher.name,
-                        email: enrollment.classSectionId.assignedTeacher.email,
-                      }
-                    : null,
-                }
+                program: enrollment.classSectionId.program,
+                room: enrollment.classSectionId.room,
+                totalStudents: enrollment.classSectionId.enrolledStudents,
+                teacher: enrollment.classSectionId.assignedTeacher
+                  ? {
+                    name: enrollment.classSectionId.assignedTeacher.name,
+                    email: enrollment.classSectionId.assignedTeacher.email,
+                  }
+                  : null,
+              }
               : null,
           })),
           enrollmentCount: student.enrollmentCount,
         },
         teacher: teacher
           ? {
-              name: teacher.name,
-              email: teacher.email,
-              subject: classSection?.subject,
-            }
+            name: teacher.name,
+            email: teacher.email,
+            subject: classSection?.subject,
+          }
           : null,
         classmates,
         classInfo: classSection
           ? {
-              program: classSection.program,
-              semester: classSection.semester,
-              section: classSection.section,
-              subject: classSection.subject,
-              room: classSection.room,
-              totalStudents: classSection.enrolledStudents,
-            }
+            program: classSection.program,
+            semester: classSection.semester,
+            section: classSection.section,
+            subject: classSection.subject,
+            room: classSection.room,
+            totalStudents: classSection.enrolledStudents,
+          }
           : null,
       },
       { status: 200 }

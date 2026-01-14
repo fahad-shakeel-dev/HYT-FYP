@@ -6,7 +6,7 @@ import Class from "@/models/ClassSchema";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secure-jwt-secret";
-const COOKIE_NAME = "auth_token";
+const COOKIE_NAME = "p_auth_token";
 
 export async function GET(request) {
   try {
@@ -63,9 +63,9 @@ export async function GET(request) {
       enrolledStudents: enrollment.classSectionId?.enrolledStudents,
       teacher: enrollment.classSectionId?.assignedTeacher
         ? {
-            name: enrollment.classSectionId.assignedTeacher.name,
-            email: enrollment.classSectionId.assignedTeacher.email,
-          }
+          name: enrollment.classSectionId.assignedTeacher.name,
+          email: enrollment.classSectionId.assignedTeacher.email,
+        }
         : null,
       color: ["bg-blue-500", "bg-green-500", "bg-purple-500"][index % 3],
     }));

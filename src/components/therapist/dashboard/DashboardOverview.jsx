@@ -15,26 +15,26 @@ import {
 
 // Simplified stats for the therapist
 const stats = [
-    { title: "Active Patients", value: "12", icon: Users, color: "bg-blue-600 shadow-blue-100" },
-    { title: "Reports Due", value: "05", icon: ClipboardList, color: "bg-amber-600 shadow-amber-100" },
-    { title: "Upcoming Sessions", value: "03", icon: CalendarCheck, color: "bg-teal-600 shadow-teal-100" },
-    { title: "New Messages", value: "02", icon: Bell, color: "bg-indigo-600 shadow-indigo-100" },
+    { title: "Active Patients", value: "12", icon: Users, color: "from-blue-500 to-blue-600 shadow-blue-200" },
+    { title: "Reports Due", value: "05", icon: ClipboardList, color: "from-amber-500 to-amber-600 shadow-amber-200" },
+    { title: "Upcoming Sessions", value: "03", icon: CalendarCheck, color: "from-teal-500 to-teal-600 shadow-teal-200" },
+    { title: "New Messages", value: "02", icon: Bell, color: "from-indigo-500 to-indigo-600 shadow-indigo-200" },
 ];
 
 export default function DashboardOverview({ setActiveSection }) {
     return (
-        <div className="space-y-10">
+        <div className="space-y-12">
             {/* Welcome Section */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-3xl font-black text-slate-800 tracking-tight">Therapist Dashboard</h2>
-                    <p className="text-slate-400 font-bold text-sm mt-1">Welcome back to your clinical portal</p>
+                    <h2 className="text-4xl font-black text-slate-800 tracking-tight">Therapist Dashboard</h2>
+                    <p className="text-slate-500 font-bold text-lg mt-2">Welcome back to your clinical portal</p>
                 </div>
                 <button
                     onClick={() => setActiveSection("patients")}
-                    className="bg-primary-600 text-white px-6 py-3 rounded-2xl font-black text-sm shadow-xl shadow-primary-200 hover:bg-primary-700 transition-all active:scale-95 flex items-center gap-2"
+                    className="bg-slate-900 text-white px-8 py-4 rounded-[1.5rem] font-bold text-sm shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3"
                 >
-                    <Users size={18} />
+                    <Users size={20} />
                     View All Patients
                 </button>
             </div>
@@ -44,18 +44,21 @@ export default function DashboardOverview({ setActiveSection }) {
                 {stats.map((stat, index) => (
                     <motion.div
                         key={index}
-                        className="bg-white rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-slate-50 relative overflow-hidden group hover:scale-[1.02] transition-transform"
+                        className="bg-white rounded-[3rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 relative overflow-hidden group hover:-translate-y-2 transition-transform duration-500"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                     >
-                        <div className={`w-14 h-14 ${stat.color} rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg`}>
-                            <stat.icon size={24} />
+                        <div className={`w-20 h-20 bg-gradient-to-br ${stat.color} rounded-[1.5rem] flex items-center justify-center text-white mb-6 shadow-xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
+                            <stat.icon size={40} strokeWidth={2.5} />
                         </div>
-                        <div className="space-y-1">
-                            <h3 className="text-3xl font-black text-slate-800 tracking-tight">{stat.value}</h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{stat.title}</p>
+                        <div className="space-y-2 relative z-10">
+                            <h3 className="text-5xl font-black text-slate-800 tracking-tighter">{stat.value}</h3>
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{stat.title}</p>
                         </div>
+
+                        {/* Decorative Circle */}
+                        <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-slate-50 rounded-full group-hover:bg-slate-100 transition-colors duration-500 z-0" />
                     </motion.div>
                 ))}
             </div>

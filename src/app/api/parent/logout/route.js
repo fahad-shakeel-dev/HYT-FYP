@@ -5,7 +5,7 @@ export async function POST(request) {
 
     // Clear JWT cookie
     response.cookies.set({
-        name: "auth_token",
+        name: "p_auth_token",
         value: "",
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
