@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation";
+import { LucideActivity } from "lucide-react";
 import Sidebar from "@/components/therapist/dashboard/Sidebar"
 import Header from "@/components/therapist/dashboard/Header"
 import DashboardOverview from "@/components/therapist/dashboard/DashboardOverview"
@@ -9,7 +10,7 @@ import PatientManagement from "@/components/therapist/dashboard/PatientManagemen
 import GroupPatientManagement from "@/components/therapist/dashboard/GroupPatientManagement"
 import SentHistory from "@/components/therapist/dashboard/SentHistory"
 
-export default function TherapistDashboard() {
+function TherapistDashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialSection = searchParams.get("tab") || "dashboard";
@@ -107,4 +108,17 @@ export default function TherapistDashboard() {
       `}</style>
     </div>
   )
+}
+
+export default function TherapistDashboard() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-screen space-y-4 bg-slate-50">
+        <LucideActivity className="animate-spin text-primary-600" size={48} />
+        <p className="text-slate-400 font-bold animate-pulse uppercase tracking-widest text-xs">Accessing Authorization Layer...</p>
+      </div>
+    }>
+      <TherapistDashboardContent />
+    </Suspense>
+  );
 }

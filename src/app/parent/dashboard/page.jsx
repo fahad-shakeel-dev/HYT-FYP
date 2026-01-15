@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -92,7 +92,7 @@ const clinicalAlerts = [
   },
 ];
 
-export default function ParentDashboard() {
+function ParentDashboardContent() {
   const router = useRouter();
   const { studentData, loading, setStudentData } = useStudent();
   const searchParams = useSearchParams();
@@ -644,5 +644,18 @@ export default function ParentDashboard() {
         bodyClassName={() => "text-sm font-bold text-slate-800 flex p-3"}
       />
     </div>
+  );
+}
+
+export default function ParentDashboard() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-screen space-y-4 bg-[#fcfcfd]">
+        <LucideActivity className="animate-spin text-primary-600" size={48} />
+        <p className="text-slate-400 font-bold animate-pulse uppercase tracking-widest text-xs">Accessing Secure Care Portal...</p>
+      </div>
+    }>
+      <ParentDashboardContent />
+    </Suspense>
   );
 }
