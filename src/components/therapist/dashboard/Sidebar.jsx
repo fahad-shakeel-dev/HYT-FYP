@@ -57,19 +57,17 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
         } shadow-[10px_0_30px_rgba(0,0,0,0.02)]`}
     >
       {/* Sidebar Header */}
-      {/* ... header code ... */}
-      <div className="p-6 h-24 flex items-center justify-between">
-        {/* ... (keep header content) ... */}
-        <div className="flex items-center gap-4 py-2">
-          <div className="min-w-[48px] h-[48px] bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary-200 rotate-3 transition-transform hover:rotate-0">
-            <LucideStethoscope size={24} />
+      <div className="h-24 flex items-center justify-between p-6 border-b border-slate-100">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="min-w-[44px] w-11 h-11 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary-200 flex-shrink-0 transition-transform hover:rotate-0 hover:scale-105">
+            <LucideStethoscope size={22} />
           </div>
           {!collapsed && (
-            <div className="flex flex-col">
-              <span className="text-lg font-black text-slate-800 tracking-tight leading-none mb-1">
+            <div className="flex flex-col min-w-0">
+              <span className="text-base font-black text-slate-800 tracking-tight leading-none truncate">
                 Therapist
               </span>
-              <span className="text-[10px] uppercase font-bold text-primary-600 tracking-widest leading-none">
+              <span className="text-[9px] uppercase font-bold text-primary-600 tracking-widest leading-none">
                 Clinical Portal
               </span>
             </div>
@@ -78,7 +76,8 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
         {!collapsed && (
           <button
             onClick={() => setCollapsed(true)}
-            className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary-600 hover:bg-primary-50 transition-all active:scale-90"
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary-600 hover:bg-primary-50 transition-all active:scale-90"
+            title="Collapse sidebar"
           >
             <LucideChevronLeft size={18} />
           </button>
@@ -86,10 +85,14 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
       </div>
 
       {/* Sidebar Navigation */}
-      <nav className="flex-1 px-4 py-6 overflow-y-auto no-scrollbar h-[calc(100vh-200px)] flex flex-col gap-8">
+      <nav className="flex-1 px-3 py-6 overflow-y-auto no-scrollbar h-[calc(100vh-240px)] flex flex-col gap-6">
         {/* Main Menu */}
         <div className="space-y-2">
-          {!collapsed && <p className="px-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">Main Menu</p>}
+          {!collapsed && (
+            <p className="px-3 text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-3">
+              Main Menu
+            </p>
+          )}
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
@@ -100,17 +103,22 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
                   setActiveSection(item.id);
                   if (window.innerWidth < 1024) setCollapsed(true);
                 }}
-                className={`flex items-center gap-4 w-full h-14 px-4 rounded-2xl transition-all duration-300 group ${isActive
-                  ? "bg-primary-600 text-white shadow-xl shadow-primary-100"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-primary-600"
-                  }`}
+                className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-300 group ${
+                  isActive
+                    ? "bg-primary-600 text-white shadow-lg shadow-primary-100"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-primary-600"
+                }`}
                 title={collapsed ? item.label : ""}
               >
-                <div className={`min-w-[24px] transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110"}`}>
-                  <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                <div className={`min-w-[22px] transition-transform duration-300 flex-shrink-0 ${
+                  isActive ? "scale-110" : "group-hover:scale-110"
+                }`}>
+                  <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                 </div>
                 {!collapsed && (
-                  <span className={`text-sm font-bold tracking-tight whitespace-nowrap transition-opacity duration-300 ${isActive ? "opacity-100" : "opacity-80"}`}>
+                  <span className={`text-xs font-bold tracking-tight whitespace-nowrap transition-opacity duration-300 ${
+                    isActive ? "opacity-100" : "opacity-85"
+                  }`}>
                     {item.label}
                   </span>
                 )}
@@ -124,8 +132,12 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
 
         {/* Assigned Groups Section */}
         {assignedGroups.length > 0 && (
-          <div className="space-y-2">
-            {!collapsed && <p className="px-4 text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">Allocated Groups</p>}
+          <div className="space-y-3">
+            {!collapsed && (
+              <p className="px-4 text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-3">
+                Allocated Groups ({assignedGroups.length})
+              </p>
+            )}
             {assignedGroups.map((group, idx) => {
               const groupId = `group-${idx}`;
               const isActive = activeSection === groupId;
@@ -136,23 +148,73 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
                     setActiveSection(groupId);
                     if (window.innerWidth < 1024) setCollapsed(true);
                   }}
-                  className={`flex items-center gap-4 w-full h-14 px-4 rounded-2xl transition-all duration-300 group cursor-pointer text-left ${isActive
-                    ? "bg-slate-100 text-teal-600 shadow-sm"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-teal-600"
-                    }`}
-                  title={collapsed ? group.subject : ""}
+                  className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-300 group cursor-pointer text-left ${
+                    isActive
+                      ? "bg-teal-50 text-teal-700 shadow-md border border-teal-200"
+                      : "text-slate-600 hover:bg-slate-50 hover:border border-slate-100"
+                  }`}
+                  title={collapsed ? `${group.displayName || group.subject} - ${group.totalStudents} students` : ""}
                 >
-                  <div className="min-w-[24px] h-6 flex items-center justify-center">
-                    <div className={`w-2 h-2 rounded-full transition-all ${isActive ? 'bg-teal-500 ring-4 ring-teal-100' : 'bg-slate-300 group-hover:bg-teal-400'}`} />
+                  <div className="min-w-[20px] h-5 flex items-center justify-center flex-shrink-0">
+                    <div
+                      className={`w-2.5 h-2.5 rounded-full transition-all ${
+                        isActive 
+                          ? 'bg-teal-600 ring-3 ring-teal-200 scale-100' 
+                          : 'bg-slate-300 group-hover:bg-teal-400 scale-90'
+                      }`}
+                    />
                   </div>
                   {!collapsed && (
-                    <div className="flex flex-col items-start overflow-hidden">
-                      <span className={`text-sm font-bold truncate w-full ${isActive ? 'text-slate-800' : 'text-slate-600'}`}>
-                        {group.subject}
+                    <div className="flex flex-col items-start overflow-hidden min-w-0 flex-1">
+                      <span
+                        className={`text-sm font-bold truncate w-full leading-tight ${
+                          isActive ? "text-slate-800" : "text-slate-700"
+                        }`}
+                      >
+                        {group.subject || group.displayName?.split('(')[0].trim()}
                       </span>
-                      <span className="text-[10px] font-medium text-slate-400 truncate w-full">
-                        {group.program} — {group.section}
-                      </span>
+                      {/* Days - Professional Display */}
+                      {group.days && group.days.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1.5 mb-1">
+                          {group.days.slice(0, 3).map((day) => (
+                            <span
+                              key={day}
+                              className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md transition-colors ${
+                                isActive
+                                  ? "bg-teal-600/20 text-teal-700"
+                                  : "bg-slate-100 text-slate-600"
+                              }`}
+                            >
+                              {day.substring(0, 3)}
+                            </span>
+                          ))}
+                          {group.days.length > 3 && (
+                            <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-md ${
+                              isActive ? "bg-teal-600/20 text-teal-700" : "bg-slate-100 text-slate-600"
+                            }`}>
+                              +{group.days.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1 w-full">
+                        <span className="text-[9px] font-medium text-slate-500 truncate">
+                          {group.program}
+                        </span>
+                        {group.section && (
+                          <>
+                            <span className="text-slate-400">•</span>
+                            <span className="text-[9px] font-medium text-slate-500 truncate">
+                              {group.section}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      {group.totalStudents > 0 && (
+                        <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                          {group.totalStudents} Student{group.totalStudents !== 1 ? "s" : ""}
+                        </span>
+                      )}
                     </div>
                   )}
                 </button>
@@ -163,33 +225,46 @@ export default function Sidebar({ activeSection, setActiveSection, collapsed, se
       </nav>
 
       {/* Sidebar Footer / Profile */}
-      <div className="absolute bottom-0 left-0 w-full p-6 border-t border-slate-100 bg-white/80 backdrop-blur-sm">
-        <div className={`relative flex items-center gap-4 p-2 rounded-2xl transition-all ${collapsed ? "justify-center" : "hover:bg-slate-50"} group/profile`}>
-          <div className="min-w-[48px] h-[48px] rounded-2xl bg-secondary-100 flex items-center justify-center text-secondary-600 font-bold border-2 border-white shadow-sm overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-100 bg-gradient-to-t from-white to-white/95">
+        <div
+          className={`relative flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer group/profile ${
+            collapsed
+              ? "justify-center hover:bg-slate-50"
+              : "hover:bg-slate-50"
+          }`}
+        >
+          {/* Profile Avatar */}
+          <div className="min-w-[44px] w-11 h-11 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-700 font-bold border-2 border-white shadow-md overflow-hidden flex-shrink-0 flex-col items-center justify-center text-sm">
             {therapist.image ? (
               <img src={therapist.image} alt={therapist.name} className="w-full h-full object-cover" />
             ) : (
-              therapist.name.charAt(0)
+              <span className="font-black text-base">
+                {therapist.name?.charAt(0)?.toUpperCase() || "T"}
+              </span>
             )}
           </div>
+
+          {/* Profile Info */}
           {!collapsed && (
-            <div className="flex flex-col min-w-0 pr-8">
-              <span className="text-sm font-black text-slate-800 truncate">
-                {therapist.name}
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="text-xs font-bold text-slate-800 truncate leading-tight">
+                {therapist.name || "Therapist"}
               </span>
-              <span className="text-xs font-bold text-slate-400 truncate uppercase">
-                {therapist.specialization}
+              <span className="text-[8px] font-bold text-slate-500 truncate uppercase tracking-widest">
+                {therapist.specialization || "Clinical Staff"}
               </span>
             </div>
           )}
 
-          {/* Logout Button (Hidden by default, visible on hover or if collapsed logic added) */}
+          {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className={`absolute ${collapsed ? "-right-12 top-2 bg-white shadow-xl" : "right-2"} p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-all opacity-0 group-hover/profile:opacity-100`}
-            title="Secure Logout"
+            className={`flex-shrink-0 p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all opacity-0 group-hover/profile:opacity-100 ${
+              collapsed ? "absolute -right-12 top-1/2 -translate-y-1/2 bg-white shadow-lg rounded-xl" : ""
+            }`}
+            title="Logout"
           >
-            <LucideLogOut size={18} />
+            <LucideLogOut size={16} />
           </button>
         </div>
       </div>

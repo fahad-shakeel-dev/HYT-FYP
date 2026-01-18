@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/mongodb";
-import RegistrationRequest from "@/models/RegistrationRequest";
-import User from "@/models/User";
+import UnverifiedStudent from "@/models/UnverifiedStudent";
+import Student from "@/models/Student";
 
 export async function POST(request) {
     try {
@@ -19,31 +19,31 @@ export async function POST(request) {
             return NextResponse.json({ message: "Invalid or expired reset token" }, { status: 400 });
         }
 
-        // Find user with valid reset token in RegistrationRequest
-        const regRequest = await RegistrationRequest.findOne({
+        // Find user with valid reset token in UnverifiedStudent
+        const unverifiedStudent = await UnverifiedStudent.findOne({
             email: decoded.email,
             resetPasswordToken: token,
             resetPasswordExpires: { $gt: Date.now() },
         });
 
-        if (!regRequest) {
+        if (!unverifiedStudent) {
             return NextResponse.json({ message: "Invalid or expired reset token" }, { status: 400 });
         }
 
         // Hash new password
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        // Update password in RegistrationRequest and clear reset token
-        regRequest.password = hashedPassword;
-        regRequest.resetPasswordToken = undefined;
-        regRequest.resetPasswordExpires = undefined;
-        await regRequest.save();
+        // Update password in UnverifiedStudent and clear reset token
+        unverifiedStudent.password = hashedPassword;
+        unverifiedStudent.resetPasswordToken = undefined;
+        unverifiedStudent.resetPasswordExpires = undefined;
+        await unverifiedStudent.save();
 
-        // Also update in User model if they have been verified
-        const user = await User.findOne({ email: decoded.email });
-        if (user) {
-            user.password = hashedPassword;
-            await user.save();
+        // Also update in Student model if they have been verified
+        const student = await Student.findOne({ email: decoded.email });
+        if (student) {
+            student.password = hashedPassword;
+            await student.save();
         }
 
         return NextResponse.json({ message: "Password reset successfully" }, { status: 200 });

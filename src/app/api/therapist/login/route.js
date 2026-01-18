@@ -13,19 +13,26 @@ export async function POST(request) {
 
         // Find user by email in User collection
         const user = await User.findOne({ email });
+        
+        // If user doesn't exist, check registration requests
         if (!user) {
-            return NextResponse.json({ message: "Invalid clinical credentials" }, { status: 401 });
+            const regRequest = await RegistrationRequest.findOne({ email });
+            
+            // If exists in registration but not verified, ask to verify email
+            if (regRequest && !regRequest.isVerified) {
+                return NextResponse.json({ message: "Verify your email before logging in" }, { status: 403 });
+            }
+            
+            // If no registration request either, no account found
+            return NextResponse.json({ message: "No account found" }, { status: 404 });
         }
 
         // Find registration request to check verification status
         const regRequest = await RegistrationRequest.findOne({ email });
-        if (!regRequest) {
-            return NextResponse.json({ message: "Clinical identity not found in registry" }, { status: 404 });
-        }
 
         // Check if email is verified
-        if (!regRequest.isVerified) {
-            return NextResponse.json({ message: "Professional email verification required" }, { status: 403 });
+        if (!regRequest || !regRequest.isVerified) {
+            return NextResponse.json({ message: "Verify your email before logging in" }, { status: 403 });
         }
 
         // Compare provided password with stored hashed password from User

@@ -177,11 +177,10 @@
 
 
 
-// std
-
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Student from "@/models/Student";
+import UnverifiedStudent from "@/models/UnverifiedStudent";
 import ClassSection from "@/models/ClassSection";
 import User from "@/models/User"; // Import User model to avoid MissingSchemaError
 import bcrypt from "bcryptjs";
@@ -201,7 +200,16 @@ export async function POST(request) {
     // Find student by email
     const student = await Student.findOne({ email });
     if (!student) {
-      return NextResponse.json({ message: "Student not found with this email" }, { status: 404 });
+      // Check if they have an unverified account
+      const unverifiedStudent = await UnverifiedStudent.findOne({ email });
+      
+      // If exists in unverified but not verified, ask to verify email
+      if (unverifiedStudent && !unverifiedStudent.isVerified) {
+        return NextResponse.json({ message: "Verify your email before logging in" }, { status: 403 });
+      }
+      
+      // If no student account found anywhere, no account found
+      return NextResponse.json({ message: "No account found" }, { status: 404 });
     }
 
     // Verify password
@@ -212,7 +220,7 @@ export async function POST(request) {
 
     // Check if student is verified
     if (!student.isVerified) {
-      return NextResponse.json({ message: "Please verify your email before logging in" }, { status: 401 });
+      return NextResponse.json({ message: "Verify your email before logging in" }, { status: 403 });
     }
 
     // Find the class section

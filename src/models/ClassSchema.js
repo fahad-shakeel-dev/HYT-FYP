@@ -4,7 +4,6 @@ const ClassSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ["Speech Therapy", "Occupational Therapy", "Behavioral Therapy", "Physical Therapy", "Social Skills Group"],
   },
   className: {
     type: String, // Therapy Group Name

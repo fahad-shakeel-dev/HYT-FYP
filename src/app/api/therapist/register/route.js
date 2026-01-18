@@ -26,8 +26,31 @@ export async function POST(request) {
 
     // Check if user already exists in RegistrationRequest
     const existingRequest = await RegistrationRequest.findOne({ email });
+    
+    // If existing request found, check if it's verified or expired
     if (existingRequest) {
-      return NextResponse.json({ message: "Clinician with this identity already exists in registry" }, { status: 400 });
+      // If verified, don't allow re-registration
+      if (existingRequest.isVerified) {
+        return NextResponse.json(
+          { message: "Email already verified. Please login or contact support." },
+          { status: 400 }
+        );
+      }
+      
+      // If unverified, check if it's older than 1 day
+      const createdDate = new Date(existingRequest.createdAt);
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      
+      if (createdDate > oneDayAgo) {
+        // Less than 1 day old, still within verification window
+        return NextResponse.json(
+          { message: "Registration already exists. Please check your email for verification link. You can register again after 24 hours if not verified." },
+          { status: 400 }
+        );
+      } else {
+        // Older than 1 day, delete it and allow new registration
+        await RegistrationRequest.deleteOne({ _id: existingRequest._id });
+      }
     }
 
     // Hash password

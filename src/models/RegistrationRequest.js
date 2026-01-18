@@ -55,4 +55,14 @@ const RegistrationRequestSchema = new mongoose.Schema({
     },
 })
 
+// TTL Index: Automatically delete unverified requests after 24 hours (86400 seconds)
+// This will delete documents where isVerified is false and createdAt is older than 1 day
+RegistrationRequestSchema.index(
+    { createdAt: 1 },
+    {
+        expireAfterSeconds: 86400,
+        partialFilterExpression: { isVerified: false }
+    }
+)
+
 export default mongoose.models.RegistrationRequest || mongoose.model("RegistrationRequest", RegistrationRequestSchema)

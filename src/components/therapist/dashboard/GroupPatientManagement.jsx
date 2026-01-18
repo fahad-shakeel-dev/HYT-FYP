@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import ShareResourceModal from "./ShareResourceModal";
 
-export default function GroupPatientManagement({ groupId, groupName, groupSubject, preloadedStudents = [] }) {
+export default function GroupPatientManagement({ groupId, groupName, groupSubject, preloadedStudents = [], groupDays = [] }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [patients, setPatients] = useState(preloadedStudents);
     const [loading, setLoading] = useState(false);
@@ -68,16 +68,42 @@ export default function GroupPatientManagement({ groupId, groupName, groupSubjec
 
             {/* Header Area */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div>
+                <div className="space-y-3 flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                        <span className="px-3 py-1 bg-teal-50 text-teal-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-teal-100">
+                        <span className="px-3 py-1.5 bg-teal-50 text-teal-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-teal-100">
                             Allocated Group
                         </span>
+                        {groupDays && groupDays.length > 0 && (
+                            <span className="px-3 py-1.5 bg-primary-50 text-primary-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-primary-100">
+                                {groupDays.length} Day{groupDays.length !== 1 ? "s" : ""}
+                            </span>
+                        )}
                     </div>
-                    <h2 className="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-3">
-                        {groupSubject || "Therapy Group"}
-                    </h2>
-                    <p className="text-slate-400 font-bold text-sm">Managing records for {filteredPatients.length} patients</p>
+                    
+                    {/* Group Title */}
+                    <div>
+                        <h2 className="text-3xl font-black text-slate-800 tracking-tight mb-3">
+                            {groupSubject || "Therapy Group"}
+                        </h2>
+                        
+                        {/* Days - Professional Display */}
+                        {groupDays && groupDays.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-2 mb-4">
+                                <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Allocated On:</span>
+                                {groupDays.map((day) => (
+                                    <div
+                                        key={day}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow-md transition-all"
+                                    >
+                                        <div className="w-2 h-2 rounded-full bg-teal-500"></div>
+                                        <span className="text-sm font-bold text-slate-700">{day}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    <p className="text-slate-500 font-bold text-sm">Managing records for {filteredPatients.length} patients</p>
                 </div>
 
                 <button

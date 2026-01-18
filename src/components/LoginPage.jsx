@@ -19,7 +19,8 @@ export default function LoginPage() {
             secondaryIcon: LucideActivity,
             color: "primary",
             route: "/therapist",
-            stats: "1.2k+ Sessions Logged"
+            stats: "1.2k+ Sessions Logged",
+            buttonLabel: "Login as Therapist"
         },
         {
             id: "parent",
@@ -30,7 +31,8 @@ export default function LoginPage() {
             secondaryIcon: LucideShieldCheck,
             color: "secondary",
             route: "/parent",
-            stats: "Real-time Progress Tracking"
+            stats: "Real-time Progress Tracking",
+            buttonLabel: "Login as Parent"
         },
     ]
 
@@ -39,7 +41,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-outfit">
+        <div className="min-h-screen w-full max-w-screen bg-[#f8fafc] flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 relative overflow-x-hidden overflow-y-auto font-outfit">
             {/* Animated Background Orbs */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                 <motion.div
@@ -97,18 +99,13 @@ export default function LoginPage() {
 
                 <div className="flex flex-col items-center gap-3">
                     <p className="text-slate-500 font-bold text-base sm:text-lg max-w-2xl mx-auto mb-2">
-                        Comprehensive clinical governance and caregiver transparency interface.
+                        Connect with experienced therapists and receive personalized clinical care online.
                     </p>
-                    <div className="flex items-center gap-4">
-                        <div className="h-[2px] w-12 bg-slate-200"></div>
-                        <span className="text-slate-400 font-black text-[10px] uppercase tracking-[0.4em]">Project ID: Lumos-2025</span>
-                        <div className="h-[2px] w-12 bg-slate-200"></div>
-                    </div>
                 </div>
             </motion.div>
 
             {/* Portal Selection Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 w-full max-w-6xl z-10 relative px-0 sm:px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-10 w-full max-w-6xl z-10 relative px-2 sm:px-4">
                 {cards.map((card, idx) => (
                     <motion.div
                         key={card.id}
@@ -124,7 +121,7 @@ export default function LoginPage() {
 
                         <div
                             onClick={() => handleCardClick(card.route)}
-                            className="relative bg-white/70 backdrop-blur-lg border border-white/50 rounded-[2.5rem] sm:rounded-[3rem] p-6 sm:p-8 md:p-12 h-full flex flex-col justify-between cursor-pointer shadow-xl transition-all duration-500 group-hover:-translate-y-3"
+                            className="relative bg-white/70 backdrop-blur-lg border border-white/50 rounded-2xl sm:rounded-3xl md:rounded-[2.5rem] lg:rounded-[3rem] p-4 sm:p-6 md:p-8 lg:p-12 h-full flex flex-col justify-between cursor-pointer shadow-xl transition-all duration-500 group-hover:-translate-y-3"
                             style={{ transformStyle: "preserve-3d" }}
                         >
                             <div>
@@ -152,26 +149,26 @@ export default function LoginPage() {
                                 </p>
                             </div>
 
-                            <div className="relative">
+                            <div className="relative w-full">
                                 <motion.div
-                                    className={`w-full py-4 sm:py-5 ${card.id === 'therapist' ? 'bg-primary-600' : 'bg-slate-900'} text-white font-black rounded-2xl shadow-xl flex items-center justify-center gap-3 group/btn overflow-hidden relative`}
+                                    className={`w-full px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-5 ${card.id === 'therapist' ? 'bg-primary-600 hover:bg-primary-700' : 'bg-slate-900 hover:bg-slate-950'} text-white font-outfit rounded-xl sm:rounded-2xl shadow-xl flex items-center justify-center gap-2 sm:gap-3 group/btn overflow-hidden relative transition-all duration-300`}
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
-                                    <span className="relative z-10 text-[10px] uppercase tracking-[0.3em]">Access Authorized Portal</span>
-                                    <LucideChevronRight size={18} className="relative z-10 group-hover/btn:translate-x-1 transition-transform" />
+                                    <span className="relative z-10 text-[11px] sm:text-xs md:text-sm lg:text-base uppercase tracking-[0.12em] font-black">{card.buttonLabel}</span>
+                                    <LucideChevronRight size={14} className="relative z-10 group-hover/btn:translate-x-1 transition-transform hidden sm:block" />
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
                                 </motion.div>
 
-                                <div className="mt-6 flex items-center justify-center gap-6">
-                                    <div className="flex items-center gap-2 text-slate-300 font-black text-[8px] uppercase tracking-widest">
-                                        <card.secondaryIcon size={12} />
-                                        Verified Node
+                                <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 px-4">
+                                    <div className="flex items-center gap-2 text-slate-600 font-black text-xs sm:text-sm uppercase tracking-wide">
+                                        <card.secondaryIcon size={16} />
+                                        Verified & Safe
                                     </div>
-                                    <div className="w-1 h-1 bg-slate-200 rounded-full"></div>
-                                    <div className="flex items-center gap-2 text-slate-300 font-black text-[8px] uppercase tracking-widest">
-                                        <LucideShieldCheck size={12} />
-                                        256-bit Encryption
+                                    <div className="hidden sm:block w-1 h-1 bg-slate-300 rounded-full"></div>
+                                    <div className="flex items-center gap-2 text-slate-600 font-black text-xs sm:text-sm uppercase tracking-wide">
+                                        <LucideShieldCheck size={16} />
+                                        Secure & Protected
                                     </div>
                                 </div>
                             </div>
@@ -188,11 +185,6 @@ export default function LoginPage() {
                 className="mt-20 z-10 flex flex-col items-center gap-4"
             >
                 <div className="flex items-center gap-6">
-                    <div className="text-left">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none mb-1">Lead Researcher</p>
-                        <p className="text-sm font-black text-slate-700 leading-none">Lead Clinical Governance</p>
-                    </div>
-                    <div className="h-8 w-[1px] bg-slate-200"></div>
                     <div className="text-left">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-none mb-1">Branding Unit</p>
                         <p className="text-sm font-black text-slate-700 leading-none">Lumos Milestone Care • 2025</p>

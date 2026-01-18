@@ -32,11 +32,11 @@ export async function POST(request) {
 
     await sendEmail({
       to: registrationRequest.email,
-      subject: "Registration Approved - UCP Portal",
+      subject: "Registration Approved - Lumos Milestone care",
       html: `
         <h2>Congratulations!</h2>
         <p>Your registration request has been approved by the admin.</p>
-        <p>You can now login to the UCP Portal with your credentials.</p>
+        <p>You can now login to the Lumos Milestone care with your credentials.</p>
         <p>Welcome to our platform!</p>
       `,
     });

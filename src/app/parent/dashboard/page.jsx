@@ -458,7 +458,7 @@ function ParentDashboardContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfcfd] font-outfit">
+    <div className="min-h-screen bg-[#fcfcfd] font-outfit overflow-x-hidden">
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
         <aside

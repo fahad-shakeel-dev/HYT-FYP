@@ -69,6 +69,10 @@ export async function GET(request) {
         path: "students", // Correct field name for population
         select: "name email registrationNumber program semester",
         model: Student // Pass the model object directly instead of string "Student" to avoid registry lookup failure
+      })
+      .populate({
+        path: "classId", // Populate the Class data to get schedules
+        select: "schedules className",
       });
 
     // DEBUG: Log class sections and their students
@@ -81,6 +85,112 @@ export async function GET(request) {
     });
 
     // Prepare response data
+    // Function to extract base subject name (remove day names like Monday, Tuesday, etc)
+    const getBaseSubjectName = (subject) => {
+      if (!subject) return subject;
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      let baseSubject = subject.trim();
+      
+      // Remove day names from the end
+      days.forEach(day => {
+        const regex = new RegExp(`\\s*${day}\\s*$`, 'i');
+        baseSubject = baseSubject.replace(regex, '');
+      });
+      
+      return baseSubject.trim();
+    };
+
+    // Function to extract day names from schedule strings
+    const extractDaysFromSchedules = (schedules) => {
+      if (!schedules || !Array.isArray(schedules)) return [];
+      
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const foundDays = [];
+      
+      schedules.forEach(schedule => {
+        const lowerSchedule = schedule.toLowerCase();
+        days.forEach(day => {
+          if (lowerSchedule.includes(day.toLowerCase()) && !foundDays.includes(day)) {
+            foundDays.push(day);
+          }
+        });
+      });
+      
+      return foundDays;
+    };
+
+    // Deduplicate and merge groups with the same base subject name
+    const mergeGroupsBySubject = (classSections) => {
+      const groupMap = new Map();
+      
+      classSections.forEach((classSection) => {
+        const subject = classSection.subject || classSection.activity;
+        const baseSubject = getBaseSubjectName(subject);
+        
+        // Extract days from the Class schedules
+        const days = extractDaysFromSchedules(classSection.classId?.schedules || []);
+        
+        if (!groupMap.has(baseSubject)) {
+          groupMap.set(baseSubject, {
+            classSectionId: classSection._id,
+            subject: baseSubject, // Use base subject name without day
+            program: classSection.program || classSection.category,
+            semester: classSection.semester,
+            section: classSection.section || classSection.schedule,
+            room: classSection.room,
+            students: [],
+            days: [], // Track all assigned days
+          });
+        }
+        
+        // Add days from this section to the group
+        const groupDays = groupMap.get(baseSubject).days;
+        days.forEach(day => {
+          if (!groupDays.includes(day)) {
+            groupDays.push(day);
+          }
+        });
+        
+        // Merge students from all groups with same base subject
+        const students = (classSection.students || []);
+        students.forEach(s => {
+          if (s && s._id) {
+            groupMap.get(baseSubject).students.push({
+              _id: s._id,
+              id: s._id,
+              name: s.name,
+              email: s.email,
+              registrationNumber: s.registrationNumber,
+              program: s.program,
+              semester: s.semester,
+            });
+          }
+        });
+      });
+      
+      // Convert map to array and remove duplicate students within each group
+      return Array.from(groupMap.values()).map(group => {
+        const uniqueStudents = new Map();
+        group.students.forEach(s => {
+          if (!uniqueStudents.has(s._id.toString())) {
+            uniqueStudents.set(s._id.toString(), s);
+          }
+        });
+        
+        return {
+          ...group,
+          students: Array.from(uniqueStudents.values()),
+          totalStudents: Array.from(uniqueStudents.values()).length,
+          // Create display name with all days
+          displayName: group.days.length > 0 
+            ? `${group.subject} (${group.days.join(', ')})`
+            : group.subject,
+        };
+      });
+    };
+
+    const mergedClasses = mergeGroupsBySubject(classSections);
+
     const response = {
       therapist: { // Keeping key as 'teacher' for frontend compatibility or change to 'therapist' if frontend is updated. 
         // User asked to "replace all teacher with therapist", assuming frontend component usage too.
@@ -93,33 +203,8 @@ export async function GET(request) {
         email: therapist.email,
         image: therapist.image,
         department: therapist.role,
-        assignedClasses: classSections.map((classSection) => ({
-          classSectionId: classSection._id,
-          subject: classSection.subject || classSection.activity, // Handle both likely fields
-          program: classSection.program || classSection.category,
-          semester: classSection.semester,
-          section: classSection.section || classSection.schedule,
-          room: classSection.room,
-          totalStudents: classSection.students ? classSection.students.length : 0,
-          students: (function () {
-            const uniqueStudents = new Map();
-            (classSection.students || []).forEach(s => {
-              if (s && s._id && !uniqueStudents.has(s._id.toString())) {
-                uniqueStudents.set(s._id.toString(), s);
-              }
-            });
-            return Array.from(uniqueStudents.values());
-          })().map((student) => ({
-            _id: student._id, // Essential for React keys in many components
-            id: student._id,  // Keep for compatibility
-            name: student.name,
-            email: student.email,
-            registrationNumber: student.registrationNumber,
-            program: student.program,
-            semester: student.semester,
-          })),
-        })),
-        classCount: classSections.length,
+        assignedClasses: mergedClasses,
+        classCount: mergedClasses.length,
         // Safe mapping of classAssignments
         classAssignments: (therapist.classAssignments || []).map((assignment) => ({
           classId: assignment.classId,

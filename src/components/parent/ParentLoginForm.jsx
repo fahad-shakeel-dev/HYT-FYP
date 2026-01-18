@@ -59,6 +59,12 @@ export default function ParentLoginForm() {
                     timer: 1500,
                     timerProgressBar: true,
                     showConfirmButton: false,
+                    didOpen: (modal) => {
+                        const titleElement = modal.querySelector('.swal2-title')
+                        const textElement = modal.querySelector('.swal2-html-container')
+                        if (titleElement) titleElement.style.color = '#000000'
+                        if (textElement) textElement.style.color = '#000000'
+                    }
                 }).then(() => {
                     window.location.href = "/parent/dashboard"
                 })
@@ -68,6 +74,12 @@ export default function ParentLoginForm() {
                     title: "Access Denied",
                     text: data.message || "Invalid credentials provided.",
                     confirmButtonColor: "#ef4444",
+                    didOpen: (modal) => {
+                        const titleElement = modal.querySelector('.swal2-title')
+                        const textElement = modal.querySelector('.swal2-html-container')
+                        if (titleElement) titleElement.style.color = '#000000'
+                        if (textElement) textElement.style.color = '#000000'
+                    }
                 })
             }
         } catch (error) {
@@ -76,6 +88,12 @@ export default function ParentLoginForm() {
                 title: "Network Latency",
                 text: "Communication with the care registry failed.",
                 confirmButtonColor: "#ef4444",
+                didOpen: (modal) => {
+                    const titleElement = modal.querySelector('.swal2-title')
+                    const textElement = modal.querySelector('.swal2-html-container')
+                    if (titleElement) titleElement.style.color = '#000000'
+                    if (textElement) textElement.style.color = '#000000'
+                }
             })
         } finally {
             setLoading(false)
@@ -83,7 +101,7 @@ export default function ParentLoginForm() {
     }
 
     return (
-        <div className="h-screen w-full bg-white flex flex-col lg:flex-row overflow-hidden font-outfit">
+        <div className="min-h-screen w-screen bg-white flex flex-col lg:flex-row overflow-x-hidden overflow-y-auto lg:overflow-hidden font-outfit">
             {/* Split Screen - Care Side */}
             <div className="hidden lg:flex lg:w-[45%] bg-slate-900 relative items-center justify-center p-12 xl:p-20 overflow-hidden">
                 <div className="absolute inset-0 z-0 opacity-20">
@@ -137,8 +155,8 @@ export default function ParentLoginForm() {
             </div>
 
             {/* Split Screen - Form Side */}
-            <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-12 xl:p-20 relative bg-[#fcfcfd] overflow-y-auto no-scrollbar">
-                <div className="w-full max-w-sm xl:max-w-md my-auto">
+            <div className="flex-1 flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 lg:p-12 xl:p-20 relative bg-[#fcfcfd] overflow-y-auto no-scrollbar">
+                <div className="w-full max-w-xs sm:max-w-sm md:max-w-sm lg:max-w-md xl:max-w-md my-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

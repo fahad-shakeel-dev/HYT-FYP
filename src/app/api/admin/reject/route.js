@@ -21,7 +21,7 @@ export async function POST(request) {
         // Send rejection email
         await sendEmail({
             to: registrationRequest.email,
-            subject: "Registration Request Update - UCP Portal",
+            subject: "Registration Request Update - Lumos Milestone care",
             html: `
         <h2>Registration Request Update</h2>
         <p>We regret to inform you that your registration request has been cancelled by the admin.</p>

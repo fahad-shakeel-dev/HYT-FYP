@@ -29,9 +29,22 @@ const UserSchema = new mongoose.Schema(
       enum: ["therapist", "admin"],
       default: "therapist",
     },
+    subject: {
+      type: String,
+      default: null,
+    },
     isApproved: {
       type: Boolean,
       default: false,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    registrationRequestId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RegistrationRequest",
+      default: null,
     },
     classAssignments: [
       {
@@ -70,8 +83,13 @@ const UserSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    strict: "throw",
+    strict: false,
   }
 );
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+// Clear cached model to ensure schema updates are applied
+if (mongoose.models.User) {
+  delete mongoose.models.User;
+}
+
+export default mongoose.model("User", UserSchema);

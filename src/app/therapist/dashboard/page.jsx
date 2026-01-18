@@ -61,9 +61,10 @@ function TherapistDashboardContent() {
 
       return <GroupPatientManagement
         groupId={group?.classSectionId}
-        groupSubject={group?.subject}
-        groupName={`${group?.program} - ${group?.section}`} // Construct display name
-        preloadedStudents={group?.students || []} // Pass strict student list
+        groupSubject={group?.displayName || group?.subject}
+        groupName={`${group?.program} - ${group?.section}`}
+        preloadedStudents={group?.students || []}
+        groupDays={group?.days || []}
       />
     }
 
@@ -80,7 +81,7 @@ function TherapistDashboardContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-outfit">
+    <div className="min-h-screen bg-slate-50 font-outfit overflow-x-hidden">
       <Sidebar
         activeSection={activeSection}
         setActiveSection={handleSectionChange}
@@ -88,7 +89,7 @@ function TherapistDashboardContent() {
         setCollapsed={setSidebarCollapsed}
         therapistData={therapistData}
       />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? "pl-20" : "pl-72"}`}>
+      <div className={`transition-all duration-300 ${sidebarCollapsed ? "pl-24" : "pl-80"}`}>
         <Header activeSection={activeSection} toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
         <main className="p-8">
           <div className="max-w-[1600px] mx-auto">

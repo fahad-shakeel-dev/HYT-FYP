@@ -42,10 +42,10 @@ export async function POST(request) {
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
-            subject: "Password Reset Request - UCP Portal",
+            subject: "Password Reset Request - Lumos Milestone care",
             html: `
                 <h2>Password Reset Request</h2>
-                <p>You have requested to reset your password for UCP Portal.</p>
+                <p>You have requested to reset your password for Lumos Milestone care.</p>
                 <p>Please click the link below to reset your password:</p>
                 <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a>
                 <p>This link will expire in 1 hour.</p>

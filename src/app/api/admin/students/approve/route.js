@@ -41,7 +41,7 @@
 //         const mailOptions = {
 //             from: "ucpedua@gmail.com",
 //             to: studentData.email,
-//             subject: "🎉 Student Registration Approved - UCP Portal",
+//             subject: "🎉 Student Registration Approved - Lumos Milestone care",
 //             html: `
 //         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px;">
 //           <div style="background: white; padding: 30px; border-radius: 10px;">
@@ -64,7 +64,7 @@
 //             </div>
             
 //             <div style="text-align: center; margin: 30px 0;">
-//               <p style="color: #059669; font-size: 18px; font-weight: bold;">✅ You can now login to the UCP Portal!</p>
+//               <p style="color: #059669; font-size: 18px; font-weight: bold;">✅ You can now login to the Lumos Milestone care!</p>
 //               <p style="color: #6B7280;">Welcome to our academic community. We're excited to have you on board!</p>
 //             </div>
             
@@ -185,7 +185,7 @@
 //         // If email fails, send SMS
 //         if (!emailSent) {
 //             console.log("📱 Sending SMS notification...")
-//             const smsMessage = `🎉 Congratulations ${studentRequest.name}! Your UCP Portal registration has been APPROVED. Class: ${classSection.classId}, Room: ${classSection.room}. You can now login to the portal.`
+//             const smsMessage = `🎉 Congratulations ${studentRequest.name}! Your Lumos Milestone care registration has been APPROVED. Class: ${classSection.classId}, Room: ${classSection.room}. You can now login to the portal.`
 //             smsSent = await sendSMS(studentRequest.phone, smsMessage)
 //         }
 

@@ -26,11 +26,11 @@ const UnverifiedStudentSchema = new mongoose.Schema(
     },
     semester: {
       type: String,
-      required: true,
+      default: "1",
     },
     section: {
       type: String,
-      required: true,
+      default: "A",
     },
     registrationNumber: {
       type: String,

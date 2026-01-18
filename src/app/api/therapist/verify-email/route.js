@@ -2,9 +2,19 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/lib/mongodb";
 import RegistrationRequest from "@/models/RegistrationRequest";
+import User from "@/models/User";
+import bcrypt from "bcryptjs";
 
 export async function GET(request) {
     try {
+        // Auto-cleanup: Delete unverified requests older than 1 day
+        await connectDB();
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        await RegistrationRequest.deleteMany({
+            isVerified: false,
+            createdAt: { $lt: oneDayAgo },
+        });
+
         const { searchParams } = new URL(request.url);
         const token = searchParams.get("token");
 
@@ -41,6 +51,36 @@ export async function GET(request) {
         user.isVerified = true;
         user.verificationToken = null;
         await user.save();
+
+        // Create User account for verified registration
+        const existingUser = await User.findOne({ email });
+        if (!existingUser) {
+            const userPayload = {
+                name: user?.name,
+                email: user?.email,
+                phone: user?.phone,
+                password: user?.password,
+                image: user?.image || null,
+                role: user?.role || "therapist",
+                isApproved: false, // Pending admin approval
+                isVerified: true, // Email verified
+                registrationRequestId: user?._id,
+            };
+            
+            // Add subject only if it exists in registration
+            if (user?.subject) {
+                userPayload.subject = user.subject;
+            }
+            
+            try {
+                const newUser = new User(userPayload);
+                await newUser.save();
+            } catch (userCreationError) {
+                console.error("User creation error:", userCreationError);
+                // Log but don't fail - email is already verified
+                // User can login after admin approves
+            }
+        }
 
         // return NextResponse.redirect(new URL("/therapist?message=Email verified successfully", baseURL));
         return NextResponse.redirect(new URL("/therapist", baseURL));
